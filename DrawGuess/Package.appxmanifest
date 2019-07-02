@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+
+<Package
+  xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
+  xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest"
+  xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10"
+  IgnorableNamespaces="uap mp">
+
+  <Identity
+    Name="fabbd7f7-6f9e-481e-941e-99c57d919661"
+    Publisher="CN=gabri"
+    Version="1.0.0.0" />
+
+  <mp:PhoneIdentity PhoneProductId="fabbd7f7-6f9e-481e-941e-99c57d919661" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+
+  <Properties>
+    <DisplayName>DrawGuess</DisplayName>
+    <PublisherDisplayName>Gabriella Thorén</PublisherDisplayName>
+    <Logo>Assets\Icons\Start_Icon.png</Logo>
+  </Properties>
+
+  <Dependencies>
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+  </Dependencies>
+
+  <Resources>
+    <Resource Language="x-generate"/>
+  </Resources>
+
+  <Applications>
+    <Application Id="App"
+      Executable="$targetnametoken$.exe"
+      EntryPoint="DrawGuess.App">
+      <uap:VisualElements
+        DisplayName="Draw &amp; Guess"
+        Square150x150Logo="Assets\Icons\Start_Icon.png"
+        Square44x44Logo="Assets\Icons\App_Icon.png"
+        Description="Draw &amp; Guess"
+        BackgroundColor="transparent">
+        <uap:DefaultTile Wide310x150Logo="Assets\Icons\WideLogo.png" ShortName="Draw &amp; Guess" Square71x71Logo="Assets\Icons\SmallTile.png" Square310x310Logo="Assets\Icons\LargeTile.png">
+          <uap:ShowNameOnTiles>
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
+          </uap:ShowNameOnTiles>
+        </uap:DefaultTile >
+        <uap:SplashScreen Image="Assets\Icons\Splash_Screen.png"  BackgroundColor="#00588F"/>
+        <uap:InitialRotationPreference>
+          <uap:Rotation Preference="landscape"/></uap:InitialRotationPreference>
+      </uap:VisualElements>
+    </Application>
+  </Applications>
+
+  <Capabilities>
+    <Capability Name="internetClient" />
+  </Capabilities>
+</Package>
