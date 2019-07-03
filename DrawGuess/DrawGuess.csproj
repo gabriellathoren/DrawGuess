@@ -321,14 +321,19 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer">
+      <Version>2.2.4</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
     </PackageReference>
-    <PackageReference Include="System.Data.SqlClient">
-      <Version>4.6.1</Version>
-    </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\DrawGuess.Models\DrawGuess.Models.csproj">
+      <Project>{8d37c47d-34ce-415c-ae41-94af513a9a9c}</Project>
+      <Name>DrawGuess.Models</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Fonts\Roboto-Italic.ttf" />
   </ItemGroup>
