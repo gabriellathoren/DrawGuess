@@ -23,6 +23,12 @@ namespace DrawGuess
     /// </summary>
     sealed partial class App : Application
     {
+        // Connection string for using Windows Authentication.
+        private string connectionString =
+            @"Server=tcp:drawguess.database.windows.net,1433;Initial Catalog=DrawGuess;Persist Security Info=False;User ID=drawguess;Password=travbana94!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+
+        public string ConnectionString { get => connectionString; set => connectionString = value; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -32,7 +38,6 @@ namespace DrawGuess
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
-            
         }
 
         /// <summary>

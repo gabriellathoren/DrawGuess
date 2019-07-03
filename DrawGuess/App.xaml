@@ -4,8 +4,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:DrawGuess"
     RequestedTheme="Dark">
+    
 
-    <Application.Resources>
+    <Application.Resources>        
         <FontFamily x:Key="RobotoLight">/Assets/Fonts/Roboto-Light.ttf#Roboto</FontFamily>
         <FontFamily x:Key="RobotoBold">/Assets/Fonts/Roboto-Bold.ttf#Roboto</FontFamily>
         <FontFamily x:Key="RobotoThin">/Assets/Fonts/Roboto-Thin.ttf#Roboto</FontFamily>
