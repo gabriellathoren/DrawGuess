@@ -8,6 +8,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -34,13 +35,17 @@ namespace DrawGuess.Pages
        
         public StartPage()
         {
+            if ((App.Current as App).User.Equals(null))
+            {
+                this.Frame.Navigate(typeof(LoginPage), null, new SuppressNavigationTransitionInfo());
+                return;
+            }
+
             this.InitializeComponent();
-            this.ViewModel = new StartViewModel();
+            this.ViewModel = new StartViewModel();            
+            
 
             //TESTKOD
-            ViewModel.UserName = "Gabriella Thorén";
-            ViewModel.ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F";
-            ViewModel.Points = "1000 XP";
             ViewModel.Items.Add(new GameRoom() { RoomName = "Violett", NumberOfPlayers = 3 });
             ViewModel.Items.Add(new GameRoom() { RoomName = "Golden", NumberOfPlayers = 5 });
             ViewModel.Items.Add(new GameRoom() { RoomName = "Marin", NumberOfPlayers = 7 });

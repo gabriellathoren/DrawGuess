@@ -24,7 +24,7 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <controls:Navigation Grid.ColumnSpan="3" Grid.Row="0" LogoTapped="Logo_Tapped" UserName="{x:Bind ViewModel.UserName}" ProfilePicture="{x:Bind ViewModel.User.ProfilePicture}"/>
+        <controls:Navigation Grid.ColumnSpan="3" Grid.Row="0" LogoTapped="Logo_Tapped" />
 
         <Button Padding="0" Background="Transparent" Grid.Row="1" Grid.Column="0" Margin="0,60,0,0" HorizontalAlignment="Right" VerticalAlignment="Top">
             <Grid>

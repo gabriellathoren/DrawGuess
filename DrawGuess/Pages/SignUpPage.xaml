@@ -26,42 +26,44 @@
         </Grid.Background>
 
         <Button Margin="0,0,0,10" Grid.Row="0" Height="50" Width="50" Padding="10" BorderThickness="0" Background="Transparent" Click="Return_Click" TabIndex="7" TabNavigation="Local">
-            <Image HorizontalAlignment="Left" Opacity="0.8" x:Name="returnButton" Height="20" Source="/Assets/Components/return_button.png"/>            
+            <Image HorizontalAlignment="Left" x:Name="returnButton" Height="25" Source="/Assets/Components/return_button.png"/>            
         </Button>
         
         <Image Grid.Row="1" Margin="0,0,0,10" HorizontalAlignment="Center" x:Name="logo" Width="305" Source="/Assets/Icons/textlogo.png"/>
 
-        <TextBox PreviewKeyDown="EnterPressed" Text="{x:Bind ViewModel.User.FirstName, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}" Grid.Row="2" Width="400" Margin="0,0,0,10" FontFamily="{StaticResource RobotoLight}" Header="First name" x:Name="firstNameBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="NameOrPhoneNumber" FontSize="14" TabIndex="1" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" BorderThickness="0,0,0,0" RequestedTheme="Light" >
+        <TextBox PreviewKeyDown="EnterPressed" Text="{x:Bind ViewModel.User.FirstName, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}" Grid.Row="2" Width="400" Height="55" Margin="0,0,0,10" FontFamily="{StaticResource RobotoLight}" Header="First name" x:Name="firstNameBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="NameOrPhoneNumber" FontSize="14" TabIndex="1" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" RequestedTheme="Light">
             <TextBox.Resources>
                 <SolidColorBrush x:Key="TextControlHeaderForeground" Color="White" />
             </TextBox.Resources>
         </TextBox>
 
-        <TextBox PreviewKeyDown="EnterPressed" Text="{x:Bind ViewModel.User.LastName, Mode=TwoWay}"  Style="{StaticResource TextBoxStyle}" Grid.Row="3" Width="400" Margin="0,5,0,10" Header="Last name" x:Name="lastNameBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="AlphanumericFullWidth" FontFamily="{StaticResource RobotoLight}"  FontSize="14" TabIndex="2" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" BorderThickness="0,0,0,0" RequestedTheme="Light">
+        <TextBox PreviewKeyDown="EnterPressed" Text="{x:Bind ViewModel.User.LastName, Mode=TwoWay}"  Style="{StaticResource TextBoxStyle}" Grid.Row="3" Width="400" Margin="0,5,0,10" Header="Last name" x:Name="lastNameBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="AlphanumericFullWidth" FontFamily="{StaticResource RobotoLight}"  FontSize="14" TabIndex="2" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" Height="55" RequestedTheme="Light">
             <TextBox.Resources>
                 <SolidColorBrush x:Key="TextControlHeaderForeground" Color="White" />
             </TextBox.Resources>
         </TextBox>
 
-        <TextBox PreviewKeyDown="EnterPressed" Text="{x:Bind ViewModel.User.Email, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}" Grid.Row="4" Width="400" Margin="0,5,0,10" Header="Email" x:Name="emailBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="AlphanumericFullWidth" FontSize="14" FontFamily="{StaticResource RobotoLight}"  TabIndex="3" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" RequestedTheme="Light" BorderThickness="0,0,0,0">
+        <TextBox PreviewKeyDown="EnterPressed" Text="{x:Bind ViewModel.User.Email, Mode=TwoWay}" Style="{StaticResource TextBoxStyle}" Grid.Row="4" Width="400" Margin="0,5,0,10" Header="Email" x:Name="emailBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="AlphanumericFullWidth" FontSize="14" FontFamily="{StaticResource RobotoLight}"  TabIndex="3" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" RequestedTheme="Light" Height="55">
             <TextBox.Resources>
                 <SolidColorBrush x:Key="TextControlHeaderForeground" Color="White" />
             </TextBox.Resources>
         </TextBox>
 
-        <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.Password, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="5" Width="400" x:Name="passwordBox" Header="Password" Margin="0,5,0,10" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="password" FontSize="14" FontFamily="{StaticResource RobotoLight}" TabIndex="4" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" RequestedTheme="Light" BorderThickness="0,0,0,0">
+        <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.Password, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="5" Width="400" x:Name="passwordBox" Header="Password" Margin="0,5,0,10" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="password" FontSize="14" FontFamily="{StaticResource RobotoLight}" TabIndex="4" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" RequestedTheme="Light" Height="55">
             <PasswordBox.Resources>
                 <SolidColorBrush x:Key="TextControlHeaderForeground" Color="White" />
             </PasswordBox.Resources>
         </PasswordBox>
 
-        <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.ConfirmedPassword, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="6" Width="400" x:Name="passwordConfirmBox" Header="Confirm password" Margin="0,5,0,10" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="password" FontSize="14" FontFamily="{StaticResource RobotoLight}"  TabIndex="5" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True"  RequestedTheme="Light" BorderThickness="0,0,0,0">
+        <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.ConfirmedPassword, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="6" Width="400" x:Name="passwordConfirmBox" Header="Confirm password" Margin="0,5,0,10" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="password" FontSize="14" FontFamily="{StaticResource RobotoLight}"  TabIndex="5" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True"  RequestedTheme="Light" Height="55">
             <PasswordBox.Resources>
                 <SolidColorBrush x:Key="TextControlHeaderForeground" Color="White" />
             </PasswordBox.Resources>
         </PasswordBox>
 
-        <Button Grid.Row="7" FontSize="14" Content="Register" Foreground="White" Background="#50FFFFFF" RequestedTheme="Dark" HorizontalAlignment="Center" VerticalAlignment="Top" Height="32" Grid.RowSpan="2" Width="90" FontFamily="{StaticResource RobotoLight}" TabIndex="6" TabNavigation="Local" Click="Register_Click"/>
-        <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=TwoWay}" FontSize="14" HorizontalAlignment="Center" Foreground="white" Grid.Row="9" Margin="0,10,0,0"/>
+        <Button Grid.Row="7" FontSize="14" Content="Register" Foreground="White" Background="#40FFFFFF" RequestedTheme="Dark" HorizontalAlignment="Center" VerticalAlignment="Top" Height="32" Grid.RowSpan="2" Width="90" FontFamily="{StaticResource RobotoLight}" TabIndex="6" TabNavigation="Local" Click="Register_Click"/>
+        
+        <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=TwoWay}" FontSize="14" HorizontalAlignment="Center" Foreground="white" Grid.Row="9" Margin="0,10,0,0" FontFamily="{StaticResource RobotoLight}"/>
+
     </Grid>
 </Page>

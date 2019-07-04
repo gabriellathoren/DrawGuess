@@ -5,9 +5,9 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DrawGuess.Services
+namespace DrawGuess.Security
 {
-    public static class Encode_Decode
+    public static class Crypting
     {
 
         public static byte[] CreateSalt()

@@ -18,8 +18,8 @@
 
         <Button Foreground="Transparent" x:Name="SettingsButton" Padding="20,5,20,5" BorderThickness="0" Background="Transparent" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Click="SettingsButton_Click">
             <StackPanel Orientation="Horizontal" >
-                <TextBlock x:Name="user" Text="{x:Bind UserName}" FontSize="18" Foreground="White" VerticalAlignment="Center" FontFamily="{StaticResource RobotoThin}"/>
-                <Image x:Name="profilePicture" Source="{x:Bind ProfilePicture}" Height="40" Width="40" Margin="10,0,0,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="user" Text="{x:Bind ViewModel.UserName, Mode=TwoWay}" FontSize="18" Foreground="White" VerticalAlignment="Center" FontFamily="{StaticResource RobotoThin}"/>
+                <PersonPicture Background="blue" x:Name="profilePicture" Initials="{x:Bind ViewModel.Initials, Mode=TwoWay}" DisplayName="{x:Bind ViewModel.UserName, Mode=TwoWay}" Height="40" Width="40" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
         </Button>
 

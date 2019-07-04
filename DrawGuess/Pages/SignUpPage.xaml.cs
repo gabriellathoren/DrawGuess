@@ -9,6 +9,7 @@ using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.System;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -50,22 +51,27 @@ namespace DrawGuess.Pages
 
             if (string.IsNullOrEmpty(ViewModel.User.FirstName))
             {
+                firstNameBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 allObligatoryFieldsFilled = false; 
             }
             if (string.IsNullOrEmpty(ViewModel.User.LastName))
             {
+                lastNameBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 allObligatoryFieldsFilled = false;
             }
             if (string.IsNullOrEmpty(ViewModel.User.Email))
             {
+                emailBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 allObligatoryFieldsFilled = false;
             }
             if (string.IsNullOrEmpty(ViewModel.Password))
             {
+                passwordBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 allObligatoryFieldsFilled = false;
             }
             if (string.IsNullOrEmpty(ViewModel.ConfirmedPassword))
             {
+                passwordConfirmBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 allObligatoryFieldsFilled = false;
             }
 
@@ -78,6 +84,16 @@ namespace DrawGuess.Pages
 
         }
 
+        private void ResetErrorIndicators()
+        {
+            
+            firstNameBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            lastNameBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            emailBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            passwordBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            ViewModel.ErrorMessage = "";
+        }
+
         private bool IsEmailValidated()
         {
             try
@@ -88,6 +104,7 @@ namespace DrawGuess.Pages
             catch
             {
                 ViewModel.ErrorMessage = "Please specify a correct email";
+                emailBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 return false;
             }
             
@@ -98,12 +115,16 @@ namespace DrawGuess.Pages
 
             if(ViewModel.Password.Length < 8)
             {
+                passwordConfirmBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                passwordBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 ViewModel.ErrorMessage = "Password must be longer than 8 characters";
                 return false;
             }
 
             if(!ViewModel.Password.Equals(ViewModel.ConfirmedPassword))
             {
+                passwordConfirmBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                passwordBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 ViewModel.ErrorMessage = "The confirmed passwords do not match";
                 return false;
             }
@@ -117,9 +138,9 @@ namespace DrawGuess.Pages
             if (Register_clicked) { return; }
             else { Register_clicked = true; }
 
-            ViewModel.ErrorMessage = "";
+            ResetErrorIndicators();
 
-            if(IsAllObligatoryFieldsFilled() && IsEmailValidated() && IsPasswordsAccepted())
+            if (IsAllObligatoryFieldsFilled() && IsEmailValidated() && IsPasswordsAccepted())
             {
                 try
                 {

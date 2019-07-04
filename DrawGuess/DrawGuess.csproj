@@ -123,8 +123,8 @@
     </Compile>
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
-    <Compile Include="DatabaseConnection.cs" />
     <Compile Include="Models\User.cs" />
+    <Compile Include="Exceptions\UserNotFoundException.cs" />
     <Compile Include="Pages\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
@@ -145,8 +145,11 @@
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\GameRoom.cs" />
-    <Compile Include="Services\Encode_Decode.cs" />
+    <Compile Include="Security\CredentialControl.cs" />
+    <Compile Include="Security\Crypting.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
+    <Compile Include="ViewModels\LoginViewModel.cs" />
+    <Compile Include="ViewModels\NavigationViewModel.cs" />
     <Compile Include="ViewModels\PlayersViewModel.cs" />
     <Compile Include="ViewModels\SettingsViewModel.cs" />
     <Compile Include="ViewModels\SignUpViewModel.cs" />
@@ -328,7 +331,9 @@
       <Version>4.6.1</Version>
     </PackageReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Assets\ProfileImages\" />
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Assets\Fonts\Roboto-Italic.ttf" />
   </ItemGroup>

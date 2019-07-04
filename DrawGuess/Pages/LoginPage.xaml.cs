@@ -1,10 +1,17 @@
-﻿using System;
+﻿using DrawGuess.Exceptions;
+using DrawGuess.ViewModels;
+using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Credentials;
+using Windows.Storage;
+using Windows.System;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -19,29 +26,103 @@ namespace DrawGuess.Pages
 {
     public sealed partial class LoginPage : Page
     {
+        public LoginViewModel ViewModel;
+        private bool Login_clicked = false;
+        private bool SignUp_clicked = false;
+
         public LoginPage()
         {
             this.InitializeComponent();
-        }
-
-        private void PasswordBox_PasswordChanged(object sender, RoutedEventArgs e)
-        {
-
+            ViewModel = new LoginViewModel();
         }
 
         private void SignUp_Click(object sender, RoutedEventArgs e)
         {
+            if (SignUp_clicked) { return; }
+            else { SignUp_clicked = true; }
+
             this.Frame.Navigate(typeof(SignUpPage), "", new SuppressNavigationTransitionInfo());
+
+            SignUp_clicked = false;
         }
 
         private void Login_Click(object sender, RoutedEventArgs e)
         {
+            if (Login_clicked) { return; }
+            else { Login_clicked = true; }
+
+            ResetErrorIndicators();
+
+            if(IsAllObligatoryFieldsFilled())
+            {
+                try
+                {
+                    Models.User user = Models.User.GetUser(ViewModel.Email, ViewModel.Password);
+
+                    if (user != null)
+                    {
+                        LogIn(user);
+                    }
+                }
+                catch(UserNotFoundException)
+                {
+                    ViewModel.ErrorMessage = "Wrong email or password";
+                }
+                catch(Exception)
+                {
+                    ViewModel.ErrorMessage = "Something went wrong, try again later";
+                }
+            }
+            
+            Login_clicked = false;
+        }
+
+        private void LogIn(Models.User user)
+        {
+            var vault = new PasswordVault();
+            vault.Add(new PasswordCredential((App.Current as App).ResourceName, user.Email, ViewModel.Password));
+
+            (App.Current as App).User = user;
+
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
         }
 
-        private void EmailBox_TextChanged(object sender, TextChangedEventArgs e)
+        private void EnterPressed(object sender, KeyRoutedEventArgs e)
         {
+            if (e.Key == VirtualKey.Enter)
+            {
+                Login_Click(sender, e);
+            }
+        }
 
+        private bool IsAllObligatoryFieldsFilled()
+        {
+            bool allObligatoryFieldsFilled = true;
+
+            if (string.IsNullOrEmpty(ViewModel.Email))
+            {
+                emailBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                allObligatoryFieldsFilled = false;
+            }
+            if (string.IsNullOrEmpty(ViewModel.Password))
+            {
+                passwordBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                allObligatoryFieldsFilled = false;
+            }
+
+            if (!allObligatoryFieldsFilled)
+            {
+                ViewModel.ErrorMessage = "Please fill in both email and password to log in";
+            }
+
+            return allObligatoryFieldsFilled;
+        }
+
+        private void ResetErrorIndicators()
+        {
+            emailBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            passwordBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            ViewModel.ErrorMessage = "";
         }
     }
 }

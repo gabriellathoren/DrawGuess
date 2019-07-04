@@ -1,4 +1,6 @@
-﻿using System;
+﻿using DrawGuess.Models;
+using DrawGuess.Security;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -7,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -23,11 +26,16 @@ namespace DrawGuess
     /// </summary>
     sealed partial class App : Application
     {
-        // Connection string for using Windows Authentication.
+        // Connection string for Azure database
         private string connectionString =
             @"Server=tcp:drawguess.database.windows.net,1433;Initial Catalog=DrawGuess;Persist Security Info=False;User ID=drawguess;Password=travbana94!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
-
         public string ConnectionString { get => connectionString; set => connectionString = value; }
+        
+        private string resourceName = "DrawGuess";
+        public string ResourceName { get => resourceName; set => resourceName = value; }
+
+        private User user = new User();
+        public User User { get => user; set => user = value; }
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -81,11 +89,19 @@ namespace DrawGuess
             {
                 if (rootFrame.Content == null)
                 {
-                    // When the navigation stack isn't restored navigate to the first page,
-                    // configuring the new page by passing required information as a navigation
-                    // parameter
-                    rootFrame.Navigate(typeof(Pages.LoginPage), e.Arguments);
-                    
+                    var loginCredential = CredentialControl.GetCredentialFromLocker();
+
+                    //Control if user is already logged on
+                    if (loginCredential != null)
+                    {
+                        loginCredential.RetrievePassword();
+                        CredentialControl.SystemLogIn(loginCredential.UserName, loginCredential.Password);
+                        rootFrame.Navigate(typeof(Pages.StartPage), e.Arguments);
+                    }
+                    else
+                    {
+                        rootFrame.Navigate(typeof(Pages.LoginPage), e.Arguments);
+                    }
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();

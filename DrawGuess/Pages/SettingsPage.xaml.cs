@@ -6,6 +6,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Credentials;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -34,12 +35,7 @@ namespace DrawGuess.Pages
             ViewModel.User = new Models.User { FirstName = "Gabriella", LastName = "Thorén", Email = "gabriella_thoren@hotmail.com", ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" };
             ViewModel.UserName = ViewModel.User.FirstName + " " + ViewModel.User.LastName;
         }
-
-        private void TextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-
-        }
-
+        
         private void Logo_Tapped(object sender, EventArgs e)
         {
             this.Frame.Navigate(typeof(StartPage), null, new SuppressNavigationTransitionInfo());
@@ -47,7 +43,9 @@ namespace DrawGuess.Pages
 
         private void SignOut_Click(object sender, RoutedEventArgs e)
         {
-            
+            var vault = new PasswordVault();            
+            vault.Remove(vault.FindAllByUserName((App.Current as App).User.Email).First());
+            this.Frame.Navigate(typeof(LoginPage), null, new SuppressNavigationTransitionInfo());
         }
 
         private void ChangePassword_Click(object sender, RoutedEventArgs e)

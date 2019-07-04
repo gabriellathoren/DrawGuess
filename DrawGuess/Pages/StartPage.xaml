@@ -93,7 +93,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <controls:Navigation Grid.Row="0" SettingsClick="Navigation_SettingsClick" UserName="{x:Bind ViewModel.UserName}" ProfilePicture="{x:Bind ViewModel.ProfilePicture}"/>
+        <controls:Navigation Grid.Row="0" SettingsClick="Navigation_SettingsClick" />
 
         <Grid Grid.Row="1" VerticalAlignment="Stretch">
             <Grid.RowDefinitions>
