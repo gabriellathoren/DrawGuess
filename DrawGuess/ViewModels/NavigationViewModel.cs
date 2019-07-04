@@ -60,5 +60,12 @@ namespace DrawGuess.ViewModels
         {
             this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        public NavigationViewModel()
+        {
+            User = (App.Current as App).User;
+            UserName = User.FirstName + " " + User.LastName;
+            Initials = User.FirstName.Substring(0, 1).ToUpper() + User.LastName.Substring(0, 1).ToUpper();
+        }
     }
 }

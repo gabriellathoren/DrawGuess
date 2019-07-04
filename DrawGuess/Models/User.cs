@@ -60,6 +60,45 @@ namespace DrawGuess.Models
             return users;
         }
 
+
+        public static bool DoesUserExists(string email)
+        {
+            string query =
+                "SELECT Id, FirstName, LastName, Email, PasswordSalt, PasswordHash, Points " +
+                "FROM dbo.Users " +
+                "WHERE Email = '" + email + "' ";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+                {
+                    conn.Open();
+                    if (conn.State == System.Data.ConnectionState.Open)
+                    {
+                        using (SqlCommand cmd = conn.CreateCommand())
+                        {
+                            cmd.CommandText = query;
+                            using (SqlDataReader reader = cmd.ExecuteReader())
+                            {
+                                if(reader.HasRows)
+                                {
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                    conn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return false;
+        }
+
+
         public static User GetUser(string email, string password)
         {
             var user = new User();

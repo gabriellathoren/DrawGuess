@@ -18,13 +18,9 @@ using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=234238
 
 namespace DrawGuess.Controls
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class Navigation : UserControl
     {
 
@@ -38,12 +34,7 @@ namespace DrawGuess.Controls
         {
             this.InitializeComponent();
             ViewModel = new NavigationViewModel();
-
-            ViewModel.User = (App.Current as App).User;
-            ViewModel.UserName = ViewModel.User.FirstName + " " + ViewModel.User.LastName;
-            ViewModel.Initials = ViewModel.User.FirstName.Substring(0,1).ToUpper() + ViewModel.User.LastName.Substring(0,1).ToUpper();
-            ViewModel.ProfilePicture = ViewModel.User.ProfilePicture;
-
+            
             if(!string.IsNullOrEmpty(ViewModel.ProfilePicture))
             {
                 _ = SetProfilePictureAsync();

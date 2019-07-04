@@ -1,4 +1,5 @@
 ﻿using DrawGuess.Models;
+using DrawGuess.Security;
 using DrawGuess.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text.RegularExpressions;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Credentials;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -19,13 +21,9 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
-// The Blank Page item template is documented at https://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
 namespace DrawGuess.Pages
 {
-    /// <summary>
-    /// An empty page that can be used on its own or navigated to within a Frame.
-    /// </summary>
     public sealed partial class SignUpPage : Page
     {
         private bool Register_clicked { get; set; }
@@ -96,10 +94,12 @@ namespace DrawGuess.Pages
 
         private bool IsEmailValidated()
         {
+            bool IsEmailAccepted = true;
+
             try
             {
                 var addr = new System.Net.Mail.MailAddress(ViewModel.User.Email);
-                return addr.Address == ViewModel.User.Email;
+                IsEmailAccepted = addr.Address == ViewModel.User.Email;
             }
             catch
             {
@@ -107,7 +107,15 @@ namespace DrawGuess.Pages
                 emailBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 return false;
             }
-            
+
+            if(Models.User.DoesUserExists(ViewModel.User.Email))
+            {
+                ViewModel.ErrorMessage = "Email is already registered";
+                emailBox.BorderBrush = new SolidColorBrush(Colors.Red);
+                return false;
+            }
+
+            return IsEmailAccepted;
         }
         
         private bool IsPasswordsAccepted()
@@ -144,7 +152,9 @@ namespace DrawGuess.Pages
             {
                 try
                 {
-                    Models.User.AddUser(ViewModel.User, ViewModel.Password);
+                    Models.User.AddUser(ViewModel.User, ViewModel.Password);                    
+                    CredentialControl.SystemLogIn(ViewModel.User.Email, ViewModel.Password);
+                    this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
                 }
                 catch(Exception)
                 {

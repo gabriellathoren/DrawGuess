@@ -45,6 +45,12 @@ namespace DrawGuess.Security
             {
                 Models.User User = Models.User.GetUser(email, password);
 
+                var vault = new PasswordVault();
+
+                if(vault.RetrieveAll().Count < 1) { 
+                    vault.Add(new PasswordCredential((App.Current as App).ResourceName, email, password));
+                }
+
                 if (User != null)
                 {
                     (App.Current as App).User = User;
