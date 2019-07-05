@@ -133,7 +133,7 @@ namespace DrawGuess.Pages
             {
                 passwordConfirmBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 passwordBox.BorderBrush = new SolidColorBrush(Colors.Red);
-                ViewModel.ErrorMessage = "The confirmed passwords do not match";
+                ViewModel.ErrorMessage = "The specified passwords do not match";
                 return false;
             }
 

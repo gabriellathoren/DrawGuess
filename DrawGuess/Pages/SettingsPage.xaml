@@ -20,21 +20,24 @@
         </Grid.RowDefinitions>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <controls:Navigation Grid.ColumnSpan="3" Grid.Row="0" LogoTapped="Logo_Tapped" />
+        <controls:Navigation Grid.ColumnSpan="4" Grid.Row="0" />
 
-        <Button Padding="0" Background="Transparent" Grid.Row="1" Grid.Column="0" Margin="0,60,0,0" HorizontalAlignment="Right" VerticalAlignment="Top">
-            <Grid>
-                <PersonPicture x:Name="profilePicture" UseLayoutRounding="False" Initials="{x:Bind ViewModel.Initials, Mode=TwoWay}" RequestedTheme="Dark" Height="200" Width="200"/>
-                <Rectangle Fill="Black" Opacity="0.7" HorizontalAlignment="Stretch" Height="60" VerticalAlignment="Bottom"/>
-                <TextBlock Height="40" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Text="CHANGE IMAGE" FontSize="12" FontFamily="{StaticResource RobotoLight}"/>
-            </Grid>
-        </Button>
-
-        <StackPanel Grid.Row="1" Grid.Column="1" Margin="0,60,0,0" HorizontalAlignment="Center" VerticalAlignment="Stretch">
+        <StackPanel Grid.Row="1" Grid.Column="1" Padding="40,0,40,0">
+            <Button Padding="0" Background="Transparent"  Margin="0,60,0,0" HorizontalAlignment="Right" VerticalAlignment="Top">
+                <Grid>
+                    <PersonPicture x:Name="profilePicture" UseLayoutRounding="False" Initials="{x:Bind ViewModel.Initials, Mode=TwoWay}" RequestedTheme="Dark" Height="200" Width="200"/>
+                    <Rectangle Fill="Black" Opacity="0.7" HorizontalAlignment="Stretch" Height="60" VerticalAlignment="Bottom"/>
+                    <TextBlock Height="40" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Text="CHANGE IMAGE" FontSize="12" FontFamily="{StaticResource RobotoLight}"/>
+                </Grid>
+            </Button>
+        </StackPanel>
+ 
+        <StackPanel Grid.Row="1" Grid.Column="2" Margin="0,60,0,0" HorizontalAlignment="Center" VerticalAlignment="Stretch">
             <TextBox Text="{x:Bind ViewModel.User.FirstName}" Style="{StaticResource TextBoxStyle}" Width="400" Margin="0,0,0,10" FontFamily="{StaticResource RobotoLight}" Header="First name" x:Name="firstNameBox" VerticalContentAlignment="Center" Windows10version1809:CornerRadius="15" Opacity="0.9" Foreground="Black" Background="#FFFFFF" InputScope="NameOrPhoneNumber" FontSize="14" TabIndex="1" TabNavigation="Local" AutomationProperties.IsRequiredForForm="True" BorderThickness="0,0,0,0" RequestedTheme="Light">
                 <TextBox.Resources>
                     <SolidColorBrush x:Key="TextControlHeaderForeground" Color="White" />
@@ -53,16 +56,13 @@
                 </TextBox.Resources>
             </TextBox>
 
-            <Button Padding="20,6,20,6" Margin="0,10,0,0" Content="Change password" HorizontalAlignment="Center" Click="ChangePassword_Click"/>
-            <HyperlinkButton Content="Sign out" HorizontalAlignment="Center" VerticalAlignment="Bottom" Click="SignOut_Click"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button Margin="0,0,10,0" Content="Cancel" HorizontalAlignment="Center" Click="Cancel_Click" RequestedTheme="Dark"/>
+                <Button Margin="0,0,0,0" Content="Save changes" Background="SeaGreen" HorizontalAlignment="Center" Click="SaveChanges_Click"/>
+            </StackPanel>
         </StackPanel>
 
-        <Button Background="Transparent" Grid.Row="2" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,20,20,0" BorderThickness="0">
-            <StackPanel>
-                <Image Source="/Assets/Components/close.png"  Height="30" Width="30"/>
-                <TextBlock Text="SAVE" FontFamily="{StaticResource RobotoLight}" FontSize="10" HorizontalAlignment="Center" Margin="0,5,0,0"/>
-            </StackPanel>
-        </Button>
+        
 
     </Grid>
 </Page>

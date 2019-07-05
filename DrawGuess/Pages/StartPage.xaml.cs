@@ -81,11 +81,6 @@ namespace DrawGuess.Pages
 
             this.Frame.Navigate(typeof(GamePage), room, new DrillInNavigationTransitionInfo());
         }
-
-        private void Navigation_SettingsClick(object sender, EventArgs e)
-        {
-            this.Frame.Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
-        }
     }
 
     public class GameRoomDataTemplateSelector : DataTemplateSelector

@@ -1,6 +1,7 @@
 ﻿using DrawGuess.Exceptions;
 using DrawGuess.Security;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -155,6 +156,46 @@ namespace DrawGuess.Models
             catch (Exception e)
             {
                 throw new UserNotFoundException("User could not be found in database.", e);
+            }
+        }
+
+        public static void UpdatePassword(string email, string password)
+        {
+            if (password == null)
+            {
+                throw new ArgumentNullException(nameof(password));
+            }
+
+            byte[] salt = Crypting.CreateSalt();
+            String passwordHash = Crypting.CreatePassword(salt, password);
+
+            string query = 
+                "UPDATE dbo.Users " +
+                "SET PasswordSalt = '" + Convert.ToBase64String(salt) + "'," +
+                "PasswordHash = '" + passwordHash + "' " +
+                "WHERE email = '" + email + "'";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand
+                    {
+                        CommandType = System.Data.CommandType.Text,
+                        CommandText = query,
+                        Connection = conn
+                    };
+
+                    cmd.ExecuteNonQuery();
+
+                    conn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
             }
         }
 

@@ -16,11 +16,18 @@
 
         <Image Tapped="Logo_Tapped" Grid.Row="0" Grid.Column="1" Margin="0,10,0,10" HorizontalAlignment="Center" x:Name="logo" Width="305" Source="/Assets/Icons/textlogo.png"/>
 
-        <Button Foreground="Transparent" x:Name="SettingsButton" Padding="20,5,20,5" BorderThickness="0" Background="Transparent" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center" Click="SettingsButton_Click">
+        <Button Foreground="Transparent" x:Name="SettingsButton" Padding="20,5,20,5" BorderThickness="0" Background="Transparent" Grid.Row="0" Grid.Column="2" HorizontalAlignment="Right" VerticalAlignment="Center">
             <StackPanel Orientation="Horizontal" >
                 <TextBlock x:Name="user" Text="{x:Bind ViewModel.UserName, Mode=TwoWay}" FontSize="18" Foreground="White" VerticalAlignment="Center" FontFamily="{StaticResource RobotoThin}"/>
                 <PersonPicture Background="blue" x:Name="profilePicture" Initials="{x:Bind ViewModel.Initials, Mode=TwoWay}" DisplayName="{x:Bind ViewModel.UserName, Mode=TwoWay}" Height="40" Width="40" Margin="10,0,0,0" VerticalAlignment="Center"/>
             </StackPanel>
+            <Button.Flyout>
+                <MenuFlyout>
+                    <MenuFlyoutItem Text="Settings" Click="SettingsButton_Click"/>
+                    <MenuFlyoutItem Text="Change password" Click="ChangePassword_Click" />
+                    <MenuFlyoutItem Text="Sign out" Click="SignOut_Click" />
+                </MenuFlyout>
+            </Button.Flyout>
         </Button>
 
         <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Orientation="Vertical" CacheMode="BitmapCache">

@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Credentials;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -25,10 +26,6 @@ namespace DrawGuess.Controls
     {
 
         public NavigationViewModel ViewModel { get; set; }
-
-        public event EventHandler SettingsClick;
-        public event EventHandler LogoTapped;
-
 
         public Navigation()
         {
@@ -54,12 +51,24 @@ namespace DrawGuess.Controls
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            this.SettingsClick?.Invoke(this, new EventArgs());
+            ((Frame)Window.Current.Content).Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
+        }
+
+        private void ChangePassword_Click(object sender, RoutedEventArgs e)
+        {
+            ((Frame)Window.Current.Content).Navigate(typeof(ChangePasswordPage), null, new SuppressNavigationTransitionInfo());
+        }
+        
+        private void SignOut_Click(object sender, RoutedEventArgs e)
+        {
+            var vault = new PasswordVault();
+            vault.Remove(vault.FindAllByUserName((App.Current as App).User.Email).First());
+            ((Frame)Window.Current.Content).Navigate(typeof(LoginPage), null, new SuppressNavigationTransitionInfo());
         }
 
         private void Logo_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            this.LogoTapped?.Invoke(this, new EventArgs());
+            ((Frame)Window.Current.Content).Navigate(typeof(StartPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 }

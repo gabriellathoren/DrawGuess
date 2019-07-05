@@ -9,6 +9,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Security.Credentials;
 using Windows.Storage;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
@@ -90,16 +91,28 @@ namespace DrawGuess
                 if (rootFrame.Content == null)
                 {
                     var loginCredential = CredentialControl.GetCredentialFromLocker();
-
-                    //Control if user is already logged on
-                    if (loginCredential != null)
-                    {
-                        loginCredential.RetrievePassword();
-                        CredentialControl.SystemLogIn(loginCredential.UserName, loginCredential.Password);
-                        rootFrame.Navigate(typeof(Pages.StartPage), e.Arguments);
+                    try
+                    {                 
+                        //Control if user is already logged on
+                        if (loginCredential != null)
+                        {
+                            loginCredential.RetrievePassword();
+                            CredentialControl.SystemLogIn(loginCredential.UserName, loginCredential.Password);
+                            rootFrame.Navigate(typeof(Pages.StartPage), e.Arguments);
+                        }
+                        else
+                        {
+                            rootFrame.Navigate(typeof(Pages.LoginPage), e.Arguments);
+                        }
                     }
-                    else
+                    catch(Exception)
                     {
+                        PasswordVault vault = new PasswordVault();
+
+                        foreach(PasswordCredential p in vault.RetrieveAll()) {
+                            vault.Remove(p);
+                        }
+
                         rootFrame.Navigate(typeof(Pages.LoginPage), e.Arguments);
                     }
                 }

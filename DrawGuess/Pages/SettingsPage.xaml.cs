@@ -27,22 +27,13 @@ namespace DrawGuess.Pages
             this.InitializeComponent();
             this.ViewModel = new SettingsViewModel();
         }
-        
-        private void Logo_Tapped(object sender, EventArgs e)
+
+        private void SaveChanges_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(StartPage), null, new SuppressNavigationTransitionInfo());
         }
 
-        private void SignOut_Click(object sender, RoutedEventArgs e)
+        private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            var vault = new PasswordVault();            
-            vault.Remove(vault.FindAllByUserName((App.Current as App).User.Email).First());
-            this.Frame.Navigate(typeof(LoginPage), null, new SuppressNavigationTransitionInfo());
-        }
-
-        private void ChangePassword_Click(object sender, RoutedEventArgs e)
-        {
-            this.Frame.Navigate(typeof(ChangePasswordPage), null, new SuppressNavigationTransitionInfo());
         }
     }
 }
