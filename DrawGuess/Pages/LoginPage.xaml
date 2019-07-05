@@ -34,8 +34,8 @@
             </PasswordBox.Resources>
         </PasswordBox>
 
-        <Button Grid.Row="5" Margin="0,10,0,0" Content="Log in" Click="Login_Click" Foreground="White" Background="#40FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.RowSpan="5" Width="150" FontSize="14" FontFamily="{StaticResource RobotoLight}" TabIndex="2" TabFocusNavigation="Local"/>
-        <HyperlinkButton Grid.Row="6" Margin="0,40,0,0" Content="Sign up" Click="SignUp_Click" Foreground="White" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Top" Height="32" Grid.RowSpan="6" Width="67" FontSize="12" FontFamily="{StaticResource RobotoRegular}" TabIndex="3" TabFocusNavigation="Local" />
+        <Button Grid.Row="5" Margin="0,10,0,0" Content="Log in" Click="Login_Click" Foreground="White" Background="#40FFFFFF" HorizontalAlignment="Center" VerticalAlignment="Top" Grid.RowSpan="5" Width="150" FontSize="14" TabIndex="2" TabFocusNavigation="Local"/>
+        <HyperlinkButton Grid.Row="6" Margin="0,40,0,0" Content="Sign up" Click="SignUp_Click" Foreground="White" Background="Transparent" HorizontalAlignment="Center" VerticalAlignment="Top" Height="32" Grid.RowSpan="6" Width="67" FontSize="12" TabIndex="3" TabFocusNavigation="Local" />
 
 
     </Grid>
