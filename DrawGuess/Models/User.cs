@@ -199,6 +199,56 @@ namespace DrawGuess.Models
             }
         }
 
+        public static void UpdateUser(string firstName, string lastName, string email, string profileImage)
+        {
+            if (firstName == null)
+            {
+                throw new ArgumentNullException(nameof(firstName));
+            }
+            if (lastName == null)
+            {
+                throw new ArgumentNullException(nameof(lastName));
+            }
+            if (email == null)
+            {
+                throw new ArgumentNullException(nameof(email));
+            }
+            if (profileImage == null)
+            {
+                throw new ArgumentNullException(nameof(profileImage));
+            }
+
+            string query =
+                "UPDATE dbo.Users " +
+                "SET FirstName = '" + firstName + "'," +
+                "LastName = '" + lastName + "', " +
+                "ProfileImage = '" + profileImage + "' " +
+                "WHERE email = '" + email + "'";
+
+            try
+            {
+                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+                {
+                    conn.Open();
+
+                    SqlCommand cmd = new SqlCommand
+                    {
+                        CommandType = System.Data.CommandType.Text,
+                        CommandText = query,
+                        Connection = conn
+                    };
+
+                    cmd.ExecuteNonQuery();
+
+                    conn.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public static void AddUser(User user, string password)
         {
             if (user == null)

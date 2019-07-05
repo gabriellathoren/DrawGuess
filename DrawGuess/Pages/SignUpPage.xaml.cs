@@ -89,6 +89,7 @@ namespace DrawGuess.Pages
             lastNameBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
             emailBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
             passwordBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
+            passwordConfirmBox.BorderBrush = new SolidColorBrush(Color.FromArgb(66, 0, 0, 0));
             ViewModel.ErrorMessage = "";
         }
 
@@ -148,18 +149,24 @@ namespace DrawGuess.Pages
 
             ResetErrorIndicators();
 
-            if (IsAllObligatoryFieldsFilled() && IsEmailValidated() && IsPasswordsAccepted())
+            if (IsAllObligatoryFieldsFilled())
             {
-                try
+                if(IsEmailValidated())
                 {
-                    Models.User.AddUser(ViewModel.User, ViewModel.Password);                    
-                    CredentialControl.SystemLogIn(ViewModel.User.Email, ViewModel.Password);
-                    this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
-                }
-                catch(Exception)
-                {
-                    ViewModel.ErrorMessage = "Something went wrong, please try again later";
-                }
+                    if(IsPasswordsAccepted())
+                    {
+                        try
+                        {
+                            Models.User.AddUser(ViewModel.User, ViewModel.Password);
+                            CredentialControl.SystemLogIn(ViewModel.User.Email, ViewModel.Password);
+                            this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
+                        }
+                        catch (Exception)
+                        {
+                            ViewModel.ErrorMessage = "Something went wrong, please try again later";
+                        }
+                    }
+                }                
             }
 
             Register_clicked = false;
