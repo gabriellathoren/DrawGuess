@@ -28,8 +28,13 @@ namespace DrawGuess
     sealed partial class App : Application
     {
         // Connection string for Azure database
-        private string connectionString =
-            @"Server=tcp:drawguess.database.windows.net,1433;Initial Catalog=DrawGuess;Persist Security Info=False;User ID=drawguess;Password=travbana94!;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;";
+        public string username;
+        public string Username { get => username; set => username = value; }
+
+        private string password;
+        public string Password { get => password; set => password = value; }
+
+        private string connectionString;
         public string ConnectionString { get => connectionString; set => connectionString = value; }
         
         private string resourceName = "DrawGuess";
@@ -46,6 +51,12 @@ namespace DrawGuess
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+
+            //Set connectionsstring
+            var resources = new Windows.ApplicationModel.Resources.ResourceLoader("Resources");
+            Username = resources.GetString("user");
+            Password = resources.GetString("password");
+            connectionString = @"Server=tcp:drawguess.database.windows.net,1433;Initial Catalog=DrawGuess;Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;User ID=" + username + ";Password=" + password + ";";
 
         }
 

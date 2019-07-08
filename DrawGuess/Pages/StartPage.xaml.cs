@@ -38,34 +38,15 @@ namespace DrawGuess.Pages
             }
 
             this.InitializeComponent();
-            this.ViewModel = new StartViewModel();            
-            
+            this.ViewModel = new StartViewModel();
 
-            //TESTKOD
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Violett", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Golden", NumberOfPlayers = 5 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Marin", NumberOfPlayers = 7 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Silver", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Shimmer", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Coco white", NumberOfPlayers = 9 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Ocean blue", NumberOfPlayers = 8 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Marmor", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Coco white", NumberOfPlayers = 10 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Ocean blue", NumberOfPlayers = 10 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Marmor", NumberOfPlayers = 10 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Violett", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Golden", NumberOfPlayers = 5 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Marin", NumberOfPlayers = 7 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Silver", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Shimmer", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Coco white", NumberOfPlayers = 9 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Ocean blue", NumberOfPlayers = 8 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Marmor", NumberOfPlayers = 3 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Coco white", NumberOfPlayers = 10 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Ocean blue", NumberOfPlayers = 10 });
-            ViewModel.Items.Add(new GameRoom() { RoomName = "Marmor", NumberOfPlayers = 10 });
-
+            GetRooms();
             SortRoomList();
+        }
+
+        public void GetRooms()
+        {
+
         }
 
         public void SortRoomList()

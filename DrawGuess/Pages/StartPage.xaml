@@ -100,7 +100,10 @@
                 <RowDefinition Height="auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <TextBlock Grid.Row="0" Text="{x:Bind ViewModel.Points}" Margin="0,0,20,0" FontSize="18" HorizontalAlignment="Right" Foreground="White" />
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,20,0" HorizontalAlignment="Right">
+                <TextBlock Text="{x:Bind ViewModel.User.Points}" FontSize="18" Foreground="White" />
+                <TextBlock Text="XP" Margin="5,0,0,0" FontSize="18" Foreground="White" />
+            </StackPanel>
         </Grid>
 
         <Grid Grid.Row="2" >

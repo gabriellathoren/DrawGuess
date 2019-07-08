@@ -12,7 +12,7 @@ using System.Linq;
 
 namespace DrawGuess.Models
 {
-    public class User : INotifyPropertyChanged
+    public class User
     {
         public int Id { get; set; }
         public String FirstName { get; set; }
@@ -25,43 +25,7 @@ namespace DrawGuess.Models
         {
             ProfilePicture = "";
         }
-
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void NotifyPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
-
-        public ObservableCollection<User> GetUsers()
-        {
-            var users = new ObservableCollection<User>();
-            //const string query =
-            //    "SELECT Id, FirstName, LastName, Email, Points " +
-            //    "FROM dbo.Users ";
-
-            //IEnumerable<IDataRecord> data = DatabaseConnection.DatabaseReader(query);
-
-            //while (reader.Read())
-            //{
-            //    var user = new User
-            //    {
-            //        Id = reader.GetInt32(0),
-            //        FirstName = reader.GetString(1),
-            //        LastName = reader.GetString(2),
-            //        Email = reader.GetString(3),
-            //        Points = reader.GetInt32(4)
-            //    };
-            //    users.Add(user);
-            //}
-
-            return users;
-        }
-
-
+        
         public static bool DoesUserExists(string email)
         {
             string query =
@@ -74,7 +38,7 @@ namespace DrawGuess.Models
                 using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
                 {
                     conn.Open();
-                    if (conn.State == System.Data.ConnectionState.Open)
+                    if (conn.State == ConnectionState.Open)
                     {
                         using (SqlCommand cmd = conn.CreateCommand())
                         {
