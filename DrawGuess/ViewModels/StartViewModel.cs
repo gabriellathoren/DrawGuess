@@ -24,8 +24,8 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private ObservableCollection<GameRoom> items;
-        public ObservableCollection<GameRoom> Items
+        private ObservableCollection<Game> items;
+        public ObservableCollection<Game> Items
         {
             get { return this.items; }
             set
@@ -34,10 +34,21 @@ namespace DrawGuess.ViewModels
                 this.OnPropertyChanged();
             }
         }
-        
+
+        private Game selectedItem;
+        public Game SelectedItem
+        {
+            get { return this.selectedItem; }
+            set
+            {
+                this.selectedItem = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         public StartViewModel()
         {
-            Items = new ObservableCollection<GameRoom>();
+            Items = new ObservableCollection<Game>();
             User = (App.Current as App).User;
         }
 

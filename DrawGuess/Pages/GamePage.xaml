@@ -45,7 +45,7 @@
 
             <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left">
                 <TextBlock Text="ROUND" FontSize="14" Foreground="Black" Margin="0,0,3,0" FontFamily="{StaticResource RobotoLight}"/>
-                <TextBlock Text="{x:Bind ViewModel.Round}" FontFamily="{StaticResource RobotoLight}" FontSize="14" Foreground="Black"/>  
+                <TextBlock Text="{x:Bind ViewModel.Game.Round}" FontFamily="{StaticResource RobotoLight}" FontSize="14" Foreground="Black"/>
             </StackPanel>
 
             <Grid Grid.Row="1" BorderBrush="black" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
@@ -54,7 +54,7 @@
 
             <InkToolbar InitialControls="None" Background="Black"  TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2" EraseAllClicked="InkToolbar_EraseAllClicked">
                 <InkToolbarEraserButton/>
-                <InkToolbarBallpointPenButton />                
+                <InkToolbarBallpointPenButton />
             </InkToolbar>
 
             <GridView ItemTemplate="{StaticResource MissingLetterTemplate}" SelectionMode="None" Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess}" HorizontalContentAlignment="Center">
@@ -64,14 +64,14 @@
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
             </GridView>
-            <GridView ItemTemplate="{StaticResource LetterTemplate}" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters}" HorizontalContentAlignment="Center">
+            <GridView ItemTemplate="{StaticResource LetterTemplate}" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Game.RandomLetters}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
             </GridView>
-                        
+
         </Grid>
 
         <Grid Grid.Column="1" Padding="0,20,0,10">
@@ -91,8 +91,8 @@
 
             <TextBlock Text="Score board" Grid.Row="0" HorizontalAlignment="Center" FontSize="20" FontFamily="{StaticResource RobotoLight}"/>
             <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center">
-                <TextBlock Text="ROOM" FontFamily="{StaticResource RobotoLight}" FontSize="10" Margin="0,0,2,0"/>
-                <TextBlock Text="{x:Bind ViewModel.Room.RoomName}" FontFamily="{StaticResource RobotoLight}" FontSize="10"/>
+                <TextBlock Text="GAME" FontFamily="{StaticResource RobotoLight}" FontSize="10" Margin="0,0,2,0"/>
+                <TextBlock Text="{x:Bind ViewModel.Game.Name}" FontFamily="{StaticResource RobotoLight}" FontSize="10"/>
             </StackPanel>
             <ListView x:Name="PlayerList" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Players}" Margin="0,10,0,10" HorizontalContentAlignment="Stretch">
 
@@ -102,42 +102,42 @@
                         <Setter Property="Padding" Value="0"/>
                     </Style>
                 </ListView.ItemContainerStyle>
-                
-                <ListView.ItemTemplate> 
-                    
+
+                <ListView.ItemTemplate>
+
                     <DataTemplate x:DataType="ViewModels:PlayersViewModel" >
                         <Grid Background="{Binding Source={Binding}, Converter={StaticResource ColorConverter}}">
-                        <Grid Padding="10,0,10,0" x:Name="PlayerItem" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
-                            
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="50"/>
-                                <ColumnDefinition Width="30"/>
-                            </Grid.ColumnDefinitions>
+                            <Grid Padding="10,0,10,0" x:Name="PlayerItem" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
-                            <TextBlock Grid.Column="0" Text="{x:Bind Placement}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="20"/>
-                            <Image HorizontalAlignment="Left" Width="40" Height="40" Grid.Column="1" Source="{x:Bind ProfilePicture}" VerticalAlignment="Center"/>
-                            <TextBlock TextWrapping="Wrap" TextTrimming="WordEllipsis"  HorizontalAlignment="Stretch" Grid.Column="2" Text="{x:Bind Name}" VerticalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
-                            <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                <TextBlock Text="{x:Bind Points}" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
-                                <TextBlock Text=" p" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
-                            </StackPanel>
-                            <Image Width="15" VerticalAlignment="Center" x:Name="RightAnswer" Grid.Column="4" Source="/Assets/Components/check.png" Visibility="{Binding Path=RightAnswer, Converter={StaticResource VisibilityConverter}}"/>
-                            <Image Width="15" VerticalAlignment="Center" x:Name="Painter" Grid.Column="4" Source="/Assets/Components/pen.png" Visibility="{Binding Path=Painter, Converter={StaticResource VisibilityConverter}}"/>
-                            
-                        </Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="50"/>
+                                    <ColumnDefinition Width="30"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock Grid.Column="0" Text="{x:Bind Placement}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="20"/>
+                                <Image HorizontalAlignment="Left" Width="40" Height="40" Grid.Column="1" Source="{x:Bind Player.ProfilePicture}" VerticalAlignment="Center"/>
+                                <TextBlock TextWrapping="Wrap" TextTrimming="WordEllipsis"  HorizontalAlignment="Stretch" Grid.Column="2" Text="{x:Bind Name}" VerticalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
+                                <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                                    <TextBlock Text="{x:Bind Player.Points}" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
+                                    <TextBlock Text=" p" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
+                                </StackPanel>
+                                <Image Width="15" VerticalAlignment="Center" x:Name="RightAnswer" Grid.Column="4" Source="/Assets/Components/check.png" Visibility="{Binding Path=RightAnswer, Converter={StaticResource VisibilityConverter}}"/>
+                                <Image Width="15" VerticalAlignment="Center" x:Name="Painter" Grid.Column="4" Source="/Assets/Components/pen.png" Visibility="{Binding Path=Painter, Converter={StaticResource VisibilityConverter}}"/>
+
+                            </Grid>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
-            
+
             <StackPanel Grid.Row="3" HorizontalAlignment="Right" >
                 <Button Margin="0,0,10,0" Padding="0,5,0,0" BorderThickness="0" Background="Transparent" Click="Quit_Click">
                     <Image Source="/Assets/Components/quit.png" Height="50" HorizontalAlignment="Center"/>
                 </Button>
             </StackPanel>
-        </Grid>     
+        </Grid>
     </Grid>
 </Page>

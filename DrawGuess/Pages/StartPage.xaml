@@ -30,7 +30,7 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:DataType="Models:GameRoom" x:Name="FullRoom">
+        <DataTemplate x:DataType="Models:Game" x:Name="FullGame">
             <StackPanel >
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -38,7 +38,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{x:Bind RoomName}" FontSize="14" HorizontalAlignment="Left" FontFamily="{StaticResource RobotoLight}"/>
+                    <TextBlock Grid.Column="0" Text="{x:Bind Name}" FontSize="14" HorizontalAlignment="Left" FontFamily="{StaticResource RobotoLight}"/>
                     <StackPanel Orientation="Horizontal" Grid.Column="2" >
                         <TextBlock Text="{x:Bind NumberOfPlayers}" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
                         <TextBlock Text="/10" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
@@ -53,7 +53,7 @@
             </StackPanel>
         </DataTemplate>
 
-        <DataTemplate x:DataType="Models:GameRoom" x:Name="GameRoom">
+        <DataTemplate x:DataType="Models:Game" x:Name="Game">
             <StackPanel >
                 <Grid>
                     <Grid.ColumnDefinitions>
@@ -61,7 +61,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="auto"/>
                     </Grid.ColumnDefinitions>
-                    <TextBlock Grid.Column="0" Text="{x:Bind RoomName}" FontSize="14" HorizontalAlignment="Left" FontFamily="{StaticResource RobotoLight}"/>
+                    <TextBlock Grid.Column="0" Text="{x:Bind Name}" FontSize="14" HorizontalAlignment="Left" FontFamily="{StaticResource RobotoLight}"/>
                     <StackPanel Orientation="Horizontal" Grid.Column="2" >
                         <TextBlock Text="{x:Bind NumberOfPlayers}" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
                         <TextBlock Text="/10" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
@@ -101,12 +101,12 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
             <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,20,0" HorizontalAlignment="Right">
-                <TextBlock Text="{x:Bind ViewModel.User.Points}" FontSize="18" Foreground="White" />
+                <TextBlock Text="{x:Bind ViewModel.User.ExperiencePoints}" FontSize="18" Foreground="White" />
                 <TextBlock Text="XP" Margin="5,0,0,0" FontSize="18" Foreground="White" />
             </StackPanel>
         </Grid>
 
-        <Grid Grid.Row="2" >
+        <Grid Grid.Row="2" VerticalAlignment="Top">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
@@ -114,14 +114,14 @@
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
 
-            <GridView x:Name="gameRoomsList" ItemsSource="{x:Bind ViewModel.Items}" Grid.Column="1" Margin="0,20,0,0" Padding="60,0,60,0" SelectionMode="Single" Tapped="GameRoomsList_Tapped" >
+            <GridView x:Name="gameList" ItemsSource="{x:Bind ViewModel.Items}" SelectedItem="{x:Bind ViewModel.SelectedItem}" Grid.Column="1" Margin="0,20,0,0" Padding="60,0,60,0" SelectionMode="Single" IsItemClickEnabled="False" Tapped="GameList_Tapped">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
                         <WrapGrid MaximumRowsOrColumns="6" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Stretch" VerticalChildrenAlignment="Stretch" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplateSelector >
-                    <pages:GameRoomDataTemplateSelector FullRoomTemplate="{StaticResource FullRoom}" NewGameTemplate="{StaticResource NewGame}" GameRoomTemplate="{StaticResource GameRoom}"  />
+                    <pages:GameDataTemplateSelector FullGameTemplate="{StaticResource FullGame}" NewGameTemplate="{StaticResource NewGame}" GameTemplate="{StaticResource Game}"  />
                 </GridView.ItemTemplateSelector>
             </GridView>
         </Grid>

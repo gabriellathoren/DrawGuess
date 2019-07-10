@@ -25,10 +25,8 @@ namespace DrawGuess.Pages
 {
     public sealed partial class StartPage : Page
     {
-
         public StartViewModel ViewModel { get; set; }
-
-       
+               
         public StartPage()
         {
             if ((App.Current as App).User.Equals(null))
@@ -40,39 +38,55 @@ namespace DrawGuess.Pages
             this.InitializeComponent();
             this.ViewModel = new StartViewModel();
 
-            GetRooms();
-            SortRoomList();
+            GetGames();
+            SortGameList();
         }
 
-        public void GetRooms()
+        public void GetGames()
         {
+            try
+            {
+                ViewModel.Items = Models.Game.GetGames();
+                ViewModel.Items.Insert(0, new Game()
+                {
+                    Id = -1
+                });
+            }
+            catch(Exception)
+            {
 
+            }
         }
 
-        public void SortRoomList()
+        public void SortGameList()
         {
-            ViewModel.Items = new ObservableCollection<GameRoom>(ViewModel.Items.OrderBy(x => x.Full).ToList());
+            ViewModel.Items = new ObservableCollection<Game>(ViewModel.Items.OrderBy(x => x.Full).ToList());
 
         }
-
-        private void GameRoomsList_Tapped(object sender, TappedRoutedEventArgs e)
+        
+        private void GameList_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            GameRoom room = (GameRoom) gameRoomsList.SelectedItem;
-            room.RoomName = room.RoomName.ToUpper();
+            Game game = (Game)gameList.SelectedItem;
+            string gameName = game.Name;
 
-            this.Frame.Navigate(typeof(GamePage), room, new DrillInNavigationTransitionInfo());
+            if (game.Id.Equals(-1))
+            {
+                gameName = Models.Game.AddGame(ViewModel.Items);
+            }            
+
+            this.Frame.Navigate(typeof(GamePage), gameName, new DrillInNavigationTransitionInfo());
         }
     }
 
-    public class GameRoomDataTemplateSelector : DataTemplateSelector
+    public class GameDataTemplateSelector : DataTemplateSelector
     {
         public DataTemplate NewGameTemplate { get; set; }
-        public DataTemplate GameRoomTemplate { get; set; }
-        public DataTemplate FullRoomTemplate { get; set; }
+        public DataTemplate GameTemplate { get; set; }
+        public DataTemplate FullGameTemplate { get; set; }
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            GameRoom room = (GameRoom)item;
+            Game game = (Game)item;
 
             DataTemplate _returnTemplate = new DataTemplate();
             var itemsControl = ItemsControl.ItemsControlFromItemContainer(container);
@@ -81,13 +95,13 @@ namespace DrawGuess.Pages
             {
                 _returnTemplate = NewGameTemplate;
             }
-            else if (room.Full)
+            else if (game.Full)
             {
-                _returnTemplate = FullRoomTemplate;
+                _returnTemplate = FullGameTemplate;
             }
             else
             {
-                _returnTemplate = GameRoomTemplate;
+                _returnTemplate = GameTemplate;
             }
 
             return _returnTemplate;

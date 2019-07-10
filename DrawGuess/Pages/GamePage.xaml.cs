@@ -29,68 +29,66 @@ namespace DrawGuess.Pages
         {
             this.InitializeComponent();
             ViewModel = new GameViewModel();
-            ViewModel.Round = 1;
-            ViewModel.SecretWord = "LEMONS";
 
             // Initialize the InkCanvas
             InkCanvas.InkPresenter.InputDeviceTypes =
                 Windows.UI.Core.CoreInputDeviceTypes.Mouse |
                 Windows.UI.Core.CoreInputDeviceTypes.Pen;
+        }
 
+        public void SetGame()
+        {
             SetPlayers();
             SetPlacement();
             SetHint();
-            SetRandomLetters();
+            //SetRandomLetters(); //Hämta från databas
+            //SetRound();
+            //SetSecretWord();
         }
 
         public void SetPlayers()
         {
-            ViewModel.Players.Add(new PlayersViewModel { Id = 1, Name = "Gabriella Thorén", Points = 10, Painter = false, RightAnswer = false, IsCurrentUser = true, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F"});;
-            ViewModel.Players.Add(new PlayersViewModel { Id = 2, Name = "Anna Anna Anna Anna Anna Anna Anna Anna Thorén", Points = 100, Painter = false, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 3, Name = "Tomas Thorén", Points = 60, Painter = true, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 4, Name = "Mia Thorén", Points = 50, Painter = false, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 5, Name = "Peter Thorén", Points = 50, Painter = false, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 6, Name = "Anton Thorén", Points = 56, Painter = false, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 7, Name = "Anja Thorén", Points = 49, Painter = false, RightAnswer = true, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 8, Name = "Nova Thorén", Points = 1, Painter = false, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 9, Name = "Lovisa Thorén", Points = 35, Painter = false, RightAnswer = true, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
-            ViewModel.Players.Add(new PlayersViewModel { Id = 10, Name = "Laura Thorén", Points = 10, Painter = false, RightAnswer = false, ProfilePicture = "https://scontent-arn2-1.xx.fbcdn.net/v/t1.0-9/55807325_2778073192210585_6307069374352064512_n.jpg?_nc_cat=108&_nc_oc=AQk9gg8bPNJLK_rSrDfDZOCNwg-GhY1tHWPwHkZRSSwBpLIVfb71EAsO8zbSJzxQzJg&_nc_ht=scontent-arn2-1.xx&oh=106558072dcc414195889611c828acd5&oe=5DBBAA6F" });
+            ObservableCollection<Player> players = Models.Game.GetPlayers(ViewModel.Game.Id);
+
+            foreach(Player player in players)
+            {
+                ViewModel.Players.Add(new PlayersViewModel(player));
+            }
         }
 
-        public void SetRandomLetters()
-        {
-            //Get letters from secret word to add to hinting letters
-            for (int i = 0; i < ViewModel.SecretWord.Length; i++)
-            {
-                ViewModel.RandomLetters.Add(ViewModel.SecretWord[i].ToString());
-            }
+        //public void SetRandomLetters()
+        //{
+        //    //Get letters from secret word to add to hinting letters
+        //    for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
+        //    {
+        //        ViewModel.Game.RandomLetters.Add(ViewModel.Game.SecretWord[i].ToString());
+        //    }
 
-            //Add random letters
-            int noOfLetters = 15 - ViewModel.SecretWord.Length;
+        //    //Add random letters
+        //    int noOfLetters = 15 - ViewModel.Game.SecretWord.Length;
             
-            for (int i = 0; i < noOfLetters; i++)
-            {
-                ViewModel.RandomLetters.Add(GetRandomLetter());
-            }
+        //    for (int i = 0; i < noOfLetters; i++)
+        //    {
+        //        ViewModel.Game.RandomLetters.Add(GetRandomLetter());
+        //    }
 
-            //Randomize order of letters
-            Shuffle();
+        //    //Randomize order of letters
+        //    Shuffle();
+        //}
 
-        }
+        //public void Shuffle()
+        //{
+        //    int n = ViewModel.Game.RandomLetters.Count;
 
-        public void Shuffle()
-        {
-            int n = ViewModel.RandomLetters.Count;
-
-            while (n > 1)
-            {
-                n--;
-                int k = Random.Next(n + 1);
-                string value = ViewModel.RandomLetters[k];
-                ViewModel.RandomLetters[k] = ViewModel.RandomLetters[n];
-                ViewModel.RandomLetters[n] = value;
-            }
-        }
+        //    while (n > 1)
+        //    {
+        //        n--;
+        //        int k = Random.Next(n + 1);
+        //        string value = ViewModel.Game.RandomLetters[k];
+        //        ViewModel.Game.RandomLetters[k] = ViewModel.Game.RandomLetters[n];
+        //        ViewModel.Game.RandomLetters[n] = value;
+        //    }
+        //}
 
         public string GetRandomLetter()
         {            
@@ -101,7 +99,7 @@ namespace DrawGuess.Pages
         public void SetHint()
         {
             //Set hinting boxes based on number of letters in secret word
-            for(int i = 0; i < ViewModel.SecretWord.Length; i++)
+            for(int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
             {
                 ViewModel.Guess.Add("");
             }
@@ -109,7 +107,7 @@ namespace DrawGuess.Pages
 
         public void SetPlacement()
         {
-            ViewModel.Players = new ObservableCollection<PlayersViewModel>(ViewModel.Players.OrderBy(x => x.Points).ToList());
+            ViewModel.Players = new ObservableCollection<PlayersViewModel>(ViewModel.Players.OrderBy(x => x.Player.Points).ToList());
 
             int placement = 1;
             foreach(PlayersViewModel p in ViewModel.Players)
@@ -118,7 +116,7 @@ namespace DrawGuess.Pages
                 {
                     p.Placement = placement;
                 }
-                else if(p.Points == ViewModel.Players[ViewModel.Players.IndexOf(p)-1].Points)
+                else if(p.Player.Points == ViewModel.Players[ViewModel.Players.IndexOf(p)-1].Player.Points)
                 {
                     p.Placement = placement;
                 }
@@ -132,9 +130,11 @@ namespace DrawGuess.Pages
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            ViewModel.Room = (GameRoom) e.Parameter;  
+            string gameName = e.Parameter as string;
+            ViewModel.Game = Game.GetGame(gameName);
+            SetGame();   
         }
-        
+
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());

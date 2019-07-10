@@ -19,7 +19,7 @@ namespace DrawGuess.Models
         public String LastName { get; set; }
         public String Email { get; set; }
         public String ProfilePicture { get; set; }
-        public int Points { get; set; }
+        public int ExperiencePoints { get; set; }
 
         public User()
         {
@@ -96,7 +96,7 @@ namespace DrawGuess.Models
                                     user.Email = reader.GetString(3);
                                     PasswordSalt = reader.GetString(4);
                                     PasswordHash = reader.GetString(5);
-                                    user.Points = reader.GetInt32(6);
+                                    user.ExperiencePoints = reader.GetInt32(6);
                                 }
                             }
                         }
