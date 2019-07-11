@@ -1,5 +1,7 @@
 ﻿using DrawGuess.Exceptions;
 using DrawGuess.Security;
+using PlayFab;
+using PlayFab.ClientModels;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -25,7 +27,7 @@ namespace DrawGuess.Models
         {
             ProfilePicture = "";
         }
-        
+
         public static bool DoesUserExists(string email)
         {
             string query =
@@ -45,7 +47,7 @@ namespace DrawGuess.Models
                             cmd.CommandText = query;
                             using (SqlDataReader reader = cmd.ExecuteReader())
                             {
-                                if(reader.HasRows)
+                                if (reader.HasRows)
                                 {
                                     return true;
                                 }
@@ -133,7 +135,7 @@ namespace DrawGuess.Models
             byte[] salt = Crypting.CreateSalt();
             String passwordHash = Crypting.CreatePassword(salt, password);
 
-            string query = 
+            string query =
                 "UPDATE dbo.Users " +
                 "SET PasswordSalt = '" + Convert.ToBase64String(salt) + "'," +
                 "PasswordHash = '" + passwordHash + "' " +
@@ -224,6 +226,33 @@ namespace DrawGuess.Models
             {
                 throw new ArgumentNullException(nameof(password));
             }
+
+            //try
+            //{
+            //    var registerTask = PlayFabClientAPI.RegisterPlayFabUserAsync(
+            //        new RegisterPlayFabUserRequest()
+            //        {
+            //            DisplayName = user.FirstName + " " + user.LastName,
+            //            Email = user.Email,
+            //            Password = password,
+            //            TitleId = (App.Current as App).PlayFabTitleId
+            //        }
+            //    );
+
+            //    var apiError = registerTask.Result.Error;
+            //    var apiResult = registerTask.Result.Result;
+
+            //    if (apiError != null)
+            //    {   
+            //        throw new Exception(apiError.ErrorMessage);
+            //    }
+
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e; 
+            //}
+
 
             byte[] salt = Crypting.CreateSalt();
             String passwordHash = Crypting.CreatePassword(salt, password);

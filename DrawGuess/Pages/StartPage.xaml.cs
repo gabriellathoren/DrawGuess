@@ -1,5 +1,7 @@
 ﻿using DrawGuess.Models;
 using DrawGuess.ViewModels;
+using PlayFab;
+using PlayFab.GroupsModels;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -64,14 +66,15 @@ namespace DrawGuess.Pages
 
         }
         
-        private void GameList_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void GameList_Tapped(object sender, TappedRoutedEventArgs e)
         {
             Game game = (Game)gameList.SelectedItem;
             string gameName = game.Name;
 
             if (game.Id.Equals(-1))
             {
-                gameName = Models.Game.AddGame(ViewModel.Items);
+                gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
+                await Models.Game.AddGameAsync(gameName);
             }            
 
             this.Frame.Navigate(typeof(GamePage), gameName, new DrillInNavigationTransitionInfo());

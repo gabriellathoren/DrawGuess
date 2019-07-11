@@ -39,9 +39,9 @@
 
         <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.Password, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="5" x:Name="passwordBox" Header="Password" Margin="0,5,0,10" VerticalContentAlignment="Center" InputScope="password" TabIndex="4" TabNavigation="Local"/>
 
-        <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.ConfirmedPassword, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="6" x:Name="passwordConfirmBox" Header="Confirm password" Margin="0,5,0,10" VerticalContentAlignment="Center" InputScope="password" TabIndex="5" TabNavigation="Local"/>
+        <PasswordBox PreviewKeyDown="EnterPressed" Password="{x:Bind ViewModel.ConfirmedPassword, Mode=TwoWay}" Style="{StaticResource PasswordBoxStyle}" Grid.Row="6" x:Name="passwordConfirmBox" Header="Confirm password" Margin="0,5,0,15" VerticalContentAlignment="Center" InputScope="password" TabIndex="5" TabNavigation="Local"/>
 
-        <Button Grid.Row="7" FontSize="14" Content="Register" Foreground="White" Background="#40FFFFFF" RequestedTheme="Dark" HorizontalAlignment="Center" VerticalAlignment="Top" Height="32" Grid.RowSpan="2" Width="90" TabIndex="6" TabNavigation="Local" Click="Register_Click"/>
+        <Button Grid.Row="7" FontSize="14" Content="Register" Foreground="White" Background="#40FFFFFF" RequestedTheme="Dark" HorizontalAlignment="Center" VerticalAlignment="Top" Height="32" Grid.RowSpan="2" Width="250" TabIndex="6" TabNavigation="Local" Click="Register_Click"/>
         
         <TextBlock Text="{x:Bind ViewModel.ErrorMessage, Mode=TwoWay}" FontSize="14" HorizontalAlignment="Center" Foreground="white" Grid.Row="9" Margin="0,10,0,0" FontFamily="{StaticResource RobotoLight}"/>
 

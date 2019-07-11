@@ -34,13 +34,14 @@ namespace DrawGuess.Pages
             InkCanvas.InkPresenter.InputDeviceTypes =
                 Windows.UI.Core.CoreInputDeviceTypes.Mouse |
                 Windows.UI.Core.CoreInputDeviceTypes.Pen;
+
         }
 
         public void SetGame()
         {
             SetPlayers();
             SetPlacement();
-            SetHint();
+            //SetHint();
             //SetRandomLetters(); //Hämta från databas
             //SetRound();
             //SetSecretWord();
@@ -133,6 +134,11 @@ namespace DrawGuess.Pages
             string gameName = e.Parameter as string;
             ViewModel.Game = Game.GetGame(gameName);
             SetGame();   
+        }
+
+        protected override async void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            await Models.Game.RemoveGameMember(ViewModel.Game.Name, ViewModel.User);
         }
 
         private void Quit_Click(object sender, RoutedEventArgs e)

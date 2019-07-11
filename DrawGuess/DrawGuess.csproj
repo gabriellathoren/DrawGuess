@@ -328,6 +328,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
     </PackageReference>
+    <PackageReference Include="PlayFabAllSDK">
+      <Version>1.53.190627</Version>
+    </PackageReference>
     <PackageReference Include="System.Collections.NonGeneric">
       <Version>4.3.0</Version>
     </PackageReference>

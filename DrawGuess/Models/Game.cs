@@ -1,4 +1,6 @@
-﻿using System;
+﻿using PlayFab;
+using PlayFab.GroupsModels;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -33,9 +35,9 @@ namespace DrawGuess.Models
 
         public static void AddPlayer(int playerId, int gameId)
         {
-           string query =
-                "INSERT INTO dbo.GamePlayer (UserId, Points, GameId) " +
-                "VALUES('" + playerId + "','" + 0 + "','" + gameId + ")";
+            string query =
+                 "INSERT INTO dbo.GamePlayer (UserId, Points, GameId) " +
+                 "VALUES('" + playerId + "','" + 0 + "','" + gameId + ")";
 
             try
             {
@@ -197,10 +199,21 @@ namespace DrawGuess.Models
             return randomGameName;
         }
 
-        public static string AddGame(ObservableCollection<Game> currentGames)
+        public static async Task AddGameAsync(string gameName)
         {
-            string gameName = RandomizeRoomName(currentGames);
 
+            //Add game to PlayFab game engine
+            try
+            {
+                var request = new CreateGroupRequest { GroupName = gameName };
+                await PlayFabGroupsAPI.CreateGroupAsync(request);
+            }
+            catch (PlayFabException e)
+            {
+                throw e;
+            }
+
+            //Add game to database
             string query =
                 "INSERT INTO dbo.Game (Name) " +
                 "VALUES ('" + gameName + "')";
@@ -221,8 +234,6 @@ namespace DrawGuess.Models
                     cmd.ExecuteNonQuery();
 
                     conn.Close();
-
-                    return gameName;
                 }
             }
             catch (Exception e)
@@ -272,6 +283,22 @@ namespace DrawGuess.Models
             }
 
             return game;
+        }
+
+        public static async Task RemoveGameMember(string gameName, User user)
+        {
+            try
+            {
+                var group = await PlayFabGroupsAPI.GetGroupAsync(new GetGroupRequest { GroupName = gameName });
+                var members = await PlayFabGroupsAPI.ListGroupMembersAsync(new ListGroupMembersRequest { Group = group.Result.Group });
+                
+                //var request = new RemoveMembersRequest { Group = group.Result.Group, Members =  };
+                //await PlayFabGroupsAPI.RemoveMembersAsync(request);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
 
         public static ObservableCollection<Game> GetGames()

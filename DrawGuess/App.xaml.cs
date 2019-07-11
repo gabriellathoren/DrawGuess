@@ -1,5 +1,6 @@
 ﻿using DrawGuess.Models;
 using DrawGuess.Security;
+using PlayFab;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -43,6 +44,9 @@ namespace DrawGuess
         private User user = new User();
         public User User { get => user; set => user = value; }
 
+        private string playFabTitleId = "650C2";
+        public string PlayFabTitleId { get => playFabTitleId; set => playFabTitleId = value; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -58,7 +62,9 @@ namespace DrawGuess
             Password = resources.GetString("password");
             connectionString = @"Server=tcp:drawguess.database.windows.net,1433;Initial Catalog=DrawGuess;Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;User ID=" + username + ";Password=" + password + ";";
 
+            PlayFabSettings.staticSettings.TitleId = PlayFabTitleId;
         }
+
 
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points

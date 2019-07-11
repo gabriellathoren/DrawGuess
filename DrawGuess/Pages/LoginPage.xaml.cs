@@ -1,4 +1,5 @@
 ﻿using DrawGuess.Exceptions;
+using DrawGuess.Security;
 using DrawGuess.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -6,6 +7,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Security.Credentials;
@@ -77,13 +79,9 @@ namespace DrawGuess.Pages
             Login_clicked = false;
         }
 
-        private void LogIn(Models.User user)
+        private async void LogIn(Models.User user)
         {
-            var vault = new PasswordVault();
-            vault.Add(new PasswordCredential((App.Current as App).ResourceName, user.Email, ViewModel.Password));
-
-            (App.Current as App).User = user;
-
+            await CredentialControl.SystemLogIn(user.Email, ViewModel.Password, user);
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
         }
 

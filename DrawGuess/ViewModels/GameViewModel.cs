@@ -24,6 +24,17 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private User user;
+        public User User
+        {
+            get { return this.user; }
+            set
+            {
+                this.user = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<PlayersViewModel> players;
         public ObservableCollection<PlayersViewModel> Players
         {
@@ -62,6 +73,7 @@ namespace DrawGuess.ViewModels
         {
             Players = new ObservableCollection<PlayersViewModel>();
             Guess = new ObservableCollection<string>();
+            User = (App.Current as App).User;
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
