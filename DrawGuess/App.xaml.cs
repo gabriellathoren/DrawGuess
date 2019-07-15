@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
@@ -54,7 +55,13 @@ namespace DrawGuess
         private LoadBalancingClient loadBalancingClient = new LoadBalancingClient();
         public LoadBalancingClient LoadBalancingClient { get => loadBalancingClient; set => loadBalancingClient = value; }
 
-        
+        private bool shouldExit = false;
+        public bool ShouldExit { get => shouldExit; set => shouldExit = value; }
+
+        private bool connected = false;
+        public bool Connected { get => connected; set => connected = value; }
+
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -71,6 +78,10 @@ namespace DrawGuess
             connectionString = @"Server=tcp:drawguess.database.windows.net,1433;Initial Catalog=DrawGuess;Persist Security Info=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;User ID=" + username + ";Password=" + password + ";";
 
             PlayFabSettings.staticSettings.TitleId = PlayFabTitleId;
+
+            //Set Load Balancing Client
+            LoadBalancingClient.AppId = PhotonAppId;
+            LoadBalancingClient.AppVersion = "1.0";
         }
 
 

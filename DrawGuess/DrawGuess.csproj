@@ -138,6 +138,7 @@
     <Compile Include="LoadbalancingAPI\RoomInfo.cs" />
     <Compile Include="LoadbalancingAPI\SupportLogger.cs" />
     <Compile Include="LoadbalancingAPI\WebRpc.cs" />
+    <Compile Include="Exceptions\PhotonException.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Exceptions\UserNotFoundException.cs" />

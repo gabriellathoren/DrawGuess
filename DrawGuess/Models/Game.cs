@@ -1,4 +1,7 @@
-﻿using PlayFab;
+﻿using DrawGuess.Exceptions;
+using ExitGames.Client.Photon;
+using Photon.Realtime;
+using PlayFab;
 using PlayFab.GroupsModels;
 using System;
 using System.Collections.Generic;
@@ -199,19 +202,36 @@ namespace DrawGuess.Models
             return randomGameName;
         }
 
-        public static async Task AddGameAsync(string gameName)
+        public static void JoinGame(string gameName, User player)
         {
+            (App.Current as App).LoadBalancingClient.OpJoinRoom(
+                new EnterRoomParams() { RoomName = gameName });
+        }
 
-            //Add game to PlayFab game engine
-            try
+        public static void AddGame(string gameName)
+        {
+            var roomParams = new EnterRoomParams()
             {
-                var request = new CreateGroupRequest { GroupName = gameName };
-                await PlayFabGroupsAPI.CreateGroupAsync(request);
-            }
-            catch (PlayFabException e)
+                RoomName = gameName,
+                Lobby = new TypedLobby("Lobby1", LobbyType.SqlLobby),
+                CreateIfNotExists = true,
+                RoomOptions = new RoomOptions()
+                {
+                    MaxPlayers = 8,
+                    IsVisible = true,
+                    IsOpen = true,
+                    CustomRoomProperties = new Hashtable() { { "round", 1 }, { "C0", 1 } },
+                    PublishUserId = true,
+                }
+            };
+
+            if (!(App.Current as App).LoadBalancingClient.OpCreateRoom(roomParams))
             {
-                throw e;
+                throw new PhotonException("Could not create room right now");
             }
+
+            
+            //////////////////////////////////////////////////////////////////////////////////////////
 
             //Add game to database
             string query =
@@ -244,6 +264,15 @@ namespace DrawGuess.Models
 
         public static Game GetGame(string gameName)
         {
+            // join random rooms easily, filtering for specific room properties, if needed
+            Hashtable expectedCustomRoomProperties = new Hashtable();
+            //(App.Current as App).LoadBalancingClient.OpGetGameList();
+
+            // custom props can have any name but the key must be string
+            expectedCustomRoomProperties["map"] = 1;
+
+            (App.Current as App).LoadBalancingClient.OpGetGameList(TypedLobby.Default, "");
+
             string query = "SELECT Id, Name, SecretWord, Round, RandomLetters FROM dbo.Game WHERE Name = '" + gameName + "'";
             Game game = new Game();
 
@@ -289,11 +318,6 @@ namespace DrawGuess.Models
         {
             try
             {
-                var group = await PlayFabGroupsAPI.GetGroupAsync(new GetGroupRequest { GroupName = gameName });
-                var members = await PlayFabGroupsAPI.ListGroupMembersAsync(new ListGroupMembersRequest { Group = group.Result.Group });
-                
-                //var request = new RemoveMembersRequest { Group = group.Result.Group, Members =  };
-                //await PlayFabGroupsAPI.RemoveMembersAsync(request);
             }
             catch (Exception e)
             {
@@ -303,6 +327,7 @@ namespace DrawGuess.Models
 
         public static ObservableCollection<Game> GetGames()
         {
+
             var games = new ObservableCollection<Game>();
 
             const string query = "SELECT Id, Name FROM dbo.Game";

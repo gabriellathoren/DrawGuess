@@ -1005,7 +1005,7 @@ namespace Photon.Realtime
         /// While on the NameServer, this gets you the list of regional servers (short names and their IPs to ping them).
         /// </summary>
         /// <returns>If the operation could be sent. If false, no operation was sent (e.g. while not connected to the NameServer).</returns>
-        private bool OpGetRegions()
+        public bool OpGetRegions()
         {
             if (!this.CheckIfOpCanBeSent(OperationCode.GetRegions, this.Server, "GetRegions"))
             {

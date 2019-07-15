@@ -1,5 +1,6 @@
 ﻿using DrawGuess.Models;
 using DrawGuess.ViewModels;
+using Photon.Realtime;
 using PlayFab;
 using PlayFab.GroupsModels;
 using System;
@@ -66,18 +67,28 @@ namespace DrawGuess.Pages
 
         }
         
-        private async void GameList_Tapped(object sender, TappedRoutedEventArgs e)
+        private void GameList_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            Game game = (Game)gameList.SelectedItem;
-            string gameName = game.Name;
-
-            if (game.Id.Equals(-1))
+            try
             {
-                gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
-                await Models.Game.AddGameAsync(gameName);
-            }            
+                Game game = (Game)gameList.SelectedItem;
+                string gameName = game.Name;
 
-            this.Frame.Navigate(typeof(GamePage), gameName, new DrillInNavigationTransitionInfo());
+                if (game.Id.Equals(-1))
+                {
+                    gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
+                    Models.Game.AddGame(gameName);
+                }
+
+                //Add player to room
+                Models.Game.JoinGame(gameName, ViewModel.User);
+
+                this.Frame.Navigate(typeof(GamePage), gameName, new DrillInNavigationTransitionInfo());
+            }
+            catch(Exception ex)
+            {
+                ViewModel.ErrorMessage = ex.Message;
+            }
         }
     }
 
