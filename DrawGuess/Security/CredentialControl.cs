@@ -135,10 +135,8 @@ namespace DrawGuess.Security
 
             //We finally tell Photon to use this authentication parameters throughout the entire application.
             //PhotonNetwork.AuthValues = customAuth;
-            LoadBalancingClient loadBalancingClient = new LoadBalancingClient
-            {
-                AuthValues = customAuth
-            };
+
+            (App.Current as App).LoadBalancingClient.AuthValues = customAuth;
         }
 
     }

@@ -1,5 +1,6 @@
 ﻿using DrawGuess.Models;
 using DrawGuess.Security;
+using Photon.Realtime;
 using PlayFab;
 using System;
 using System.Collections.Generic;
@@ -50,6 +51,10 @@ namespace DrawGuess
         private string photonAppId = "2d9f6ff3-d9c5-4374-ac7e-681e0baa2f0e";
         public string PhotonAppId { get => photonAppId; set => photonAppId = value; }
 
+        private LoadBalancingClient loadBalancingClient = new LoadBalancingClient();
+        public LoadBalancingClient LoadBalancingClient { get => loadBalancingClient; set => loadBalancingClient = value; }
+
+        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
