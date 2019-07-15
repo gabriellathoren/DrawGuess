@@ -8,12 +8,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Windows.Security.Credentials;
-//using Windows.Storage;
-//using UnityEngine;
-//using Photon.Realtime;
-//using Photon.SocketServer.Security;
-//using ExitGames.Client.Photon;
-//using ExitGames.Client.Photon.EncryptorManaged;
+using Windows.Storage;
+using UnityEngine;
+using Photon.Realtime;
 
 
 namespace DrawGuess.Security
@@ -103,7 +100,7 @@ namespace DrawGuess.Security
                 Thread.Sleep(1);
             }
         }
-        
+
         private async Task RequestPhotonToken(LoginResult obj)
         {
             //We can player PlayFabId. This will come in handy during next step
@@ -121,30 +118,28 @@ namespace DrawGuess.Security
             }
             else if (photonAuthTokenTask.Result != null)
             {
-                //AuthenticateWithPhoton(photonAuthTokenTask.Result, obj.PlayFabId);
+                AuthenticateWithPhoton(photonAuthTokenTask.Result, obj.PlayFabId);
             }
         }
 
-        //private void AuthenticateWithPhoton(GetPhotonAuthenticationTokenResult obj, string playFabPlayerId)
-        //{
-        //    //We set AuthType to custom, meaning we bring our own, PlayFab authentication procedure.
-        //    var customAuth = new AuthenticationValues { AuthType = CustomAuthenticationType.Custom };
-            
+        private void AuthenticateWithPhoton(GetPhotonAuthenticationTokenResult obj, string playFabPlayerId)
+        {
+            //We set AuthType to custom, meaning we bring our own, PlayFab authentication procedure.
+            var customAuth = new AuthenticationValues { AuthType = CustomAuthenticationType.Custom };
 
-        //    //We add "username" parameter. Do not let it confuse you: PlayFab is expecting this parameter to contain player PlayFab ID (!) and not username.
-        //    customAuth.AddAuthParameter("username", playFabPlayerId);    // expected by PlayFab custom auth service
+            //We add "username" parameter. Do not let it confuse you: PlayFab is expecting this parameter to contain player PlayFab ID (!) and not username.
+            customAuth.AddAuthParameter("username", playFabPlayerId);    // expected by PlayFab custom auth service
 
-        //    //We add "token" parameter. PlayFab expects it to contain Photon Authentication Token issues to your during previous step.
-        //    customAuth.AddAuthParameter("token", obj.PhotonCustomAuthenticationToken);
+            //We add "token" parameter. PlayFab expects it to contain Photon Authentication Token issues to your during previous step.
+            customAuth.AddAuthParameter("token", obj.PhotonCustomAuthenticationToken);
 
-
-        //    //We finally tell Photon to use this authentication parameters throughout the entire application.
-        //    //PhotonNetwork.AuthValues = customAuth;
-        //    //LoadBalancingClient loadBalancingClient = new LoadBalancingClient
-        //    //{
-        //    //    AuthValues = customAuth
-        //    //};
-        //}
+            //We finally tell Photon to use this authentication parameters throughout the entire application.
+            //PhotonNetwork.AuthValues = customAuth;
+            LoadBalancingClient loadBalancingClient = new LoadBalancingClient
+            {
+                AuthValues = customAuth
+            };
+        }
 
     }
 }

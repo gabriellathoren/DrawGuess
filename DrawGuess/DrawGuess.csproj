@@ -123,6 +123,21 @@
     </Compile>
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="LoadbalancingAPI\AppSettings.cs" />
+    <Compile Include="LoadbalancingAPI\ConnectionHandler.cs" />
+    <Compile Include="LoadbalancingAPI\Extensions.cs" />
+    <Compile Include="LoadbalancingAPI\FriendInfo.cs" />
+    <Compile Include="LoadbalancingAPI\LoadBalancingClient.cs" />
+    <Compile Include="LoadbalancingAPI\LoadBalancingPeer.cs" />
+    <Compile Include="LoadbalancingAPI\PhotonPing.cs" />
+    <Compile Include="LoadbalancingAPI\PhotonPingClasses.cs" />
+    <Compile Include="LoadbalancingAPI\Player.cs" />
+    <Compile Include="LoadbalancingAPI\Region.cs" />
+    <Compile Include="LoadbalancingAPI\RegionHandler.cs" />
+    <Compile Include="LoadbalancingAPI\Room.cs" />
+    <Compile Include="LoadbalancingAPI\RoomInfo.cs" />
+    <Compile Include="LoadbalancingAPI\SupportLogger.cs" />
+    <Compile Include="LoadbalancingAPI\WebRpc.cs" />
     <Compile Include="Models\Player.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Exceptions\UserNotFoundException.cs" />
@@ -288,6 +303,9 @@
     <Content Include="Assets\SplashScreen\Splash_Screen.scale-150.png" />
     <Content Include="Assets\SplashScreen\Splash_Screen.scale-200.png" />
     <Content Include="Assets\SplashScreen\Splash_Screen.scale-400.png" />
+    <Content Include="libs\Photon3WindowsUniversal.dll" />
+    <Content Include="libs\Photon3WindowsUniversal.pdb" />
+    <Content Include="libs\Photon3WindowsUniversal.xml" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
@@ -328,6 +346,9 @@
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.8</Version>
     </PackageReference>
+    <PackageReference Include="Photon.Framework">
+      <Version>0.0.75</Version>
+    </PackageReference>
     <PackageReference Include="PlayFabAllSDK">
       <Version>1.53.190627</Version>
     </PackageReference>
@@ -336,6 +357,9 @@
     </PackageReference>
     <PackageReference Include="System.Data.SqlClient">
       <Version>4.6.1</Version>
+    </PackageReference>
+    <PackageReference Include="Unity3D.UnityEngine">
+      <Version>2018.3.5.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
@@ -379,6 +403,11 @@
   </ItemGroup>
   <ItemGroup>
     <PRIResource Include="Resources.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Photon3WindowsUniversal">
+      <HintPath>libs\Photon3WindowsUniversal.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
