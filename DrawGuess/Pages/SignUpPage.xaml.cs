@@ -142,7 +142,7 @@ namespace DrawGuess.Pages
         }
 
 
-        private void Register_Click(object sender, RoutedEventArgs e)
+        private async void Register_Click(object sender, RoutedEventArgs e)
         {
             if (Register_clicked) { return; }
             else { Register_clicked = true; }
@@ -158,7 +158,9 @@ namespace DrawGuess.Pages
                         try
                         {
                             Models.User.AddUser(ViewModel.User, ViewModel.Password);
-                            CredentialControl.SystemLogIn(ViewModel.User.Email, ViewModel.Password);
+
+                            var credentialControl = new CredentialControl();
+                            await credentialControl.SystemLogIn(ViewModel.User.Email, ViewModel.Password);
                             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
                         }
                         catch (Exception)

@@ -81,7 +81,8 @@ namespace DrawGuess.Pages
 
         private async void LogIn(Models.User user)
         {
-            await CredentialControl.SystemLogIn(user.Email, ViewModel.Password, user);
+            var credentialControl = new CredentialControl();
+            await credentialControl.SystemLogIn(user.Email, ViewModel.Password, user);
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
         }
 

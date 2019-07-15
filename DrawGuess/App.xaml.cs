@@ -47,6 +47,9 @@ namespace DrawGuess
         private string playFabTitleId = "650C2";
         public string PlayFabTitleId { get => playFabTitleId; set => playFabTitleId = value; }
 
+        private string photonAppId = "2d9f6ff3-d9c5-4374-ac7e-681e0baa2f0e";
+        public string PhotonAppId { get => photonAppId; set => photonAppId = value; }
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -71,7 +74,7 @@ namespace DrawGuess
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             var titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ForegroundColor = Windows.UI.Colors.White;
@@ -107,14 +110,15 @@ namespace DrawGuess
             {
                 if (rootFrame.Content == null)
                 {
-                    var loginCredential = CredentialControl.GetCredentialFromLocker();
+                    var credentialControl = new CredentialControl();
+                    var loginCredential = credentialControl.GetCredentialFromLocker();
                     try
                     {                 
                         //Control if user is already logged on
                         if (loginCredential != null)
                         {
                             loginCredential.RetrievePassword();
-                            CredentialControl.SystemLogIn(loginCredential.UserName, loginCredential.Password);
+                            await credentialControl.SystemLogIn(loginCredential.UserName, loginCredential.Password);
                             rootFrame.Navigate(typeof(Pages.StartPage), e.Arguments);
                         }
                         else
