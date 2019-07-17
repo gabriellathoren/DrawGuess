@@ -41,19 +41,38 @@ namespace DrawGuess.Pages
         {
             SetPlayers();
             SetPlacement();
-            //SetHint();
-            //SetRandomLetters(); //Hämta från databas
+            SetSecretWord();
+            SetHint();
+            //SetRandomLetters(); 
             //SetRound();
-            //SetSecretWord();
         }
 
         public void SetPlayers()
         {
-            ObservableCollection<Player> players = Models.Game.GetPlayers(ViewModel.Game.Id);
-
-            foreach(Player player in players)
+            try
             {
-                ViewModel.Players.Add(new PlayersViewModel(player));
+                ObservableCollection<Player> players = Game.GetPlayers();
+
+                foreach (Player player in players)
+                {
+                    ViewModel.Players.Add(new PlayersViewModel(player));
+                }
+            }
+            catch (Exception e)
+            {
+                ViewModel.ErrorMessage = e.Message;
+            }
+        }
+
+        public void SetSecretWord()
+        {
+            try
+            {
+                ViewModel.Game.SecretWord = Models.Game.GetSecretWord();
+            }
+            catch (Exception e)
+            {
+                ViewModel.ErrorMessage = e.Message;
             }
         }
 
@@ -67,7 +86,7 @@ namespace DrawGuess.Pages
 
         //    //Add random letters
         //    int noOfLetters = 15 - ViewModel.Game.SecretWord.Length;
-            
+
         //    for (int i = 0; i < noOfLetters; i++)
         //    {
         //        ViewModel.Game.RandomLetters.Add(GetRandomLetter());
@@ -91,16 +110,16 @@ namespace DrawGuess.Pages
         //    }
         //}
 
-        public string GetRandomLetter()
-        {            
-            string st = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-            return new string(Enumerable.Repeat(st, 1).Select(s => s[Random.Next(s.Length)]).ToArray());
-        }
+        //public string GetRandomLetter()
+        //{            
+        //    string st = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        //    return new string(Enumerable.Repeat(st, 1).Select(s => s[Random.Next(s.Length)]).ToArray());
+        //}
 
         public void SetHint()
         {
             //Set hinting boxes based on number of letters in secret word
-            for(int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
+            for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
             {
                 ViewModel.Guess.Add("");
             }
@@ -111,34 +130,49 @@ namespace DrawGuess.Pages
             ViewModel.Players = new ObservableCollection<PlayersViewModel>(ViewModel.Players.OrderBy(x => x.Player.Points).ToList());
 
             int placement = 1;
-            foreach(PlayersViewModel p in ViewModel.Players)
+            foreach (PlayersViewModel p in ViewModel.Players)
             {
-                if(ViewModel.Players.IndexOf(p) == 0)
+                if (ViewModel.Players.IndexOf(p) == 0)
                 {
                     p.Placement = placement;
                 }
-                else if(p.Player.Points == ViewModel.Players[ViewModel.Players.IndexOf(p)-1].Player.Points)
+                else if (p.Player.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Player.Points)
                 {
                     p.Placement = placement;
                 }
                 else
                 {
                     placement++;
-                    p.Placement = placement; 
+                    p.Placement = placement;
                 }
             }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            string gameName = e.Parameter as string;
-            ViewModel.Game = Game.GetGame(gameName);
-            SetGame();   
+            try
+            {
+                string gameName = e.Parameter as string;
+                ViewModel.Game = Game.GetGame(gameName);
+                SetGame();
+            }
+            catch(Exception ex)
+            {
+                ViewModel.ErrorMessage = ex.Message;
+            }
+
         }
 
-        protected override async void OnNavigatedFrom(NavigationEventArgs e)
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
-            await Models.Game.RemoveGameMember(ViewModel.Game.Name, ViewModel.User);
+            try
+            {
+                Game.LeaveGame();
+            }
+            catch(Exception ex)
+            {
+                ViewModel.ErrorMessage = ex.Message;
+            }
         }
 
         private void Quit_Click(object sender, RoutedEventArgs e)

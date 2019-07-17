@@ -2,6 +2,7 @@
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using PlayFab;
+using PlayFab.ClientModels;
 using PlayFab.GroupsModels;
 using System;
 using System.Collections.Generic;
@@ -36,82 +37,104 @@ namespace DrawGuess.Models
         }
         private int _numberOfPlayers;
 
-        public static void AddPlayer(int playerId, int gameId)
+        //public static void AddPlayer(int playerId, int gameId)
+        //{
+        //    string query =
+        //         "INSERT INTO dbo.GamePlayer (UserId, Points, GameId) " +
+        //         "VALUES('" + playerId + "','" + 0 + "','" + gameId + ")";
+
+        //    try
+        //    {
+        //        using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+        //        {
+        //            conn.Open();
+
+        //            SqlCommand cmd = new SqlCommand
+        //            {
+        //                CommandType = System.Data.CommandType.Text,
+        //                CommandText = query,
+        //                Connection = conn
+        //            };
+
+        //            cmd.ExecuteNonQuery();
+
+        //            conn.Close();
+        //        }
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw e;
+        //    }
+        //}
+
+        public static ObservableCollection<Player> GetPlayers()
         {
-            string query =
-                 "INSERT INTO dbo.GamePlayer (UserId, Points, GameId) " +
-                 "VALUES('" + playerId + "','" + 0 + "','" + gameId + ")";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd = new SqlCommand
-                    {
-                        CommandType = System.Data.CommandType.Text,
-                        CommandText = query,
-                        Connection = conn
-                    };
-
-                    cmd.ExecuteNonQuery();
-
-                    conn.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        public static ObservableCollection<Player> GetPlayers(int id)
-        {
-            string query =
-                "SELECT u.Id, u.FirstName, u.LastName, u.ProfileImage, p.Points " +
-                "FROM dbo.GamePlayer p " +
-                "JOIN dbo.Users u " +
-                "ON p.UserId = u.Id " +
-                "WHERE p.GameId = " + id;
-
             var players = new ObservableCollection<Player>();
 
             try
             {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+
+                foreach (var p in photonPlayers)
                 {
-                    conn.Open();
-                    if (conn.State == ConnectionState.Open)
+                    players.Add(new Player()
                     {
-                        using (SqlCommand cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = query;
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    players.Add(new Player()
-                                    {
-                                        Id = reader.GetInt32(0),
-                                        FirstName = reader.GetString(1),
-                                        LastName = reader.GetString(2),
-                                        ProfilePicture = reader.GetString(3),
-                                        Points = reader.GetInt32(4)
-                                    });
-                                }
-                            }
-                        }
-                    }
-                    conn.Close();
+                        NickName = p.Value.NickName,
+                        Points = (int) p.Value.CustomProperties["points"]
+                    });
                 }
             }
-            catch (Exception e)
+            catch(Exception e)
             {
-                throw e;
+                throw new PhotonException("Could not get players");
             }
-
+            
             return players;
+
+            //string query =
+            //    "SELECT u.Id, u.FirstName, u.LastName, u.ProfileImage, p.Points " +
+            //    "FROM dbo.GamePlayer p " +
+            //    "JOIN dbo.Users u " +
+            //    "ON p.UserId = u.Id " +
+            //    "WHERE p.GameId = " + id;
+
+            //var players = new ObservableCollection<Player>();
+
+            //try
+            //{
+            //    using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+            //    {
+            //        conn.Open();
+            //        if (conn.State == ConnectionState.Open)
+            //        {
+            //            using (SqlCommand cmd = conn.CreateCommand())
+            //            {
+            //                cmd.CommandText = query;
+            //                using (SqlDataReader reader = cmd.ExecuteReader())
+            //                {
+            //                    while (reader.Read())
+            //                    {
+            //                        players.Add(new Player()
+            //                        {
+            //                            Id = reader.GetInt32(0),
+            //                            FirstName = reader.GetString(1),
+            //                            LastName = reader.GetString(2),
+            //                            ProfilePicture = reader.GetString(3),
+            //                            Points = reader.GetInt32(4)
+            //                        });
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        conn.Close();
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e;
+            //}
+
+            //return players;
         }
 
         public static int GetNumberOfPlayers(int id)
@@ -202,10 +225,18 @@ namespace DrawGuess.Models
             return randomGameName;
         }
 
-        public static void JoinGame(string gameName, User player)
+        public static void JoinGame(string gameName)
         {
-            (App.Current as App).LoadBalancingClient.OpJoinRoom(
-                new EnterRoomParams() { RoomName = gameName });
+            var roomParams = new EnterRoomParams()
+            {
+                RoomName = gameName, 
+                PlayerProperties = new Hashtable() { { "points", 0 } }
+            };
+
+            if(!(App.Current as App).LoadBalancingClient.OpJoinRoom(roomParams))
+            {
+                throw new PhotonException("Could not join room");
+            } 
         }
 
         public static void AddGame(string gameName)
@@ -215,21 +246,25 @@ namespace DrawGuess.Models
                 RoomName = gameName,
                 Lobby = new TypedLobby("Lobby1", LobbyType.SqlLobby),
                 CreateIfNotExists = true,
+                PlayerProperties = new Hashtable() { { "points", 0 } },
                 RoomOptions = new RoomOptions()
                 {
                     MaxPlayers = 8,
                     IsVisible = true,
                     IsOpen = true,
-                    CustomRoomProperties = new Hashtable() { { "round", 1 }, { "C0", 1 } },
+                    CustomRoomProperties = new Hashtable() {
+                        { "round", 1 },
+                        { "C0", 1 },
+                        { "secret_word", "test" }
+                    },
                     PublishUserId = true,
                 }
             };
 
             if (!(App.Current as App).LoadBalancingClient.OpCreateRoom(roomParams))
             {
-                throw new PhotonException("Could not create room right now");
+                throw new PhotonException("Could not create room");
             }
-
             
             //////////////////////////////////////////////////////////////////////////////////////////
 
@@ -262,73 +297,107 @@ namespace DrawGuess.Models
             }
         }
 
-        public static Game GetGame(string gameName)
+        public static string GetSecretWord()
         {
-            // join random rooms easily, filtering for specific room properties, if needed
-            Hashtable expectedCustomRoomProperties = new Hashtable();
-            //(App.Current as App).LoadBalancingClient.OpGetGameList();
-
-            // custom props can have any name but the key must be string
-            expectedCustomRoomProperties["map"] = 1;
-
-            (App.Current as App).LoadBalancingClient.OpGetGameList(TypedLobby.Default, "");
-
-            string query = "SELECT Id, Name, SecretWord, Round, RandomLetters FROM dbo.Game WHERE Name = '" + gameName + "'";
-            Game game = new Game();
-
             try
             {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == ConnectionState.Open)
-                    {
-                        using (SqlCommand cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = query;
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    game = new Game()
-                                    {
-                                        Id = reader.GetInt32(0),
-                                        Name = reader.GetString(1),
-                                        NumberOfPlayers = GetNumberOfPlayers(reader.GetInt32(0)),
-                                        SecretWord = reader.IsDBNull(reader.GetOrdinal("SecretWord")) ? null : reader.GetString(2),
-                                        Round = reader.GetInt32(3),
-                                        RandomLetters = reader.IsDBNull(reader.GetOrdinal("RandomLetters")) ? null : reader.GetString(4),
-                                    };
-                                }
-                            }
-                        }
-                    }
-                    conn.Close();
-                }
+                Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
+                return (string)room.CustomProperties["secret_word"];
             }
-            catch (Exception e)
+            catch(Exception)
             {
-                throw e;
+                throw new PhotonException("Could not get secret word");
             }
-
-            return game;
         }
 
-        public static async Task RemoveGameMember(string gameName, User user)
+        public static Game GetGame(string gameName)
         {
             try
             {
+                Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
+
+                Game game = new Game()
+                {
+                    Name = room.Name,
+                    Round = (int)room.CustomProperties["round"],
+                    RandomLetters = (string)room.CustomProperties["random_letters"],
+                    SecretWord = (string)room.CustomProperties["secret_word"]
+                };
+
+                return game;
             }
-            catch (Exception e)
+            catch(Exception)
             {
-                throw e;
+                throw new PhotonException("Could not get game");
+            }
+
+            //string query = "SELECT Id, Name, SecretWord, Round, RandomLetters FROM dbo.Game WHERE Name = '" + gameName + "'";
+            //Game game = new Game();
+
+            //try
+            //{
+            //    using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
+            //    {
+            //        conn.Open();
+            //        if (conn.State == ConnectionState.Open)
+            //        {
+            //            using (SqlCommand cmd = conn.CreateCommand())
+            //            {
+            //                cmd.CommandText = query;
+            //                using (SqlDataReader reader = cmd.ExecuteReader())
+            //                {
+            //                    while (reader.Read())
+            //                    {
+            //                        game = new Game()
+            //                        {
+            //                            Id = reader.GetInt32(0),
+            //                            Name = reader.GetString(1),
+            //                            NumberOfPlayers = GetNumberOfPlayers(reader.GetInt32(0)),
+            //                            SecretWord = reader.IsDBNull(reader.GetOrdinal("SecretWord")) ? null : reader.GetString(2),
+            //                            Round = reader.GetInt32(3),
+            //                            RandomLetters = reader.IsDBNull(reader.GetOrdinal("RandomLetters")) ? null : reader.GetString(4),
+            //                        };
+            //                    }
+            //                }
+            //            }
+            //        }
+            //        conn.Close();
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    throw e;
+            //}
+
+        }
+
+        public static void LeaveGame()
+        {
+            try
+            {
+                if(!(App.Current as App).LoadBalancingClient.OpLeaveRoom(false))
+                {
+                    throw new Exception();
+                }
+            }
+            catch (Exception)
+            {
+                throw new PhotonException("Could not leave room");
             }
         }
 
         public static ObservableCollection<Game> GetGames()
         {
-
             var games = new ObservableCollection<Game>();
+
+            try
+            {
+                (App.Current as App).LoadBalancingClient.OpGetGameList(new TypedLobby("Lobby1", LobbyType.SqlLobby), "C0=1");
+            }
+            catch(Exception)
+            {
+                throw new PhotonException("");
+            }
 
             const string query = "SELECT Id, Name FROM dbo.Game";
 

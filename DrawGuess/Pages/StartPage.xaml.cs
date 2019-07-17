@@ -79,9 +79,10 @@ namespace DrawGuess.Pages
                     gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
                     Models.Game.AddGame(gameName);
                 }
-
-                //Add player to room
-                Models.Game.JoinGame(gameName, ViewModel.User);
+                else
+                {
+                    Models.Game.JoinGame(gameName);
+                }
 
                 this.Frame.Navigate(typeof(GamePage), gameName, new DrillInNavigationTransitionInfo());
             }

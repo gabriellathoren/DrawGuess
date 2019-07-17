@@ -11,7 +11,7 @@ using Windows.Security.Credentials;
 using Windows.Storage;
 using UnityEngine;
 using Photon.Realtime;
-
+using DrawGuess.Exceptions;
 
 namespace DrawGuess.Security
 {
@@ -71,9 +71,9 @@ namespace DrawGuess.Security
 
                 //Log in for game engine PlayFab
                 await PlayFabLogIn();
-
-                //Start game loop connected to Photon
-                Task task = Task.Run((Action)GameLoop);
+                
+                //Connect user to Photon Cloud Server
+                GameEngine.ConnectToMaster();
             }
             catch (Exception e)
             {
@@ -116,7 +116,7 @@ namespace DrawGuess.Security
             if (photonAuthTokenTask.Error != null)
             {
                 _running = false;
-                throw new Exception("Could not authenticate user with Photon");
+                throw new PlayFabException(PlayFabExceptionCode.NotLoggedIn, "Could not authenticate user");
             }
             else if (photonAuthTokenTask.Result != null)
             {
@@ -137,27 +137,11 @@ namespace DrawGuess.Security
 
             //We finally tell Photon to use this authentication parameters throughout the entire application.
             (App.Current as App).LoadBalancingClient.AuthValues = customAuth;
+            (App.Current as App).LoadBalancingClient.UserId = playFabPlayerId;
+            (App.Current as App).LoadBalancingClient.AuthValues.Token = obj.PhotonCustomAuthenticationToken;
+            (App.Current as App).LoadBalancingClient.AuthValues.UserId = playFabPlayerId;
             (App.Current as App).LoadBalancingClient.NickName = (App.Current as App).User.FirstName + " " + (App.Current as App).User.LastName;
-            (App.Current as App).LoadBalancingClient.ConnectToRegionMaster("eu");
-        }
 
-        private static async void GameLoop()
-        {
-            while (!(App.Current as App).ShouldExit)
-            {
-                (App.Current as App).LoadBalancingClient.Service();
-                // wait for few frames/milliseconds
-                await Task.Delay(TimeSpan.FromMilliseconds(100));
-            }
         }
-
-        public void Disconnect()
-        {
-            if ((App.Current as App).Connected)
-            {
-                this.Disconnect();
-            }
-        }
-
     }
 }

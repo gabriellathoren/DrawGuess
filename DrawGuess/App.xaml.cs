@@ -82,6 +82,7 @@ namespace DrawGuess
             //Set Load Balancing Client
             LoadBalancingClient.AppId = PhotonAppId;
             LoadBalancingClient.AppVersion = "1.0";
+            LoadBalancingClient.UseAlternativeUdpPorts = true;
         }
 
 

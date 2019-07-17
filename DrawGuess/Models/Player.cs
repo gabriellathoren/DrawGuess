@@ -6,8 +6,10 @@ using System.Threading.Tasks;
 
 namespace DrawGuess.Models
 {
-    public class Player : User
+    public class Player
     {
+        public string NickName { get; set; }
         public int Points { get; set; }
+
     }
 }

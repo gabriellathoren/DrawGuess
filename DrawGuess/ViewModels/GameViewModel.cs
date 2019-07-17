@@ -35,6 +35,17 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private string errorMessage;
+        public string ErrorMessage
+        {
+            get { return this.errorMessage; }
+            set
+            {
+                this.errorMessage = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<PlayersViewModel> players;
         public ObservableCollection<PlayersViewModel> Players
         {

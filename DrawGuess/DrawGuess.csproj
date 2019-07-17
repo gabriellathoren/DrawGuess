@@ -123,6 +123,7 @@
     </Compile>
     <Compile Include="Converters\ColorConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
+    <Compile Include="GameEngine.cs" />
     <Compile Include="LoadbalancingAPI\AppSettings.cs" />
     <Compile Include="LoadbalancingAPI\ConnectionHandler.cs" />
     <Compile Include="LoadbalancingAPI\Extensions.cs" />

@@ -22,17 +22,6 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private string name;
-        public string Name
-        {
-            get { return this.name; }
-            set
-            {
-                this.name = value;
-                this.OnPropertyChanged();
-            }
-        }
-
         private int placement;
         public int Placement
         {
@@ -83,7 +72,6 @@ namespace DrawGuess.ViewModels
             Placement = 0;
             IsCurrentUser = false;
             Player = player;
-            Name = Player.FirstName + " " + Player.LastName;
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

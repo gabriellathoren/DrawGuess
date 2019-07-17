@@ -118,8 +118,8 @@
                                 </Grid.ColumnDefinitions>
 
                                 <TextBlock Grid.Column="0" Text="{x:Bind Placement}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="20"/>
-                                <Image HorizontalAlignment="Left" Width="40" Height="40" Grid.Column="1" Source="{x:Bind Player.ProfilePicture}" VerticalAlignment="Center"/>
-                                <TextBlock TextWrapping="Wrap" TextTrimming="WordEllipsis"  HorizontalAlignment="Stretch" Grid.Column="2" Text="{x:Bind Name}" VerticalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
+                                <PersonPicture HorizontalAlignment="Left" Width="40" Height="40" Grid.Column="1" VerticalAlignment="Center"/>
+                                <TextBlock TextWrapping="Wrap" TextTrimming="WordEllipsis"  HorizontalAlignment="Stretch" Grid.Column="2" Text="{x:Bind Player.NickName}" VerticalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
                                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
                                     <TextBlock Text="{x:Bind Player.Points}" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
                                     <TextBlock Text=" p" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
