@@ -39,12 +39,24 @@ namespace DrawGuess.Pages
 
         public void SetGame()
         {
+            SetPlayerPoints(0);
             SetPlayers();
             SetPlacement();
             SetSecretWord();
             SetHint();
             //SetRandomLetters(); 
-            //SetRound();
+        }
+
+        public void SetPlayerPoints(int points)
+        {
+            try
+            {
+                Game.SetPlayerPoints(points);
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not set player points";
+            }
         }
 
         public void SetPlayers()
@@ -152,8 +164,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                string gameName = e.Parameter as string;
-                ViewModel.Game = Game.GetGame(gameName);
+                ViewModel.Game = Game.GetGame();
                 SetGame();
             }
             catch(Exception ex)

@@ -36,36 +36,7 @@ namespace DrawGuess.Models
             }
         }
         private int _numberOfPlayers;
-
-        //public static void AddPlayer(int playerId, int gameId)
-        //{
-        //    string query =
-        //         "INSERT INTO dbo.GamePlayer (UserId, Points, GameId) " +
-        //         "VALUES('" + playerId + "','" + 0 + "','" + gameId + ")";
-
-        //    try
-        //    {
-        //        using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-        //        {
-        //            conn.Open();
-
-        //            SqlCommand cmd = new SqlCommand
-        //            {
-        //                CommandType = System.Data.CommandType.Text,
-        //                CommandText = query,
-        //                Connection = conn
-        //            };
-
-        //            cmd.ExecuteNonQuery();
-
-        //            conn.Close();
-        //        }
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        throw e;
-        //    }
-        //}
+        
 
         public static ObservableCollection<Player> GetPlayers()
         {
@@ -75,12 +46,13 @@ namespace DrawGuess.Models
             {
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
 
+
                 foreach (var p in photonPlayers)
                 {
                     players.Add(new Player()
                     {
                         NickName = p.Value.NickName,
-                        Points = (int) p.Value.CustomProperties["points"]
+                        Points = (int) p.Value.CustomProperties["points"],
                     });
                 }
             }
@@ -90,51 +62,6 @@ namespace DrawGuess.Models
             }
             
             return players;
-
-            //string query =
-            //    "SELECT u.Id, u.FirstName, u.LastName, u.ProfileImage, p.Points " +
-            //    "FROM dbo.GamePlayer p " +
-            //    "JOIN dbo.Users u " +
-            //    "ON p.UserId = u.Id " +
-            //    "WHERE p.GameId = " + id;
-
-            //var players = new ObservableCollection<Player>();
-
-            //try
-            //{
-            //    using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-            //    {
-            //        conn.Open();
-            //        if (conn.State == ConnectionState.Open)
-            //        {
-            //            using (SqlCommand cmd = conn.CreateCommand())
-            //            {
-            //                cmd.CommandText = query;
-            //                using (SqlDataReader reader = cmd.ExecuteReader())
-            //                {
-            //                    while (reader.Read())
-            //                    {
-            //                        players.Add(new Player()
-            //                        {
-            //                            Id = reader.GetInt32(0),
-            //                            FirstName = reader.GetString(1),
-            //                            LastName = reader.GetString(2),
-            //                            ProfilePicture = reader.GetString(3),
-            //                            Points = reader.GetInt32(4)
-            //                        });
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        conn.Close();
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    throw e;
-            //}
-
-            //return players;
         }
 
         public static int GetNumberOfPlayers(int id)
@@ -230,13 +157,18 @@ namespace DrawGuess.Models
             var roomParams = new EnterRoomParams()
             {
                 RoomName = gameName, 
-                PlayerProperties = new Hashtable() { { "points", 0 } }
             };
 
             if(!(App.Current as App).LoadBalancingClient.OpJoinRoom(roomParams))
             {
                 throw new PhotonException("Could not join room");
             } 
+        }
+
+        public static void SetPlayerPoints(int points)
+        {
+            Hashtable customProperties = new Hashtable() { { "points", points } }; 
+            (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
         }
 
         public static void AddGame(string gameName)
@@ -246,7 +178,6 @@ namespace DrawGuess.Models
                 RoomName = gameName,
                 Lobby = new TypedLobby("Lobby1", LobbyType.SqlLobby),
                 CreateIfNotExists = true,
-                PlayerProperties = new Hashtable() { { "points", 0 } },
                 RoomOptions = new RoomOptions()
                 {
                     MaxPlayers = 8,
@@ -310,7 +241,7 @@ namespace DrawGuess.Models
             }
         }
 
-        public static Game GetGame(string gameName)
+        public static Game GetGame()
         {
             try
             {
@@ -330,45 +261,6 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not get game");
             }
-
-            //string query = "SELECT Id, Name, SecretWord, Round, RandomLetters FROM dbo.Game WHERE Name = '" + gameName + "'";
-            //Game game = new Game();
-
-            //try
-            //{
-            //    using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-            //    {
-            //        conn.Open();
-            //        if (conn.State == ConnectionState.Open)
-            //        {
-            //            using (SqlCommand cmd = conn.CreateCommand())
-            //            {
-            //                cmd.CommandText = query;
-            //                using (SqlDataReader reader = cmd.ExecuteReader())
-            //                {
-            //                    while (reader.Read())
-            //                    {
-            //                        game = new Game()
-            //                        {
-            //                            Id = reader.GetInt32(0),
-            //                            Name = reader.GetString(1),
-            //                            NumberOfPlayers = GetNumberOfPlayers(reader.GetInt32(0)),
-            //                            SecretWord = reader.IsDBNull(reader.GetOrdinal("SecretWord")) ? null : reader.GetString(2),
-            //                            Round = reader.GetInt32(3),
-            //                            RandomLetters = reader.IsDBNull(reader.GetOrdinal("RandomLetters")) ? null : reader.GetString(4),
-            //                        };
-            //                    }
-            //                }
-            //            }
-            //        }
-            //        conn.Close();
-            //    }
-            //}
-            //catch (Exception e)
-            //{
-            //    throw e;
-            //}
-
         }
 
         public static void LeaveGame()
