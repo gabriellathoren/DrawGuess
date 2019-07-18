@@ -392,7 +392,9 @@ namespace DrawGuess.Models
 
             try
             {
-                (App.Current as App).LoadBalancingClient.OpGetGameList(new TypedLobby("Lobby1", LobbyType.SqlLobby), "C0=1");
+                //Get list of game rooms from Photon
+                (App.Current as App).LoadBalancingClient.OpGetGameList((App.Current as App).LoadBalancingClient.CurrentLobby, "C0=1");
+                
             }
             catch(Exception)
             {

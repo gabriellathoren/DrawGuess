@@ -20,6 +20,7 @@ namespace Photon.Realtime
     using System.Collections;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.Threading;
     using ExitGames.Client.Photon;
 
     #if SUPPORTED_UNITY
@@ -3347,6 +3348,10 @@ namespace Photon.Realtime
     /// </remarks>
     public class ConnectionCallbacksContainer : List<IConnectionCallbacks>, IConnectionCallbacks
     {
+        public AutoResetEvent StopWaitConnectedToMaster = new AutoResetEvent(false);
+        public event EventHandler ConnectedToMaster;
+        public event EventHandler Disconnected;
+
         private HashSet<IConnectionCallbacks> targetsToAdd;
         private HashSet<IConnectionCallbacks> targetsToRemove;
 
@@ -3407,6 +3412,9 @@ namespace Photon.Realtime
             {
                 target.OnConnectedToMaster();
             }
+
+            EventHandler handler = ConnectedToMaster;
+            handler?.Invoke(this, null);
         }
 
         public void OnRegionListReceived(RegionHandler regionHandler)
@@ -3427,6 +3435,9 @@ namespace Photon.Realtime
             {
                 target.OnDisconnected(cause);
             }
+
+            EventHandler handler = Disconnected;
+            handler?.Invoke(this, null);
         }
 
         public void OnCustomAuthenticationResponse(Dictionary<string, object> data)
@@ -3460,6 +3471,10 @@ namespace Photon.Realtime
     /// </remarks>
     public class MatchMakingCallbacksContainer : List<IMatchmakingCallbacks>, IMatchmakingCallbacks
     {
+        
+        public AutoResetEvent StopWaitCreatedRoom = new AutoResetEvent(false);
+        public AutoResetEvent StopWaitJoinedRoom = new AutoResetEvent(false);
+        public AutoResetEvent StopWaitCreateRoomFailed = new AutoResetEvent(false);
 
         private HashSet<IMatchmakingCallbacks> targetsToAdd;
         private HashSet<IMatchmakingCallbacks> targetsToRemove;
@@ -3511,6 +3526,8 @@ namespace Photon.Realtime
             {
                 target.OnCreatedRoom();
             }
+
+            StopWaitCreatedRoom.Set();
         }
 
         public void OnJoinedRoom()
@@ -3521,6 +3538,8 @@ namespace Photon.Realtime
             {
                 target.OnJoinedRoom();
             }
+
+            StopWaitJoinedRoom.Set();
         }
 
         public void OnCreateRoomFailed(short returnCode, string message)
@@ -3531,6 +3550,7 @@ namespace Photon.Realtime
             {
                 target.OnCreateRoomFailed(returnCode, message);
             }
+            StopWaitCreateRoomFailed.Set();
         }
 
         public void OnJoinRandomFailed(short returnCode, string message)

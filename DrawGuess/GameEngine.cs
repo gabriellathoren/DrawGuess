@@ -1,4 +1,5 @@
 ﻿using DrawGuess.Exceptions;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,36 +10,56 @@ namespace DrawGuess
 {
     public class GameEngine
     {
-        public static void ConnectToMaster()
+
+        private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
+        public bool connectedToPhoton = false; 
+
+        public GameEngine()
+        {
+            LoadBalancingClient.ConnectionCallbackTargets.ConnectedToMaster += ConnectedToMaster;
+            LoadBalancingClient.ConnectionCallbackTargets.Disconnected += Disconnected;
+        }
+
+        private void ConnectedToMaster(object sender, EventArgs e)
+        {
+            connectedToPhoton = true;
+        }
+
+        private void Disconnected(object sender, EventArgs e)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ConnectToMaster()
         {
             //Connect to master server (Photon Cloud)
-            if (!(App.Current as App).LoadBalancingClient.ConnectToRegionMaster("eu"))
+            if (!LoadBalancingClient.ConnectToRegionMaster("eu"))
             {
                 throw new PhotonException("Could not authenticate user");
             }
 
-            //Start game loop connected to Photon
+            //Start game loop to have continues connection to Photon
             Task task = Task.Run((Action)GameLoop);
         }
 
         //Get and send updates to Photon 
-        public static async void GameLoop()
+        public async void GameLoop()
         {
             while (!(App.Current as App).ShouldExit)
             {
-                (App.Current as App).LoadBalancingClient.Service();
+                LoadBalancingClient.Service();
                 // wait for few frames/milliseconds
                 await Task.Delay(TimeSpan.FromMilliseconds(100));
             }
 
-            GameEngine.Disconnect();
+            Disconnect();
         }
 
-        public static void Disconnect()
+        public void Disconnect()
         {
             if ((App.Current as App).Connected)
             {
-                (App.Current as App).LoadBalancingClient.Disconnect();
+                LoadBalancingClient.Disconnect();
             }
         }
     }

@@ -9,6 +9,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -29,7 +31,8 @@ namespace DrawGuess.Pages
     public sealed partial class StartPage : Page
     {
         public StartViewModel ViewModel { get; set; }
-               
+
+
         public StartPage()
         {
             if ((App.Current as App).User.Equals(null))
@@ -78,20 +81,37 @@ namespace DrawGuess.Pages
                 {
                     gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
                     Models.Game.AddGame(gameName);
+                    NavigateToGame(true);
                 }
                 else
                 {
                     Models.Game.JoinGame(gameName);
+                    NavigateToGame();
                 }
 
-                this.Frame.Navigate(typeof(GamePage), gameName, new DrillInNavigationTransitionInfo());
+                
             }
             catch(Exception ex)
             {
                 ViewModel.ErrorMessage = ex.Message;
             }
         }
+
+        public void NavigateToGame(bool newGame = false)
+        {            
+            if(newGame)
+            {
+                //Wait for room being created in Photon
+                (App.Current as App).LoadBalancingClient.MatchMakingCallbackTargets.StopWaitCreatedRoom.WaitOne();
+            }
+            
+            //Wait for user to join game in Photon
+            (App.Current as App).LoadBalancingClient.MatchMakingCallbackTargets.StopWaitJoinedRoom.WaitOne();
+
+            this.Frame.Navigate(typeof(GamePage), null, new DrillInNavigationTransitionInfo());
+        }
     }
+
 
     public class GameDataTemplateSelector : DataTemplateSelector
     {

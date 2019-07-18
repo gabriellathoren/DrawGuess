@@ -71,9 +71,15 @@ namespace DrawGuess.Security
 
                 //Log in for game engine PlayFab
                 await PlayFabLogIn();
-                
+
                 //Connect user to Photon Cloud Server
-                GameEngine.ConnectToMaster();
+                GameEngine gameEngine = new GameEngine();
+                gameEngine.ConnectToMaster();
+
+                while(!gameEngine.connectedToPhoton)
+                {
+                    await Task.Delay(25);
+                }
             }
             catch (Exception e)
             {
