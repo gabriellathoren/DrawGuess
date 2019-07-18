@@ -11,9 +11,11 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -31,7 +33,7 @@ namespace DrawGuess.Pages
     public sealed partial class StartPage : Page
     {
         public StartViewModel ViewModel { get; set; }
-
+        public LoadBalancingClient LoadBalancingClient { get; set; }
 
         public StartPage()
         {
@@ -43,9 +45,34 @@ namespace DrawGuess.Pages
 
             this.InitializeComponent();
             this.ViewModel = new StartViewModel();
+            LoadBalancingClient = (App.Current as App).LoadBalancingClient;
+
+            LoadBalancingClient.MatchMakingCallbackTargets.JoinedRoom += JoinedRoom;
+            LoadBalancingClient.MatchMakingCallbackTargets.CreateRoomFailed += CreateRoomFailed;
+            LoadBalancingClient.MatchMakingCallbackTargets.JoinRoomFailed += JoinRoomFailed;
+
 
             GetGames();
             SortGameList();
+        }
+
+        private async void JoinedRoom(object sender, EventArgs e)
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                () =>
+                {
+                    NavigateToGame();
+                });
+        }
+
+        private void CreateRoomFailed(object sender, EventArgs e)
+        {
+            ViewModel.ErrorMessage = "Could not create new room";
+        }
+
+        private void JoinRoomFailed(object sender, EventArgs e)
+        {
+            ViewModel.ErrorMessage = "Could not join room";
         }
 
         public void GetGames()
@@ -58,7 +85,7 @@ namespace DrawGuess.Pages
                     Id = -1
                 });
             }
-            catch(Exception)
+            catch (Exception)
             {
 
             }
@@ -69,7 +96,7 @@ namespace DrawGuess.Pages
             ViewModel.Items = new ObservableCollection<Game>(ViewModel.Items.OrderBy(x => x.Full).ToList());
 
         }
-        
+
         private void GameList_Tapped(object sender, TappedRoutedEventArgs e)
         {
             try
@@ -81,33 +108,20 @@ namespace DrawGuess.Pages
                 {
                     gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
                     Models.Game.AddGame(gameName);
-                    NavigateToGame(true);
                 }
                 else
                 {
                     Models.Game.JoinGame(gameName);
-                    NavigateToGame();
                 }
-
-                
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewModel.ErrorMessage = ex.Message;
             }
         }
 
-        public void NavigateToGame(bool newGame = false)
-        {            
-            if(newGame)
-            {
-                //Wait for room being created in Photon
-                (App.Current as App).LoadBalancingClient.MatchMakingCallbackTargets.StopWaitCreatedRoom.WaitOne();
-            }
-            
-            //Wait for user to join game in Photon
-            (App.Current as App).LoadBalancingClient.MatchMakingCallbackTargets.StopWaitJoinedRoom.WaitOne();
-
+        public void NavigateToGame()
+        {
             this.Frame.Navigate(typeof(GamePage), null, new DrillInNavigationTransitionInfo());
         }
     }
@@ -126,7 +140,7 @@ namespace DrawGuess.Pages
             DataTemplate _returnTemplate = new DataTemplate();
             var itemsControl = ItemsControl.ItemsControlFromItemContainer(container);
 
-            if(itemsControl.IndexFromContainer(container) == 0)
+            if (itemsControl.IndexFromContainer(container) == 0)
             {
                 _returnTemplate = NewGameTemplate;
             }

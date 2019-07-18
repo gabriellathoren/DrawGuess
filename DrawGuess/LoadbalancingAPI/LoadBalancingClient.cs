@@ -3471,10 +3471,10 @@ namespace Photon.Realtime
     /// </remarks>
     public class MatchMakingCallbacksContainer : List<IMatchmakingCallbacks>, IMatchmakingCallbacks
     {
-        
-        public AutoResetEvent StopWaitCreatedRoom = new AutoResetEvent(false);
-        public AutoResetEvent StopWaitJoinedRoom = new AutoResetEvent(false);
-        public AutoResetEvent StopWaitCreateRoomFailed = new AutoResetEvent(false);
+        public event EventHandler JoinedRoom;
+        public event EventHandler CreateRoomFailed;
+        public event EventHandler JoinRoomFailed;
+        public event EventHandler LeftRoom;
 
         private HashSet<IMatchmakingCallbacks> targetsToAdd;
         private HashSet<IMatchmakingCallbacks> targetsToRemove;
@@ -3526,8 +3526,6 @@ namespace Photon.Realtime
             {
                 target.OnCreatedRoom();
             }
-
-            StopWaitCreatedRoom.Set();
         }
 
         public void OnJoinedRoom()
@@ -3539,7 +3537,8 @@ namespace Photon.Realtime
                 target.OnJoinedRoom();
             }
 
-            StopWaitJoinedRoom.Set();
+            EventHandler handler = JoinedRoom;
+            handler?.Invoke(this, null);
         }
 
         public void OnCreateRoomFailed(short returnCode, string message)
@@ -3550,7 +3549,9 @@ namespace Photon.Realtime
             {
                 target.OnCreateRoomFailed(returnCode, message);
             }
-            StopWaitCreateRoomFailed.Set();
+
+            EventHandler handler = CreateRoomFailed;
+            handler?.Invoke(this, null);
         }
 
         public void OnJoinRandomFailed(short returnCode, string message)
@@ -3571,6 +3572,9 @@ namespace Photon.Realtime
             {
                 target.OnJoinRoomFailed(returnCode, message);
             }
+
+            EventHandler handler = JoinRoomFailed;
+            handler?.Invoke(this, null);
         }
 
         public void OnLeftRoom()
@@ -3581,6 +3585,9 @@ namespace Photon.Realtime
             {
                 target.OnLeftRoom();
             }
+
+            EventHandler handler = LeftRoom;
+            handler?.Invoke(this, null);
         }
 
         public void OnFriendListUpdate(List<FriendInfo> friendList)
