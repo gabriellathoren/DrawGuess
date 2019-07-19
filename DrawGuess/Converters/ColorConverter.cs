@@ -15,10 +15,10 @@ namespace DrawGuess.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            PlayersViewModel player = (PlayersViewModel) value;
+            Models.Player player = (Models.Player) value;
 
             if (player.Painter) { return "#33FFE600"; }
-            else if(player.Player.IsCurrentUser) { return "#33FFFFFF"; }
+            else if(player.IsCurrentUser) { return "#33FFFFFF"; }
             else { return ""; }
         }
 

@@ -46,8 +46,8 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private ObservableCollection<PlayersViewModel> players;
-        public ObservableCollection<PlayersViewModel> Players
+        private ObservableCollection<Player> players;
+        public ObservableCollection<Player> Players
         {
             get { return this.players; }
             set
@@ -82,7 +82,7 @@ namespace DrawGuess.ViewModels
 
         public GameViewModel()
         {
-            Players = new ObservableCollection<PlayersViewModel>();
+            Players = new ObservableCollection<Player>();
             Guess = new ObservableCollection<string>();
             User = (App.Current as App).User;
         }

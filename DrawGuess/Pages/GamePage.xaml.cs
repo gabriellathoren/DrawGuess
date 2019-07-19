@@ -1,5 +1,6 @@
 ﻿using DrawGuess.Models;
 using DrawGuess.ViewModels;
+using Photon.Realtime;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -7,8 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,7 +27,7 @@ namespace DrawGuess.Pages
     {
         public GameViewModel ViewModel { get; set; }
         private Random Random = new Random();
-
+        private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
 
         public GamePage()
         {
@@ -36,6 +39,77 @@ namespace DrawGuess.Pages
                 Windows.UI.Core.CoreInputDeviceTypes.Mouse |
                 Windows.UI.Core.CoreInputDeviceTypes.Pen;
 
+            //Listen to callbacks from Photon
+            LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
+            LoadBalancingClient.InRoomCallbackTargets.PlayerLeftRoom += PlayerLeftRoom;
+        }
+
+        private async void PlayerLeftRoom(object sender, EventArgs e)
+        {
+            try
+            {
+                Photon.Realtime.Player newPlayer = (Photon.Realtime.Player)sender;
+                Models.Player player = new Models.Player()
+                {
+                    UserId = newPlayer.UserId
+                };
+
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        RemovePlayer(player);
+                    });
+            }
+            catch (Exception)
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        ViewModel.ErrorMessage = "Could not update player list";
+                    });
+            }
+        }
+
+        private async void PlayerEnteredRoom(object sender, EventArgs e)
+        {
+            try
+            {
+                Photon.Realtime.Player newPlayer = (Photon.Realtime.Player)sender;
+                Models.Player player = new Models.Player()
+                {
+                    UserId = newPlayer.UserId,
+                    NickName = newPlayer.NickName,
+                    IsCurrentUser = false,
+                    Points = (int)newPlayer.CustomProperties["points"]
+                };
+
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        AddPlayer(player);
+                    });
+            }
+            catch (Exception)
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        ViewModel.ErrorMessage = "Could not update player list";
+                    });
+            }
+        }
+
+        public void AddPlayer(Models.Player player)
+        {
+            ViewModel.Players.Add(player);
+            SetPlacement();
+        }
+
+        public void RemovePlayer(Models.Player player)
+        {
+            Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
+            ViewModel.Players.Remove(p);
+            SetPlacement();
         }
 
         public void SetGame()
@@ -54,7 +128,7 @@ namespace DrawGuess.Pages
             {
                 Game.SetPlayerPoints(points);
             }
-            catch(Exception)
+            catch (Exception)
             {
                 ViewModel.ErrorMessage = "Could not set player points";
             }
@@ -64,13 +138,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                ObservableCollection<Player> players = Game.GetPlayers();
-
-                foreach (Player player in players)
-                {
-                    
-                    ViewModel.Players.Add(new PlayersViewModel(player));
-                }
+                ViewModel.Players = Game.GetPlayers();
             }
             catch (Exception e)
             {
@@ -141,16 +209,16 @@ namespace DrawGuess.Pages
 
         public void SetPlacement()
         {
-            ViewModel.Players = new ObservableCollection<PlayersViewModel>(ViewModel.Players.OrderBy(x => x.Player.Points).ToList());
+            ViewModel.Players = new ObservableCollection<Models.Player>(ViewModel.Players.OrderBy(x => x.Points).ToList());
 
             int placement = 1;
-            foreach (PlayersViewModel p in ViewModel.Players)
+            foreach (Models.Player p in ViewModel.Players)
             {
                 if (ViewModel.Players.IndexOf(p) == 0)
                 {
                     p.Placement = placement;
                 }
-                else if (p.Player.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Player.Points)
+                else if (p.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Points)
                 {
                     p.Placement = placement;
                 }
@@ -169,7 +237,7 @@ namespace DrawGuess.Pages
                 ViewModel.Game = Game.GetGame();
                 SetGame();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 ViewModel.ErrorMessage = ex.Message;
             }

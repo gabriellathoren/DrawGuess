@@ -22,42 +22,42 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private int placement;
-        public int Placement
-        {
-            get { return this.placement; }
-            set
-            {
-                this.placement = value;
-                this.OnPropertyChanged();
-            }
-        }
+        //private int placement;
+        //public int Placement
+        //{
+        //    get { return this.placement; }
+        //    set
+        //    {
+        //        this.placement = value;
+        //        this.OnPropertyChanged();
+        //    }
+        //}
 
-        private bool painter;
-        public bool Painter
-        {
-            get { return this.painter; }
-            set
-            {
-                this.painter = value;
-                this.OnPropertyChanged();
-            }
-        }
+        //private bool painter;
+        //public bool Painter
+        //{
+        //    get { return this.painter; }
+        //    set
+        //    {
+        //        this.painter = value;
+        //        this.OnPropertyChanged();
+        //    }
+        //}
 
-        private bool rightAnswer;
-        public bool RightAnswer
-        {
-            get { return this.rightAnswer; }
-            set
-            {
-                this.rightAnswer = value;
-                this.OnPropertyChanged();
-            }
-        }                
+        //private bool rightAnswer;
+        //public bool RightAnswer
+        //{
+        //    get { return this.rightAnswer; }
+        //    set
+        //    {
+        //        this.rightAnswer = value;
+        //        this.OnPropertyChanged();
+        //    }
+        //}                
 
         public PlayersViewModel(Player player)
         {
-            Placement = 0;
+            //Placement = 0;
             Player = player;
         }
 

@@ -69,6 +69,7 @@ namespace DrawGuess.Models
 
                     player.NickName = p.Value.NickName;
                     player.Points = (int)p.Value.CustomProperties["points"];
+                    player.UserId = p.Value.UserId;
 
                     players.Add(player);
                 }

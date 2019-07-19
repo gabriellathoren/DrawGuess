@@ -3612,6 +3612,8 @@ namespace Photon.Realtime
     /// </remarks>
     internal class InRoomCallbacksContainer : List<IInRoomCallbacks>, IInRoomCallbacks
     {
+        public event EventHandler PlayerEnteredRoom;
+        public event EventHandler PlayerLeftRoom;
 
         private HashSet<IInRoomCallbacks> targetsToAdd;
         private HashSet<IInRoomCallbacks> targetsToRemove;
@@ -3664,6 +3666,9 @@ namespace Photon.Realtime
             {
                 target.OnPlayerEnteredRoom(newPlayer);
             }
+
+            EventHandler handler = PlayerEnteredRoom;
+            handler?.Invoke(newPlayer, null);
         }
 
         public void OnPlayerLeftRoom(Player otherPlayer)
@@ -3674,6 +3679,9 @@ namespace Photon.Realtime
             {
                 target.OnPlayerLeftRoom(otherPlayer);
             }
+
+            EventHandler handler = PlayerLeftRoom;
+            handler?.Invoke(otherPlayer, null);
         }
 
         public void OnRoomPropertiesUpdate(Hashtable propertiesThatChanged)
