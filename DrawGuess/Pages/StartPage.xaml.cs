@@ -52,8 +52,28 @@ namespace DrawGuess.Pages
             LoadBalancingClient.MatchMakingCallbackTargets.JoinRoomFailed += JoinRoomFailed;
             LoadBalancingClient.LobbyCallbackTargets.UpdateRoomList += UpdateRoomList;
             
+            Connect();
             GetGames();
             SortGameList();
+        }
+
+        public void Connect()
+        {
+            //Connect user to Photon Cloud Server
+            GameEngine gameEngine = new GameEngine();
+            gameEngine.ConnectToMaster();
+
+            while (!gameEngine.connectedToPhoton)
+            {
+                Task.Delay(25);
+            }
+
+            //Connect user to the right lobby
+            gameEngine.ConnectToLobby();
+            while (!gameEngine.connectedToLobby)
+            {
+                Task.Delay(25);
+            }
         }
 
         private async void UpdateRoomList(object sender, EventArgs e)

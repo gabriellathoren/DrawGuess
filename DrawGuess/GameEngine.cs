@@ -45,8 +45,6 @@ namespace DrawGuess
                 throw new PhotonException("Could not authenticate user");
             }
 
-            //Start game loop to have continues connection to Photon
-            Task task = Task.Run((Action)GameLoop);
         }
 
         public void ConnectToLobby()

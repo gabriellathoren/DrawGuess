@@ -41,7 +41,7 @@
                     <TextBlock Grid.Column="0" Text="{x:Bind Name}" FontSize="14" HorizontalAlignment="Left" FontFamily="{StaticResource RobotoLight}"/>
                     <StackPanel Orientation="Horizontal" Grid.Column="2" >
                         <TextBlock Text="{x:Bind NumberOfPlayers}" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
-                        <TextBlock Text="/10" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
+                        <TextBlock Text="/8" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
                     </StackPanel>
                 </Grid>
 
@@ -64,7 +64,7 @@
                     <TextBlock Grid.Column="0" Text="{x:Bind Name}" FontSize="14" HorizontalAlignment="Left" FontFamily="{StaticResource RobotoLight}"/>
                     <StackPanel Orientation="Horizontal" Grid.Column="2" >
                         <TextBlock Text="{x:Bind NumberOfPlayers}" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
-                        <TextBlock Text="/10" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
+                        <TextBlock Text="/8" FontSize="14" HorizontalAlignment="Right" FontFamily="{StaticResource RobotoThin}"/>
                     </StackPanel>
                 </Grid>
 

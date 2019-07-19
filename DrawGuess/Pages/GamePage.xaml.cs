@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -172,23 +173,17 @@ namespace DrawGuess.Pages
             {
                 ViewModel.ErrorMessage = ex.Message;
             }
-
-        }
-
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            try
-            {
-                Game.LeaveGame();
-            }
-            catch(Exception ex)
-            {
-                ViewModel.ErrorMessage = ex.Message;
-            }
         }
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
+            Game.LeaveGame();
+
+            while (!Game.LeftRoom)
+            {
+                Task.Delay(TimeSpan.FromMilliseconds(100));
+            }
+
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
         }
 

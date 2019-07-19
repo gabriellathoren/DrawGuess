@@ -24,6 +24,9 @@ namespace DrawGuess.Models
         public string SecretWord { get; set; }
         public string RandomLetters { get; set; }
         public int Round { get; set; }
+        public static bool LeftRoom = false;
+
+        private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
 
         public int NumberOfPlayers
         {
@@ -31,12 +34,21 @@ namespace DrawGuess.Models
             set
             {
                 _numberOfPlayers = value;
-                if (this.NumberOfPlayers >= 10) { Full = true; }
+                if (this.NumberOfPlayers >= 8) { Full = true; }
                 else { Full = false; }
             }
         }
         private int _numberOfPlayers;
-        
+       
+        public Game()
+        {
+            LoadBalancingClient.MatchMakingCallbackTargets.LeftRoom += RoomLeft;
+        }
+
+        private void RoomLeft(object sender, EventArgs e)
+        {
+            LeftRoom = true;
+        }
 
         public static ObservableCollection<Player> GetPlayers()
         {
