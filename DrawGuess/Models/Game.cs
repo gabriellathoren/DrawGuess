@@ -193,6 +193,7 @@ namespace DrawGuess.Models
                         { "C0", 1 },
                         { "secret_word", "test" }
                     },
+                    CustomRoomPropertiesForLobby = new string[] { "C0" }, // this makes "C0" available in the lobby
                     PublishUserId = true,
                 }
             };
@@ -200,36 +201,6 @@ namespace DrawGuess.Models
             if (!(App.Current as App).LoadBalancingClient.OpCreateRoom(roomParams))
             {
                 throw new PhotonException("Could not create room");
-            }
-            
-            //////////////////////////////////////////////////////////////////////////////////////////
-
-            //Add game to database
-            string query =
-                "INSERT INTO dbo.Game (Name) " +
-                "VALUES ('" + gameName + "')";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-                {
-                    conn.Open();
-
-                    SqlCommand cmd = new SqlCommand
-                    {
-                        CommandType = System.Data.CommandType.Text,
-                        CommandText = query,
-                        Connection = conn
-                    };
-
-                    cmd.ExecuteNonQuery();
-
-                    conn.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
             }
         }
 
