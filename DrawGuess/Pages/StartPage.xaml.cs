@@ -68,14 +68,12 @@ namespace DrawGuess.Pages
                 Task.Delay(25);
             }
 
-            
-
-            ////Connect user to the right lobby
-            //gameEngine.ConnectToLobby();
-            //while (!gameEngine.connectedToLobby)
-            //{
-            //    Task.Delay(25);
-            //}
+            //Connect user to the right lobby
+            gameEngine.ConnectToLobby();
+            while (!gameEngine.connectedToLobby)
+            {
+                Task.Delay(25);
+            }
         }
 
         private async void UpdateRoomList(object sender, EventArgs e)

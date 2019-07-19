@@ -24,7 +24,7 @@ namespace DrawGuess.Models
         public string SecretWord { get; set; }
         public string RandomLetters { get; set; }
         public int Round { get; set; }
-        public static bool LeftRoom = false;
+        public bool LeftRoom = false;
 
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
 
@@ -251,7 +251,7 @@ namespace DrawGuess.Models
             }
         }
 
-        public static void LeaveGame()
+        public void LeaveGame()
         {
             try
             {

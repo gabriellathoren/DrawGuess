@@ -177,9 +177,9 @@ namespace DrawGuess.Pages
 
         private void Quit_Click(object sender, RoutedEventArgs e)
         {
-            Game.LeaveGame();
+            ViewModel.Game.LeaveGame();
 
-            while (!Game.LeftRoom)
+            while (!ViewModel.Game.LeftRoom)
             {
                 Task.Delay(TimeSpan.FromMilliseconds(100));
             }

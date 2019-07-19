@@ -44,13 +44,16 @@ namespace DrawGuess
             {
                 throw new PhotonException("Could not authenticate user");
             }
-
         }
 
         public void ConnectToLobby()
         {
-            if(!LoadBalancingClient.OpJoinLobby(new TypedLobby("Lobby1", LobbyType.SqlLobby))) {
-                throw new PhotonException("Could not join lobby");
+            if (!LoadBalancingClient.InLobby)
+            {
+                if (!LoadBalancingClient.OpJoinLobby(new TypedLobby("Lobby1", LobbyType.SqlLobby)))
+                {
+                    throw new PhotonException("Could not join lobby");
+                }
             }
         }
 
