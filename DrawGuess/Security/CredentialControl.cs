@@ -15,7 +15,7 @@ using DrawGuess.Exceptions;
 
 namespace DrawGuess.Security
 {
-    public class CredentialControl //: MonoBehaviour
+    public class CredentialControl 
     {
         private static bool _running = true;
 
@@ -77,6 +77,13 @@ namespace DrawGuess.Security
                 gameEngine.ConnectToMaster();
 
                 while(!gameEngine.connectedToPhoton)
+                {
+                    await Task.Delay(25);
+                }
+
+                //Connect user to the right lobby
+                gameEngine.ConnectToLobby();
+                while (!gameEngine.connectedToLobby)
                 {
                     await Task.Delay(25);
                 }

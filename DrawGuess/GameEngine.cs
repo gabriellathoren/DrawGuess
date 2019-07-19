@@ -12,12 +12,19 @@ namespace DrawGuess
     {
 
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
-        public bool connectedToPhoton = false; 
+        public bool connectedToPhoton = false;
+        public bool connectedToLobby = false;
 
         public GameEngine()
         {
             LoadBalancingClient.ConnectionCallbackTargets.ConnectedToMaster += ConnectedToMaster;
             LoadBalancingClient.ConnectionCallbackTargets.Disconnected += Disconnected;
+            LoadBalancingClient.LobbyCallbackTargets.JoinedLobby += JoinedLobby;
+        }
+
+        private void JoinedLobby(object sender, EventArgs e)
+        {
+            connectedToLobby = true;
         }
 
         private void ConnectedToMaster(object sender, EventArgs e)
@@ -40,6 +47,13 @@ namespace DrawGuess
 
             //Start game loop to have continues connection to Photon
             Task task = Task.Run((Action)GameLoop);
+        }
+
+        public void ConnectToLobby()
+        {
+            if(!LoadBalancingClient.OpJoinLobby(new TypedLobby("Lobby1", LobbyType.SqlLobby))) {
+                throw new PhotonException("Could not join lobby");
+            }
         }
 
         //Get and send updates to Photon 
