@@ -278,56 +278,21 @@ namespace DrawGuess.Models
             }
         }
 
-        public static ObservableCollection<Game> GetGames()
+        public static void GetGames()
         {
-            var games = new ObservableCollection<Game>();
-
             try
             {
                 //Get list of game rooms from Photon
-                (App.Current as App).LoadBalancingClient.OpGetGameList((App.Current as App).LoadBalancingClient.CurrentLobby, "C0=1");
+                if(!(App.Current as App).LoadBalancingClient.OpGetGameList(new TypedLobby("Lobby1", LobbyType.SqlLobby), "C0=1"))
+                {
+                    throw new PhotonException();
+                }
                 
             }
             catch(Exception)
             {
-                throw new PhotonException("");
+                throw new PhotonException("Could not get games");
             }
-
-            const string query = "SELECT Id, Name FROM dbo.Game";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == ConnectionState.Open)
-                    {
-                        using (SqlCommand cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = query;
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    games.Add(new Game()
-                                    {
-                                        Id = reader.GetInt32(0),
-                                        Name = reader.GetString(1),
-                                        NumberOfPlayers = GetNumberOfPlayers(reader.GetInt32(0))
-                                    });
-                                }
-                            }
-                        }
-                    }
-                    conn.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-            return games;
         }
     }
 }

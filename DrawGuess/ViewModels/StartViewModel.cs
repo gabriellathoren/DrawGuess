@@ -43,7 +43,7 @@ namespace DrawGuess.ViewModels
             set
             {
                 this.items = value;
-                this.OnPropertyChanged();
+                this.OnPropertyChanged(nameof(Items));
             }
         }
 

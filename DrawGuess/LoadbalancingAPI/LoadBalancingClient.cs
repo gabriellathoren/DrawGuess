@@ -3716,6 +3716,7 @@ namespace Photon.Realtime
     /// </remarks>
     internal class LobbyCallbacksContainer : List<ILobbyCallbacks>, ILobbyCallbacks
     {
+        public event EventHandler UpdateRoomList;
 
         private HashSet<ILobbyCallbacks> targetsToAdd;
         private HashSet<ILobbyCallbacks> targetsToRemove;
@@ -3787,6 +3788,9 @@ namespace Photon.Realtime
             {
                 target.OnRoomListUpdate(roomList);
             }
+
+            EventHandler handler = UpdateRoomList;
+            handler?.Invoke(roomList, null);
         }
 
         public void OnLobbyStatisticsUpdate(List<TypedLobbyInfo> lobbyStatistics)

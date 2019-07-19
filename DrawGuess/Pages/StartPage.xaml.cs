@@ -45,15 +45,37 @@ namespace DrawGuess.Pages
 
             this.InitializeComponent();
             this.ViewModel = new StartViewModel();
+            
             LoadBalancingClient = (App.Current as App).LoadBalancingClient;
-
             LoadBalancingClient.MatchMakingCallbackTargets.JoinedRoom += JoinedRoom;
             LoadBalancingClient.MatchMakingCallbackTargets.CreateRoomFailed += CreateRoomFailed;
             LoadBalancingClient.MatchMakingCallbackTargets.JoinRoomFailed += JoinRoomFailed;
-
-
+            LoadBalancingClient.LobbyCallbackTargets.UpdateRoomList += UpdateRoomList;
+            
             GetGames();
             SortGameList();
+        }
+
+        private async void UpdateRoomList(object sender, EventArgs e)
+        {
+            try
+            {
+                List<RoomInfo> rooms = (List<RoomInfo>)sender;
+                
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        SetGames(rooms);
+                    });
+            }
+            catch(Exception)
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        ViewModel.ErrorMessage = "Could not get games";
+                    });
+            }
         }
 
         private async void JoinedRoom(object sender, EventArgs e)
@@ -75,19 +97,44 @@ namespace DrawGuess.Pages
             ViewModel.ErrorMessage = "Could not join room";
         }
 
+        public void SetGames(List<RoomInfo> rooms)
+        {
+            try
+            {
+                var list = new ObservableCollection<Game>();
+
+                if (rooms.Count > 0)
+                {
+                    foreach (RoomInfo room in rooms)
+                    {
+                        list.Add(new Models.Game()
+                        {
+                            Name = room.Name,
+                            NumberOfPlayers = room.PlayerCount
+                        });
+                    }
+                }
+
+                list.Insert(0, new Game() { Id = -1 });
+
+                ViewModel.Items = list;
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not get games";
+            }
+        }
+
         public void GetGames()
         {
             try
             {
-                ViewModel.Items = Models.Game.GetGames();
-                ViewModel.Items.Insert(0, new Game()
-                {
-                    Id = -1
-                });
+                Models.Game.GetGames();
+                
             }
-            catch (Exception)
+            catch (Exception e)
             {
-
+                ViewModel.ErrorMessage = e.Message;
             }
         }
 
