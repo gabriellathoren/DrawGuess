@@ -67,6 +67,7 @@ namespace DrawGuess.Pages
 
                 foreach (Player player in players)
                 {
+                    
                     ViewModel.Players.Add(new PlayersViewModel(player));
                 }
             }

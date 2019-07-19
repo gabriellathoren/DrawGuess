@@ -18,7 +18,7 @@ namespace DrawGuess.Converters
             PlayersViewModel player = (PlayersViewModel) value;
 
             if (player.Painter) { return "#33FFE600"; }
-            else if(player.IsCurrentUser) { return "#33FFFFFF"; }
+            else if(player.Player.IsCurrentUser) { return "#33FFFFFF"; }
             else { return ""; }
         }
 

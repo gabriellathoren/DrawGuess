@@ -45,15 +45,20 @@ namespace DrawGuess.Models
             try
             {
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-
-
+                
                 foreach (var p in photonPlayers)
                 {
-                    players.Add(new Player()
+                    var player = new Player();
+
+                    if(p.Value.UserId.Equals((App.Current as App).LoadBalancingClient.LocalPlayer.UserId))
                     {
-                        NickName = p.Value.NickName,
-                        Points = (int) p.Value.CustomProperties["points"],
-                    });
+                        player.IsCurrentUser = true;
+                    }
+
+                    player.NickName = p.Value.NickName;
+                    player.Points = (int)p.Value.CustomProperties["points"];
+
+                    players.Add(player);
                 }
             }
             catch(Exception e)

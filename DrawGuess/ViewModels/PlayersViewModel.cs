@@ -53,24 +53,11 @@ namespace DrawGuess.ViewModels
                 this.rightAnswer = value;
                 this.OnPropertyChanged();
             }
-        }
-
-        private bool isCurrentUser;
-        public bool IsCurrentUser
-        {
-            get { return this.isCurrentUser; }
-            set
-            {
-                this.isCurrentUser = value;
-                this.OnPropertyChanged();
-            }
-        }
-                
+        }                
 
         public PlayersViewModel(Player player)
         {
             Placement = 0;
-            IsCurrentUser = false;
             Player = player;
         }
 

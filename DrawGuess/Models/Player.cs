@@ -10,6 +10,6 @@ namespace DrawGuess.Models
     {
         public string NickName { get; set; }
         public int Points { get; set; }
-
+        public bool IsCurrentUser { get; set; }
     }
 }
