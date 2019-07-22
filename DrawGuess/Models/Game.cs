@@ -239,10 +239,8 @@ namespace DrawGuess.Models
                     Round = (int)room.CustomProperties["round"],
                     RandomLetters = (string)room.CustomProperties["random_letters"],
                     SecretWord = (string)room.CustomProperties["secret_word"],
-                    
+                    Started = (bool)room.CustomProperties["started"]
                 };
-
-                var Started = (string) room.CustomProperties["started"];
 
                 return game;
             }
