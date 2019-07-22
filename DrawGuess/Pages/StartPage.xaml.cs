@@ -163,7 +163,6 @@ namespace DrawGuess.Pages
         public void SortGameList()
         {
             ViewModel.Items = new ObservableCollection<Game>(ViewModel.Items.OrderBy(x => x.Full).ToList());
-
         }
 
         private void GameList_Tapped(object sender, TappedRoutedEventArgs e)
@@ -177,6 +176,10 @@ namespace DrawGuess.Pages
                 {
                     gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
                     Models.Game.AddGame(gameName);
+                }
+                else if(game.Full)
+                {
+                    return; //Do not do anything if game is full
                 }
                 else
                 {

@@ -14,7 +14,7 @@
 
     <Page.Resources>
 
-        <DataTemplate x:DataType="Models:Game" x:Name="NewGame">
+        <DataTemplate x:DataType="Models:Game" x:Name="NewGame" >
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Start new game" FontSize="14" FontFamily="{StaticResource RobotoLight}"/>
                 <Grid Height="170" Width="170" Margin="-4,0,-4,0">
