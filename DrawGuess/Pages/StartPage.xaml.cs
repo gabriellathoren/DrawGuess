@@ -127,6 +127,8 @@ namespace DrawGuess.Pages
                 {
                     foreach (RoomInfo room in rooms)
                     {
+                        if(room.PlayerCount < 1) { continue; } //Don't show rooms that has no players
+
                         list.Add(new Models.Game()
                         {
                             Name = room.Name,

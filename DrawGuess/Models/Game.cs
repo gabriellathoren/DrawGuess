@@ -204,8 +204,10 @@ namespace DrawGuess.Models
                     CustomRoomProperties = new Hashtable() {
                         { "round", 1 },
                         { "C0", 1 },
-                        { "secret_word", "test" }
+                        { "secret_word", "test" },
                     },
+                    EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
+                    PlayerTtl = 30000, //Keep actor in room 30 seconds after it was disconnected  
                     CustomRoomPropertiesForLobby = new string[] { "C0" }, // this makes "C0" available in the lobby
                     PublishUserId = true,
                 }
