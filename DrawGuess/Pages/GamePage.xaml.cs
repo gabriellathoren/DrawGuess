@@ -101,15 +101,29 @@ namespace DrawGuess.Pages
 
         public void AddPlayer(Models.Player player)
         {
-            ViewModel.Players.Add(player);
-            SetPlacement();
+            try
+            {
+                ViewModel.Players.Add(player);
+                SetPlacement();
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not add player properly";
+            }
         }
 
         public void RemovePlayer(Models.Player player)
         {
-            Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
-            ViewModel.Players.Remove(p);
-            SetPlacement();
+            try
+            {
+                Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
+                ViewModel.Players.Remove(p);
+                SetPlacement();
+            }
+            catch (Exception)
+            {
+                ViewModel.ErrorMessage = "Could not remove player properly";
+            }
         }
 
         public void SetGame()
