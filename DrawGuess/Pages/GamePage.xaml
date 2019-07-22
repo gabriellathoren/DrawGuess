@@ -95,7 +95,7 @@
                 <TextBlock Text="GAME" FontFamily="{StaticResource RobotoLight}" FontSize="10" Margin="0,0,2,0"/>
                 <TextBlock Text="{x:Bind ViewModel.Game.Name}" FontFamily="{StaticResource RobotoLight}" FontSize="10"/>
             </StackPanel>
-            <ListView x:Name="PlayerList" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Players}" Margin="0,10,0,10" HorizontalContentAlignment="Stretch">
+            <ListView x:Name="PlayerList" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" Margin="0,10,0,10" HorizontalContentAlignment="Stretch">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
