@@ -44,6 +44,7 @@ namespace DrawGuess.Pages
             LoadBalancingClient.InRoomCallbackTargets.PlayerLeftRoom += PlayerLeftRoom;
         }
 
+        //Listener for player leaving room
         private async void PlayerLeftRoom(object sender, EventArgs e)
         {
             try
@@ -70,6 +71,7 @@ namespace DrawGuess.Pages
             }
         }
 
+        //Listener for player entering room
         private async void PlayerEnteredRoom(object sender, EventArgs e)
         {
             try
@@ -105,6 +107,7 @@ namespace DrawGuess.Pages
             {
                 ViewModel.Players.Add(player);
                 SetPlacement();
+                SetGame();
             }
             catch(Exception)
             {
@@ -119,6 +122,7 @@ namespace DrawGuess.Pages
                 Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
                 ViewModel.Players.Remove(p);
                 SetPlacement();
+                SetGame();
             }
             catch (Exception)
             {
@@ -128,12 +132,51 @@ namespace DrawGuess.Pages
 
         public void SetGame()
         {
-            SetPlayerPoints(0);
             SetPlayers();
             SetPlacement();
-            SetSecretWord();
-            SetHint();
+
+            //Start game if there are 2 or more players 
+            if (ViewModel.Players.Count > 2 && !ViewModel.Game.Started)
+            {
+                StartGame();
+
+            }
+            //Stop game if there are less players than two
+            else if(ViewModel.Players.Count < 2 && ViewModel.Game.Started)
+            {
+                StopGame();
+            }
+        }
+
+        public void StopGame()
+        {
+            try
+            {
+                ViewModel.Game.Started = false;
+                Game.StopGame();
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not stop game properly";
+            }
+        }
+
+        public void StartGame()
+        {            
+            try
+            {
+                ViewModel.Game.Started = true;
+                Game.StartGame();
+                //SetHint();
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not start game";
+            }
+            //SetSecretWord();
+            //
             //SetRandomLetters(); 
+
         }
 
         public void SetPlayerPoints(int points)
@@ -220,7 +263,7 @@ namespace DrawGuess.Pages
                 ViewModel.Guess.Add("");
             }
         }
-
+        
         public void SetPlacement()
         {
             ViewModel.Players = new ObservableCollection<Models.Player>(ViewModel.Players.OrderBy(x => x.Points).ToList());
@@ -248,7 +291,8 @@ namespace DrawGuess.Pages
         {
             try
             {
-                ViewModel.Game = Game.GetGame();
+                ViewModel.Game = Game.GetGame();                
+                SetPlayerPoints(0); //Set player's point to 0
                 SetGame();
             }
             catch (Exception ex)

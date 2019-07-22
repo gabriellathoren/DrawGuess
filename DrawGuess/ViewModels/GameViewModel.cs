@@ -35,6 +35,7 @@ namespace DrawGuess.ViewModels
             }
         }
 
+
         private string errorMessage;
         public string ErrorMessage
         {

@@ -16,6 +16,8 @@ using System.Threading.Tasks;
 
 namespace DrawGuess.Models
 {
+    enum EventCode : byte { StartGame = 1 };
+
     public class Game
     {
         public int Id { get; set; }
@@ -24,6 +26,7 @@ namespace DrawGuess.Models
         public string SecretWord { get; set; }
         public string RandomLetters { get; set; }
         public int Round { get; set; }
+        public bool Started { get; set; }
         public bool LeftRoom = false;
 
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
@@ -80,41 +83,6 @@ namespace DrawGuess.Models
             }
             
             return players;
-        }
-
-        public static int GetNumberOfPlayers(int id)
-        {
-            string query = "SELECT COUNT(*) FROM dbo.GamePlayer WHERE GameId = " + id;
-            int numberOfPlayers = 0;
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == ConnectionState.Open)
-                    {
-                        using (SqlCommand cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = query;
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    numberOfPlayers = reader.GetInt32(0);
-                                }
-                            }
-                        }
-                    }
-                    conn.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-            return numberOfPlayers;
         }
 
         public static string RandomizeRoomName(ObservableCollection<Game> currentGames)
@@ -183,6 +151,32 @@ namespace DrawGuess.Models
             } 
         }
 
+        public static void StartGame()
+        {
+            //Change game status to started
+            Hashtable customProperties = new Hashtable() { { "started", true } };
+            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+
+            bool success = (App.Current as App).LoadBalancingClient.OpRaiseEvent(
+                (byte) EventCode.StartGame, 
+                (App.Current as App).LoadBalancingClient.CurrentRoom.Name, 
+                new RaiseEventOptions() { Receivers = ReceiverGroup.All },
+                new SendOptions() { Reliability = true }
+            );
+
+            if(!success)
+            {
+                throw new PhotonException("Could not start game");
+            }
+        }
+
+        public static void StopGame()
+        {
+            //Change game status to stopped
+            Hashtable customProperties = new Hashtable() { { "started", false } };
+            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+        }
+
         public static void SetPlayerPoints(int points)
         {
             Hashtable customProperties = new Hashtable() { { "points", points } }; 
@@ -205,6 +199,7 @@ namespace DrawGuess.Models
                         { "round", 1 },
                         { "C0", 1 },
                         { "secret_word", "test" },
+                        { "started", false }
                     },
                     EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
                     PlayerTtl = 30000, //Keep actor in room 30 seconds after it was disconnected  
@@ -226,9 +221,9 @@ namespace DrawGuess.Models
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
                 return (string)room.CustomProperties["secret_word"];
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                throw new PhotonException("Could not get secret word");
+                throw new PhotonException("Could not get secret word", e);
             }
         }
 
@@ -243,14 +238,17 @@ namespace DrawGuess.Models
                     Name = room.Name,
                     Round = (int)room.CustomProperties["round"],
                     RandomLetters = (string)room.CustomProperties["random_letters"],
-                    SecretWord = (string)room.CustomProperties["secret_word"]
+                    SecretWord = (string)room.CustomProperties["secret_word"],
+                    
                 };
+
+                var Started = (string) room.CustomProperties["started"];
 
                 return game;
             }
-            catch(Exception)
+            catch(Exception e)
             {
-                throw new PhotonException("Could not get game");
+                throw new PhotonException("Could not get game", e);
             }
         }
 
