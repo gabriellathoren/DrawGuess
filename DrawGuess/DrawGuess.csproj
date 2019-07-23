@@ -167,6 +167,8 @@
     <Compile Include="Models\Game.cs" />
     <Compile Include="Security\CredentialControl.cs" />
     <Compile Include="Security\Crypting.cs" />
+    <Compile Include="TemplateSelectors\GameDataTemplateSelector.cs" />
+    <Compile Include="TemplateSelectors\LetterTemplateSelector.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\NavigationViewModel.cs" />

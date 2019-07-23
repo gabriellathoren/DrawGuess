@@ -47,7 +47,7 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = "The old password is incorrect";
                 return false; 
             }
-            catch (Exception e) {
+            catch (Exception) {
                 oldPasswordBox.BorderBrush = new SolidColorBrush(Colors.Red);
                 ViewModel.ErrorMessage = "Something went wrong, please try again later";
                 return false;

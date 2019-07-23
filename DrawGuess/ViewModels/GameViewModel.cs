@@ -58,6 +58,17 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private ObservableCollection<string> randomLetters;
+        public ObservableCollection<string> RandomLetters
+        {
+            get { return this.randomLetters; }
+            set
+            {
+                this.randomLetters = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<string> guess;
         public ObservableCollection<string> Guess
         {
@@ -85,6 +96,7 @@ namespace DrawGuess.ViewModels
         {
             Players = new ObservableCollection<Player>();
             Guess = new ObservableCollection<string>();
+            RandomLetters = new ObservableCollection<string>();
             User = (App.Current as App).User;
         }
 

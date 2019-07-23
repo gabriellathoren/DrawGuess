@@ -257,6 +257,16 @@ namespace DrawGuess.Pages
             try
             {
                 ViewModel.Game.RandomLetters = Models.Game.GetRandomLetters();
+
+                var letters = new ObservableCollection<string>();
+
+                //Set hinting boxes based on number of letters in secret word
+                for (int i = 0; i < ViewModel.Game.RandomLetters.Length; i++)
+                {
+                    letters.Add(ViewModel.Game.RandomLetters[i].ToString());
+                }
+
+                ViewModel.RandomLetters = letters;
             }
             catch (Exception e)
             {
@@ -266,11 +276,22 @@ namespace DrawGuess.Pages
 
         public void SetHint()
         {
+            var hint = new ObservableCollection<string>();
+
             //Set hinting boxes based on number of letters in secret word
             for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
             {
-                ViewModel.Guess.Add("");
+                if(ViewModel.Game.SecretWord[i].ToString().Equals(" "))
+                {
+                    hint.Add(" ");
+                }
+                else
+                {
+                    hint.Add("");
+                }                
             }
+
+            ViewModel.Guess = hint;
         }
         
         public void SetPlacement()

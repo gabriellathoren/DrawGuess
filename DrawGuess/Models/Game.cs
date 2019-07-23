@@ -89,7 +89,7 @@ namespace DrawGuess.Models
             }
             catch (Exception e)
             {
-                throw new PhotonException("Could not get players");
+                throw new PhotonException("Could not get players", e);
             }
 
             return players;

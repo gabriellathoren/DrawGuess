@@ -5,6 +5,7 @@
     xmlns:local="using:DrawGuess"
     xmlns:Models="using:DrawGuess.Models"
     xmlns:pages="using:DrawGuess.Pages"
+    xmlns:TemplateSelectors="using:DrawGuess.TemplateSelectors"
     xmlns:controls="using:DrawGuess.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -120,7 +121,7 @@
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
                 <GridView.ItemTemplateSelector >
-                    <pages:GameDataTemplateSelector FullGameTemplate="{StaticResource FullGame}" NewGameTemplate="{StaticResource NewGame}" GameTemplate="{StaticResource Game}"  />
+                    <TemplateSelectors:GameDataTemplateSelector FullGameTemplate="{StaticResource FullGame}" NewGameTemplate="{StaticResource NewGame}" GameTemplate="{StaticResource Game}"  />
                 </GridView.ItemTemplateSelector>
             </GridView>
         </Grid>
