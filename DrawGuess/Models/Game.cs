@@ -100,6 +100,31 @@ namespace DrawGuess.Models
                 throw new PhotonException("Could not join room");
             }
         }
+
+        //public static void NewRound(int round, ObservableCollection<Player> players)
+        //{
+        //    try
+        //    {
+        //        //Get secret word and random letters for the hint
+        //        string secretWord = WordHelper.RandomizeSecretWord();
+        //        string randomLetters = WordHelper.SetRandomLetters(secretWord);
+                
+        //        Hashtable customProperties = new Hashtable() {
+        //            { "secret_word", secretWord }, //Secret word
+        //            { "random_letters", randomLetters }, //Set random letters
+        //            { "round", round}, //Set round
+        //        };
+        //        (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+                
+        //        //Set current user to painter
+        //        Hashtable playerProperties = new Hashtable() { { "painter", true } };
+        //        (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        throw new PhotonException("Could not start game", e);
+        //    }
+        //}
         
         public static void StartGame()
         {
@@ -125,7 +150,6 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not start game", e);
             }
-
         }
 
         public static void StopGame()
@@ -180,6 +204,19 @@ namespace DrawGuess.Models
             catch (Exception e)
             {
                 throw new PhotonException("Could not get secret word", e);
+            }
+        }
+
+        public static string GetRandomLetters()
+        {
+            try
+            {
+                Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
+                return (string)room.CustomProperties["random_letters"];
+            }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not get random letters", e);
             }
         }
 

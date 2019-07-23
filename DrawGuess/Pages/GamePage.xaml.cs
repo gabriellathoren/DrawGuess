@@ -45,7 +45,7 @@ namespace DrawGuess.Pages
             LoadBalancingClient.InRoomCallbackTargets.RoomPropertiesUpdate += RoomPropertiesUpdate;
         }
 
-        //Listener for player leaving room
+        //Listener for room changes
         private async void RoomPropertiesUpdate(object sender, EventArgs e)
         {
             try
@@ -53,7 +53,7 @@ namespace DrawGuess.Pages
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        GetGame();
+                        UpdateGame();
                     });
             }
             catch (Exception)
@@ -154,7 +154,7 @@ namespace DrawGuess.Pages
 
         public void SetGame()
         {
-            SetPlayers();
+            GetPlayers();
             SetPlacement();
 
             //Start game if there are 2 or more players 
@@ -168,6 +168,13 @@ namespace DrawGuess.Pages
             {
                 StopGame();
             }
+        }
+
+        public void UpdateGame()
+        {
+            GetSecretWord();
+            SetHint();
+            GetRandomLetters();
         }
 
         public void StopGame()
@@ -188,10 +195,7 @@ namespace DrawGuess.Pages
             try
             {
                 ViewModel.Game.Started = true;
-                Game.StartGame();
-                //SetSecretWord();
-                //SetHint();
-                //SetRandomLetters();
+                Game.StartGame();                
             }
             catch(Exception)
             {
@@ -212,7 +216,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void SetPlayers()
+        public void GetPlayers()
         {
             try
             {
@@ -224,7 +228,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void SetSecretWord()
+        public void GetSecretWord()
         {
             try
             {
@@ -235,7 +239,31 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = e.Message;
             }
         }
-        
+
+        public void SetPainter()
+        {
+            try
+            {
+                
+            }
+            catch(Exception e)
+            {
+                ViewModel.ErrorMessage = e.Message;
+            }
+        }
+
+        public void GetRandomLetters()
+        {
+            try
+            {
+                ViewModel.Game.RandomLetters = Models.Game.GetRandomLetters();
+            }
+            catch (Exception e)
+            {
+                ViewModel.ErrorMessage = e.Message;
+            }
+        }
+
         public void SetHint()
         {
             //Set hinting boxes based on number of letters in secret word
