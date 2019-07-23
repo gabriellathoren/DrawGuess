@@ -72,8 +72,17 @@ namespace DrawGuess.Models
                     }
 
                     player.NickName = p.Value.NickName;
-                    player.Points = (int)p.Value.CustomProperties["points"];
                     player.UserId = p.Value.UserId;
+
+
+                    if(p.Value.CustomProperties.ContainsKey("points"))
+                    {
+                        player.Points = (int)p.Value.CustomProperties["points"];
+                    }
+                    else
+                    {
+                        player.Points = 0;
+                    }
 
                     players.Add(player);
                 }
@@ -229,11 +238,21 @@ namespace DrawGuess.Models
                 Game game = new Game()
                 {
                     Name = room.Name,
-                    Round = (int)room.CustomProperties["round"],
-                    RandomLetters = (string)room.CustomProperties["random_letters"],
-                    SecretWord = (string)room.CustomProperties["secret_word"],
                     Started = (bool)room.CustomProperties["started"]
                 };
+
+                if(room.CustomProperties.ContainsKey("round"))
+                {
+                    game.Round = (int)room.CustomProperties["round"];
+                }
+                if(room.CustomProperties.ContainsKey("random_letters"))
+                {
+                    game.RandomLetters = (string)room.CustomProperties["random_letters"];
+                }
+                if(room.CustomProperties.ContainsKey("secret_word"))
+                {
+                    game.SecretWord = (string)room.CustomProperties["secret_word"];
+                }   
 
                 return game;
             }

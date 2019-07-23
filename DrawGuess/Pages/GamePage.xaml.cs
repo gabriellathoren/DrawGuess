@@ -311,11 +311,13 @@ namespace DrawGuess.Pages
             }
             catch (Exception ex)
             {
+                //Show error message and navgate back to start page
                 ViewModel.ErrorMessage = ex.Message;
+                Quit();
             }
         }
 
-        private void Quit_Click(object sender, RoutedEventArgs e)
+        private void Quit()
         {
             ViewModel.Game.LeaveGame();
 
@@ -325,6 +327,11 @@ namespace DrawGuess.Pages
             }
 
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
+        }
+
+        private void Quit_Click(object sender, RoutedEventArgs e)
+        {
+            Quit();
         }
 
     }
