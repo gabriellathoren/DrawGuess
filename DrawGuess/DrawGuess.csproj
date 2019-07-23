@@ -223,6 +223,11 @@
     <Content Include="Assets\Components\close.scale-150.png" />
     <Content Include="Assets\Components\close.scale-200.png" />
     <Content Include="Assets\Components\close.scale-400.png" />
+    <Content Include="Assets\Components\colorsplash.scale-100.png" />
+    <Content Include="Assets\Components\colorsplash.scale-125.png" />
+    <Content Include="Assets\Components\colorsplash.scale-150.png" />
+    <Content Include="Assets\Components\colorsplash.scale-200.png" />
+    <Content Include="Assets\Components\colorsplash.scale-300.png" />
     <Content Include="Assets\Components\letter.scale-100.png" />
     <Content Include="Assets\Components\letter.scale-125.png" />
     <Content Include="Assets\Components\letter.scale-150.png" />
