@@ -27,9 +27,10 @@ namespace DrawGuess.Models
         public string SecretWord { get; set; }
         public string RandomLetters { get; set; }
         public int Round { get; set; }
-        public bool Started { get; set; }
-        public bool LeftRoom = false;
+        public bool WaitingMode { get; set; }
 
+        public bool LeftRoom = false;
+        
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
 
         public int NumberOfPlayers
@@ -43,6 +44,18 @@ namespace DrawGuess.Models
             }
         }
         private int _numberOfPlayers;
+
+        public bool Started
+        {
+            get { return _started; }
+            set
+            {
+                _started = value;
+                if (!this.Started) { WaitingMode = true; }
+                else { WaitingMode = false; }
+            }
+        }
+        private bool _started;
 
         public Game()
         {

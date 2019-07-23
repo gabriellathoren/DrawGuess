@@ -161,7 +161,7 @@ namespace DrawGuess.Pages
             if (ViewModel.Players.Count > 1 && !ViewModel.Game.Started)
             {
                 StartGame();
-
+                return;
             }
             //Stop game if there are less players than two
             else if(ViewModel.Players.Count < 2 && ViewModel.Game.Started)

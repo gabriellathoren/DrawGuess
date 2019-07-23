@@ -14,8 +14,12 @@ namespace DrawGuess.Converters
         {
             bool boolValue = (bool) value;
 
-            if(boolValue) { return Visibility.Visible; }
-            else { return Visibility.Collapsed; }
+            if(boolValue) {
+                return Visibility.Visible;
+            }
+            else {
+                return Visibility.Collapsed;
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

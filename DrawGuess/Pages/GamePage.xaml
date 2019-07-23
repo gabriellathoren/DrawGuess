@@ -21,11 +21,11 @@
                 <Image Source="/Assets/Components/missing_letter.png" Width="44" Margin="4,0,4,0"/>
             </Grid>
         </DataTemplate>
-        
+
         <DataTemplate x:DataType="x:String" x:Name="SpacingTemplate">
             <Grid x:Name="Spacing" Width="44" Margin="4,0,4,0"/>
         </DataTemplate>
-        
+
         <DataTemplate x:DataType="x:String" x:Name="LetterTemplate">
             <Grid>
                 <Image Source="/Assets/Components/letter.png" Width="52"/>
@@ -34,13 +34,16 @@
         </DataTemplate>
     </Page.Resources>
 
+
+    <!-- View for started game -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Column="0" Margin="20">
+        <!-- View for game mode -->
+        <Grid Grid.Column="0" Margin="20" Visibility="{x:Bind ViewModel.Game.Started, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -66,7 +69,7 @@
 
             <GridView SelectionMode="None" Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
-                    <ItemsPanelTemplate>                        
+                    <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" />
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
@@ -77,13 +80,21 @@
             <GridView ItemTemplate="{StaticResource LetterTemplate}" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
-                        <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" />
+                        <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"  MaximumRowsOrColumns="10"/>
                     </ItemsPanelTemplate>
                 </GridView.ItemsPanel>
             </GridView>
 
         </Grid>
 
+
+        <!-- View for waiting mode -->
+        <Grid Grid.Column="0" Margin="20" Visibility="{x:Bind Path=ViewModel.Game.WaitingMode, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
+            <Image Source="/Assets/Components/colorsplash.png" Height="800"/>
+            <TextBlock Text="Waiting for other players to join..." FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        </Grid>
+        
+        <!-- Grid for players  -->
         <Grid Grid.Column="1" Padding="0,20,0,10">
             <Grid.Background>
                 <ImageBrush ImageSource="/Assets/Backgrounds/Background_Blurry.png"/>
@@ -150,4 +161,6 @@
             </StackPanel>
         </Grid>
     </Grid>
+
+
 </Page>
