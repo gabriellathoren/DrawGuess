@@ -1,4 +1,5 @@
 ﻿using DrawGuess.Exceptions;
+using DrawGuess.Helpers;
 using ExitGames.Client.Photon;
 using Photon.Realtime;
 using PlayFab;
@@ -16,7 +17,7 @@ using System.Threading.Tasks;
 
 namespace DrawGuess.Models
 {
-    enum EventCode : byte { StartGame = 1 };
+    enum EventCode : byte { StartGame = 1, StopGame, NewRound };
 
     public class Game
     {
@@ -42,7 +43,7 @@ namespace DrawGuess.Models
             }
         }
         private int _numberOfPlayers;
-       
+
         public Game()
         {
             LoadBalancingClient.MatchMakingCallbackTargets.LeftRoom += RoomLeft;
@@ -60,12 +61,12 @@ namespace DrawGuess.Models
             try
             {
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-                
+
                 foreach (var p in photonPlayers)
                 {
                     var player = new Player();
 
-                    if(p.Value.UserId.Equals((App.Current as App).LoadBalancingClient.LocalPlayer.UserId))
+                    if (p.Value.UserId.Equals((App.Current as App).LoadBalancingClient.LocalPlayer.UserId))
                     {
                         player.IsCurrentUser = true;
                     }
@@ -77,97 +78,54 @@ namespace DrawGuess.Models
                     players.Add(player);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new PhotonException("Could not get players");
             }
-            
+
             return players;
         }
 
-        public static string RandomizeRoomName(ObservableCollection<Game> currentGames)
-        {
-
-            string query = "SELECT Top 1 Name FROM GameNames ";
-
-            int counter = 1;
-            foreach (Game game in currentGames)
-            {
-                if (counter == 1)
-                {
-                    query += "WHERE Name != '" + game.Name + "' ";
-                }
-                else
-                {
-                    query += "AND Name != '" + game.Name + "' ";
-                }
-                counter++;
-            }
-
-            query += "ORDER BY NEWID()";
-
-            string randomGameName = "";
-
-            try
-            {
-                using (SqlConnection conn = new SqlConnection((App.Current as App).ConnectionString))
-                {
-                    conn.Open();
-                    if (conn.State == ConnectionState.Open)
-                    {
-                        using (SqlCommand cmd = conn.CreateCommand())
-                        {
-                            cmd.CommandText = query;
-                            using (SqlDataReader reader = cmd.ExecuteReader())
-                            {
-                                while (reader.Read())
-                                {
-                                    randomGameName = reader.GetString(0);
-                                }
-                            }
-                        }
-                    }
-                    conn.Close();
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-
-            return randomGameName;
-        }
+        
 
         public static void JoinGame(string gameName)
         {
             var roomParams = new EnterRoomParams()
             {
-                RoomName = gameName, 
+                RoomName = gameName,
             };
 
-            if(!(App.Current as App).LoadBalancingClient.OpJoinRoom(roomParams))
+            if (!(App.Current as App).LoadBalancingClient.OpJoinRoom(roomParams))
             {
                 throw new PhotonException("Could not join room");
-            } 
+            }
         }
-
+        
         public static void StartGame()
         {
-            //Change game status to started
-            Hashtable customProperties = new Hashtable() { { "started", true } };
-            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
-
-            bool success = (App.Current as App).LoadBalancingClient.OpRaiseEvent(
-                (byte) EventCode.StartGame, 
-                (App.Current as App).LoadBalancingClient.CurrentRoom.Name, 
-                new RaiseEventOptions() { Receivers = ReceiverGroup.All },
-                new SendOptions() { Reliability = true }
-            );
-
-            if(!success)
+            try
             {
-                throw new PhotonException("Could not start game");
+                //Get secret word and random letters for the hint
+                string secretWord = WordHelper.RandomizeSecretWord();
+                string randomLetters = WordHelper.SetRandomLetters(secretWord);
+
+                Hashtable customProperties = new Hashtable() {
+                    { "started", true }, //Change game status to started
+                    { "secret_word", secretWord }, //Secret word
+                    { "random_letters", randomLetters }, //Set random letters
+                    { "round", 1 }, //Set round
+                };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+
+                //Set current user to painter
+                Hashtable playerProperties = new Hashtable() { { "painter", true } };
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
             }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not start game", e);
+            }
+
         }
 
         public static void StopGame()
@@ -179,7 +137,7 @@ namespace DrawGuess.Models
 
         public static void SetPlayerPoints(int points)
         {
-            Hashtable customProperties = new Hashtable() { { "points", points } }; 
+            Hashtable customProperties = new Hashtable() { { "points", points } };
             (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
         }
 
@@ -196,9 +154,7 @@ namespace DrawGuess.Models
                     IsVisible = true,
                     IsOpen = true,
                     CustomRoomProperties = new Hashtable() {
-                        { "round", 1 },
                         { "C0", 1 },
-                        { "secret_word", "test" },
                         { "started", false }
                     },
                     EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
@@ -221,7 +177,7 @@ namespace DrawGuess.Models
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
                 return (string)room.CustomProperties["secret_word"];
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new PhotonException("Could not get secret word", e);
             }
@@ -244,7 +200,7 @@ namespace DrawGuess.Models
 
                 return game;
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw new PhotonException("Could not get game", e);
             }
@@ -254,7 +210,7 @@ namespace DrawGuess.Models
         {
             try
             {
-                if(!(App.Current as App).LoadBalancingClient.OpLeaveRoom(false))
+                if (!(App.Current as App).LoadBalancingClient.OpLeaveRoom(false))
                 {
                     throw new Exception();
                 }
@@ -270,13 +226,13 @@ namespace DrawGuess.Models
             try
             {
                 //Get list of game rooms from Photon
-                if(!(App.Current as App).LoadBalancingClient.OpGetGameList(new TypedLobby("Lobby1", LobbyType.SqlLobby), "C0=1"))
+                if (!(App.Current as App).LoadBalancingClient.OpGetGameList(new TypedLobby("Lobby1", LobbyType.SqlLobby), "C0=1"))
                 {
                     throw new PhotonException();
                 }
-                
+
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw new PhotonException("Could not get games");
             }

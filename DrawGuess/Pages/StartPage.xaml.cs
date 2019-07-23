@@ -1,4 +1,5 @@
-﻿using DrawGuess.Models;
+﻿using DrawGuess.Helpers;
+using DrawGuess.Models;
 using DrawGuess.ViewModels;
 using Photon.Realtime;
 using PlayFab;
@@ -174,7 +175,7 @@ namespace DrawGuess.Pages
 
                 if (game.Id.Equals(-1))
                 {
-                    gameName = Models.Game.RandomizeRoomName(ViewModel.Items);
+                    gameName = RoomHelper.RandomizeRoomName(ViewModel.Items);
                     Models.Game.AddGame(gameName);
                 }
                 else if(game.Full)

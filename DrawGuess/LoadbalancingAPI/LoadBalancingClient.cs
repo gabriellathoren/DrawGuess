@@ -3614,6 +3614,7 @@ namespace Photon.Realtime
     {
         public event EventHandler PlayerEnteredRoom;
         public event EventHandler PlayerLeftRoom;
+        public event EventHandler RoomPropertiesUpdate;
 
         private HashSet<IInRoomCallbacks> targetsToAdd;
         private HashSet<IInRoomCallbacks> targetsToRemove;
@@ -3692,6 +3693,9 @@ namespace Photon.Realtime
             {
                 target.OnRoomPropertiesUpdate(propertiesThatChanged);
             }
+
+            EventHandler handler = RoomPropertiesUpdate;
+            handler?.Invoke(propertiesThatChanged, null);
         }
 
         public void OnPlayerPropertiesUpdate(Player targetPlayer, Hashtable changedProp)

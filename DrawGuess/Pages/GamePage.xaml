@@ -53,7 +53,7 @@
                 <InkCanvas x:Name="InkCanvas" />
             </Grid>
 
-            <InkToolbar InitialControls="None" Background="Black"  TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2" EraseAllClicked="InkToolbar_EraseAllClicked">
+            <InkToolbar InitialControls="None" Background="Black"  TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2">
                 <InkToolbarEraserButton/>
                 <InkToolbarBallpointPenButton />
             </InkToolbar>

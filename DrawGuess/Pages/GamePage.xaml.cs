@@ -1,5 +1,6 @@
 ﻿using DrawGuess.Models;
 using DrawGuess.ViewModels;
+using ExitGames.Client.Photon;
 using Photon.Realtime;
 using System;
 using System.Collections.Generic;
@@ -26,7 +27,6 @@ namespace DrawGuess.Pages
     public sealed partial class GamePage : Page
     {
         public GameViewModel ViewModel { get; set; }
-        private Random Random = new Random();
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
 
         public GamePage()
@@ -42,6 +42,28 @@ namespace DrawGuess.Pages
             //Listen to callbacks from Photon
             LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
             LoadBalancingClient.InRoomCallbackTargets.PlayerLeftRoom += PlayerLeftRoom;
+            LoadBalancingClient.InRoomCallbackTargets.RoomPropertiesUpdate += RoomPropertiesUpdate;
+        }
+
+        //Listener for player leaving room
+        private async void RoomPropertiesUpdate(object sender, EventArgs e)
+        {
+            try
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        GetGame();
+                    });
+            }
+            catch (Exception)
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        ViewModel.ErrorMessage = "Could not update room";
+                    });
+            }
         }
 
         //Listener for player leaving room
@@ -136,7 +158,7 @@ namespace DrawGuess.Pages
             SetPlacement();
 
             //Start game if there are 2 or more players 
-            if (ViewModel.Players.Count > 2 && !ViewModel.Game.Started)
+            if (ViewModel.Players.Count > 1 && !ViewModel.Game.Started)
             {
                 StartGame();
 
@@ -167,15 +189,14 @@ namespace DrawGuess.Pages
             {
                 ViewModel.Game.Started = true;
                 Game.StartGame();
+                //SetSecretWord();
                 //SetHint();
+                //SetRandomLetters();
             }
             catch(Exception)
             {
                 ViewModel.ErrorMessage = "Could not start game";
             }
-            //SetSecretWord();
-            //
-            //SetRandomLetters(); 
 
         }
 
@@ -214,47 +235,7 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = e.Message;
             }
         }
-
-        //public void SetRandomLetters()
-        //{
-        //    //Get letters from secret word to add to hinting letters
-        //    for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
-        //    {
-        //        ViewModel.Game.RandomLetters.Add(ViewModel.Game.SecretWord[i].ToString());
-        //    }
-
-        //    //Add random letters
-        //    int noOfLetters = 15 - ViewModel.Game.SecretWord.Length;
-
-        //    for (int i = 0; i < noOfLetters; i++)
-        //    {
-        //        ViewModel.Game.RandomLetters.Add(GetRandomLetter());
-        //    }
-
-        //    //Randomize order of letters
-        //    Shuffle();
-        //}
-
-        //public void Shuffle()
-        //{
-        //    int n = ViewModel.Game.RandomLetters.Count;
-
-        //    while (n > 1)
-        //    {
-        //        n--;
-        //        int k = Random.Next(n + 1);
-        //        string value = ViewModel.Game.RandomLetters[k];
-        //        ViewModel.Game.RandomLetters[k] = ViewModel.Game.RandomLetters[n];
-        //        ViewModel.Game.RandomLetters[n] = value;
-        //    }
-        //}
-
-        //public string GetRandomLetter()
-        //{            
-        //    string st = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        //    return new string(Enumerable.Repeat(st, 1).Select(s => s[Random.Next(s.Length)]).ToArray());
-        //}
-
+        
         public void SetHint()
         {
             //Set hinting boxes based on number of letters in secret word
@@ -287,13 +268,18 @@ namespace DrawGuess.Pages
             }
         }
 
+        public void GetGame()
+        {
+            ViewModel.Game = Game.GetGame();
+            SetPlayerPoints(0);
+            SetGame();
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
             {
-                ViewModel.Game = Game.GetGame();                
-                SetPlayerPoints(0); //Set player's point to 0
-                SetGame();
+                GetGame();
             }
             catch (Exception ex)
             {
@@ -313,9 +299,5 @@ namespace DrawGuess.Pages
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
         }
 
-        private void InkToolbar_EraseAllClicked(InkToolbar sender, object args)
-        {
-
-        }
     }
 }
