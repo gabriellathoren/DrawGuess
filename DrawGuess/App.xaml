@@ -11,6 +11,7 @@
         <FontFamily x:Key="RobotoBold">/Assets/Fonts/Roboto-Bold.ttf#Roboto</FontFamily>
         <FontFamily x:Key="RobotoThin">/Assets/Fonts/Roboto-Thin.ttf#Roboto</FontFamily>
         <FontFamily x:Key="RobotoRegular">/Assets/Fonts/Roboto-Regular.ttf#Roboto</FontFamily>
+        <FontFamily x:Key="Akronim">/Assets/Fonts/Akronim-Regular.ttf#Akronim</FontFamily>
            
         <Style x:Key="PasswordBoxStyle" TargetType="PasswordBox">
             <Setter Property="Foreground" Value="{ThemeResource TextControlForeground}"/>

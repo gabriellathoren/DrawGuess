@@ -1,0 +1,20 @@
+﻿<UserControl
+    x:Class="DrawGuess.Controls.InfoView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:DrawGuess.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <!-- View for waiting mode -->
+    <Grid Grid.Column="0" Background="#80000000">
+        <Image Source="/Assets/Components/colorsplash.png" Height="800"/>
+        <TextBlock HorizontalTextAlignment="Center" FontFamily="{StaticResource Akronim}" Foreground="White" FontSize="{x:Bind Row1FontSize, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Run Text="{x:Bind Row1, Mode=OneWay}"/>
+        </TextBlock>
+        <TextBlock HorizontalTextAlignment="Center" FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="{x:Bind Row2FontSize, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
+            <Run Text="{x:Bind Row2, Mode=OneWay}"/>
+        </TextBlock>
+    </Grid>
+</UserControl>

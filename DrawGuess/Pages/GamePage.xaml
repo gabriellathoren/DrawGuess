@@ -5,6 +5,7 @@
     xmlns:local="using:DrawGuess"
     xmlns:ViewModels="using:DrawGuess.ViewModels"
     xmlns:Models="using:DrawGuess.Models"
+    xmlns:Controls="using:DrawGuess.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:Converter="using:DrawGuess.Converters"
@@ -34,16 +35,14 @@
         </DataTemplate>
     </Page.Resources>
 
-
-    <!-- View for started game -->
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-
+       
         <!-- View for game mode -->
-        <Grid Grid.Column="0" Margin="20" Visibility="{x:Bind ViewModel.Game.Started, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
+        <!--<Grid Grid.Column="0" Margin="20" Visibility="{x:Bind ViewModel.ShowGame, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -85,15 +84,15 @@
                 </GridView.ItemsPanel>
             </GridView>
 
-        </Grid>
+        </Grid>-->
 
+        <!-- View for info mode -->
+        <Controls:InfoView Grid.Column="0"/>
+        <!--   Mode="{x:Bind ViewModel.Game.Mode, Mode=OneWay}" 
+             
+            SpecificInfoToRow1="{x:Bind ViewModel.InfoViewRow1, Mode=OneWay}"
+            SpecificInfoToRow2="{x:Bind ViewModel.InfoViewRow2, Mode=OneWay}"/>-->
 
-        <!-- View for waiting mode -->
-        <Grid Grid.Column="0" Margin="20" Visibility="{x:Bind Path=ViewModel.Game.WaitingMode, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
-            <Image Source="/Assets/Components/colorsplash.png" Height="800"/>
-            <TextBlock Text="Waiting for other players to join..." FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="40" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        </Grid>
-        
         <!-- Grid for players  -->
         <Grid Grid.Column="1" Padding="0,20,0,10">
             <Grid.Background>

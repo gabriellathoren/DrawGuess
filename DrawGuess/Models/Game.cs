@@ -17,7 +17,14 @@ using System.Threading.Tasks;
 
 namespace DrawGuess.Models
 {
-    enum EventCode : byte { StartGame = 1, StopGame, NewRound };
+    public enum GameMode : int {
+        WaitingForPlayers = 1,
+        StartingGame,
+        StartingRound,
+        RevealingRoles, 
+        Playing, 
+        EndingGame
+    }
 
     public class Game
     {
@@ -27,7 +34,8 @@ namespace DrawGuess.Models
         public string SecretWord { get; set; }
         public string RandomLetters { get; set; }
         public int Round { get; set; }
-        public bool WaitingMode { get; set; }
+        public GameMode Mode { get; set; }
+        
 
         public bool LeftRoom = false;
         
@@ -45,17 +53,6 @@ namespace DrawGuess.Models
         }
         private int _numberOfPlayers;
 
-        public bool Started
-        {
-            get { return _started; }
-            set
-            {
-                _started = value;
-                if (!this.Started) { WaitingMode = true; }
-                else { WaitingMode = false; }
-            }
-        }
-        private bool _started;
 
         public Game()
         {
@@ -157,7 +154,7 @@ namespace DrawGuess.Models
                 string randomLetters = WordHelper.SetRandomLetters(secretWord);
 
                 Hashtable customProperties = new Hashtable() {
-                    { "started", true }, //Change game status to started
+                    { "mode", GameMode.StartingGame }, //Change game status to started
                     { "secret_word", secretWord }, //Secret word
                     { "random_letters", randomLetters }, //Set random letters
                     { "round", 1 }, //Set round
@@ -177,7 +174,7 @@ namespace DrawGuess.Models
         public static void StopGame()
         {
             //Change game status to stopped
-            Hashtable customProperties = new Hashtable() { { "started", false } };
+            Hashtable customProperties = new Hashtable() { { "mode", GameMode.WaitingForPlayers } };
             (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
         }
 
@@ -201,7 +198,7 @@ namespace DrawGuess.Models
                     IsOpen = true,
                     CustomRoomProperties = new Hashtable() {
                         { "C0", 1 },
-                        { "started", false }
+                        { "mode", GameMode.WaitingForPlayers }
                     },
                     EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
                     PlayerTtl = 30000, //Keep actor in room 30 seconds after it was disconnected  
@@ -216,12 +213,12 @@ namespace DrawGuess.Models
             }
         }
 
-        public static string GetSecretWord()
+        public static GameMode GetGameMode()
         {
             try
             {
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
-                return (string)room.CustomProperties["secret_word"];
+                return (GameMode)room.CustomProperties["mode"];
             }
             catch (Exception e)
             {
@@ -229,18 +226,6 @@ namespace DrawGuess.Models
             }
         }
 
-        public static string GetRandomLetters()
-        {
-            try
-            {
-                Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
-                return (string)room.CustomProperties["random_letters"];
-            }
-            catch (Exception e)
-            {
-                throw new PhotonException("Could not get random letters", e);
-            }
-        }
 
         public static Game GetGame()
         {
@@ -251,7 +236,7 @@ namespace DrawGuess.Models
                 Game game = new Game()
                 {
                     Name = room.Name,
-                    Started = (bool)room.CustomProperties["started"]
+                    Mode = (GameMode)room.CustomProperties["mode"]
                 };
 
                 if(room.CustomProperties.ContainsKey("round"))

@@ -47,6 +47,28 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private string infoViewRow1;
+        public string InfoViewRow1
+        {
+            get { return this.infoViewRow1; }
+            set
+            {
+                this.infoViewRow1 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private string infoViewRow2;
+        public string InfoViewRow2
+        {
+            get { return this.infoViewRow2; }
+            set
+            {
+                this.infoViewRow2 = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private ObservableCollection<Player> players;
         public ObservableCollection<Player> Players
         {
@@ -91,6 +113,20 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        public bool ShowInfoView { get; set; }
+
+        private bool showGame;
+        public bool ShowGame
+        {
+            get { return this.showGame; }
+            set
+            {
+                this.showGame = value;
+                ShowInfoView = !value;
+                this.OnPropertyChanged();
+            }
+        }
+
 
         public GameViewModel()
         {
@@ -98,6 +134,9 @@ namespace DrawGuess.ViewModels
             Guess = new ObservableCollection<string>();
             RandomLetters = new ObservableCollection<string>();
             User = (App.Current as App).User;
+            InfoViewRow1 = "";
+            InfoViewRow2 = "";
+            ShowGame = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

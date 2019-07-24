@@ -34,10 +34,6 @@ namespace DrawGuess.Pages
             this.InitializeComponent();
             ViewModel = new GameViewModel();
 
-            // Initialize the InkCanvas
-            InkCanvas.InkPresenter.InputDeviceTypes =
-                Windows.UI.Core.CoreInputDeviceTypes.Mouse |
-                Windows.UI.Core.CoreInputDeviceTypes.Pen;
 
             //Listen to callbacks from Photon
             LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
@@ -154,16 +150,35 @@ namespace DrawGuess.Pages
 
         public void SetGameMode()
         {
-            //Start game if there are 2 or more players 
-            if (ViewModel.Players.Count > 1 && !ViewModel.Game.Started)
+            try
             {
-                StartGame();
-                return;
+                //Start game if there are 2 or more players 
+                if (ViewModel.Players.Count > 1 && ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
+                {
+                    Game.StartGame();
+                    return;
+                }
+                //Stop game if there are less players than two
+                else if (ViewModel.Players.Count < 2 && !ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
+                {
+                    Game.StopGame();
+                }
             }
-            //Stop game if there are less players than two
-            else if(ViewModel.Players.Count < 2 && ViewModel.Game.Started)
+            catch(Exception)
             {
-                StopGame();
+                ViewModel.ErrorMessage = "Could not set game mode";
+            }
+        }
+
+        public void GetGameMode()
+        {
+            try
+            {
+                ViewModel.Game.Mode = Game.GetGameMode();
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not get game mode";
             }
         }
 
@@ -172,34 +187,7 @@ namespace DrawGuess.Pages
             GetPlayers();
             SetPlacement();
         }
-
-        public void StopGame()
-        {
-            try
-            {
-                ViewModel.Game.Started = false;
-                Game.StopGame();
-            }
-            catch(Exception)
-            {
-                ViewModel.ErrorMessage = "Could not stop game properly";
-            }
-        }
-
-        public void StartGame()
-        {            
-            try
-            {
-                ViewModel.Game.Started = true;
-                Game.StartGame();                
-            }
-            catch(Exception)
-            {
-                ViewModel.ErrorMessage = "Could not start game";
-            }
-
-        }
-
+               
         public void SetPlayerPoints(int points)
         {
             try
@@ -240,8 +228,6 @@ namespace DrawGuess.Pages
         {
             try
             {
-                ViewModel.Game.RandomLetters = Models.Game.GetRandomLetters();
-
                 var letters = new ObservableCollection<string>();
 
                 //Set hinting boxes based on number of letters in secret word
