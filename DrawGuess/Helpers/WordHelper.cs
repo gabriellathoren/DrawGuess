@@ -52,11 +52,12 @@ namespace DrawGuess.Helpers
             //Get letters from secret word to add to hinting letters
             for (int i = 0; i < secretWord.Length; i++)
             {
+                if (secretWord[i].Equals(" ")) { continue; }
                 randomLetters += secretWord[i].ToString();
             }
 
             //Add random letters
-            int noOfLetters = 20 - secretWord.Length;
+            int noOfLetters = 20 - secretWord.Replace(" ", "").Length;
 
             for (int i = 0; i < noOfLetters; i++)
             {
