@@ -90,7 +90,8 @@
         <Controls:InfoView Grid.Column="0"
             Mode="{x:Bind ViewModel.Game.Mode, Mode=OneWay}" 
             SpecificInfoToRow1="{x:Bind ViewModel.InfoViewRow1, Mode=OneWay}"
-            SpecificInfoToRow2="{x:Bind ViewModel.InfoViewRow2, Mode=OneWay}"/>
+            SpecificInfoToRow2="{x:Bind ViewModel.InfoViewRow2, Mode=OneWay}"
+            ShowSecretWord ="{x:Bind ViewModel.PainterView}"/>
 
         <!-- Grid for players  -->
         <Grid Grid.Column="1" Padding="0,20,0,10">

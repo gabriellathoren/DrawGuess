@@ -35,9 +35,7 @@ namespace DrawGuess.Pages
             ViewModel = new GameViewModel();
 
             // Initialize the InkCanvas
-            InkCanvas.InkPresenter.InputDeviceTypes =
-                Windows.UI.Core.CoreInputDeviceTypes.Mouse |
-                Windows.UI.Core.CoreInputDeviceTypes.Pen;
+            InkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen;
 
             //Listen to callbacks from Photon
             LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
@@ -166,11 +164,42 @@ namespace DrawGuess.Pages
                 {
                     Game.StopGame();
                 }
+                else
+                {
+                    switch(ViewModel.Game.Mode)
+                    {
+                        case GameMode.RevealingRoles:
+                            ViewModel.InfoViewRow1 = ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
+                            if(ViewModel.PainterView)
+                            {
+                                ViewModel.InfoViewRow2 = ViewModel.Game.SecretWord;
+                            }
+                            break;
+                        case GameMode.Playing:
+                            ViewModel.ShowInfoView = false;
+                            ViewModel.ShowGame = true; 
+                            break;
+                        case GameMode.StartingRound:
+                            ViewModel.InfoViewRow2 = ViewModel.Game.Round.ToString();
+                            break;
+                        case GameMode.EndingGame:
+                            ViewModel.InfoViewRow1 = GetWinners();
+                            break;
+                        default:
+                            break;
+                    }
+                }
             }
             catch(Exception)
             {
                 ViewModel.ErrorMessage = "Could not set game mode";
             }
+        }
+
+        public string GetWinners()
+        {
+            return "";
+            //ViewModel.Players.Where(x => x.Points).ToList();
         }
 
         public void StartGame()
