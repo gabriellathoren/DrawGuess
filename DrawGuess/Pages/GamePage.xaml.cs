@@ -53,7 +53,7 @@ namespace DrawGuess.Pages
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        UpdateGame();
+                        GetGame();
                     });
             }
             catch (Exception)
@@ -129,7 +129,7 @@ namespace DrawGuess.Pages
             {
                 ViewModel.Players.Add(player);
                 SetPlacement();
-                SetGame();
+                SetGameMode();
             }
             catch(Exception)
             {
@@ -144,7 +144,7 @@ namespace DrawGuess.Pages
                 Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
                 ViewModel.Players.Remove(p);
                 SetPlacement();
-                SetGame();
+                SetGameMode();
             }
             catch (Exception)
             {
@@ -152,11 +152,8 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void SetGame()
+        public void SetGameMode()
         {
-            GetPlayers();
-            SetPlacement();
-
             //Start game if there are 2 or more players 
             if (ViewModel.Players.Count > 1 && !ViewModel.Game.Started)
             {
@@ -170,11 +167,10 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void UpdateGame()
+        public void UpdatePlayerList()
         {
-            GetSecretWord();
-            SetHint();
-            GetRandomLetters();
+            GetPlayers();
+            SetPlacement();
         }
 
         public void StopGame()
@@ -221,18 +217,6 @@ namespace DrawGuess.Pages
             try
             {
                 ViewModel.Players = Game.GetPlayers();
-            }
-            catch (Exception e)
-            {
-                ViewModel.ErrorMessage = e.Message;
-            }
-        }
-
-        public void GetSecretWord()
-        {
-            try
-            {
-                ViewModel.Game.SecretWord = Models.Game.GetSecretWord();
             }
             catch (Exception e)
             {
@@ -319,16 +303,30 @@ namespace DrawGuess.Pages
 
         public void GetGame()
         {
-            ViewModel.Game = Game.GetGame();
-            SetPlayerPoints(0);
-            SetGame();
+            try
+            {
+                ViewModel.Game = Game.GetGame();
+
+                if(!string.IsNullOrEmpty(ViewModel.Game.SecretWord))
+                {
+                    SetHint();
+                    GetRandomLetters();
+                }
+
+                SetGameMode();                
+            }
+            catch(Exception e)
+            {
+                ViewModel.ErrorMessage = e.Message;
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
             {
-                GetGame();
+                UpdatePlayerList();
+                GetGame();                
             }
             catch (Exception ex)
             {
