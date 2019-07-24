@@ -42,7 +42,7 @@
         </Grid.ColumnDefinitions>
        
         <!-- View for game mode -->
-        <!--<Grid Grid.Column="0" Margin="20" Visibility="{x:Bind ViewModel.ShowGame, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
+        <Grid Grid.Column="0" Margin="20" Visibility="{x:Bind ViewModel.ShowGame, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="auto"/>
@@ -84,14 +84,13 @@
                 </GridView.ItemsPanel>
             </GridView>
 
-        </Grid>-->
+        </Grid>
 
         <!-- View for info mode -->
-        <Controls:InfoView Grid.Column="0"/>
-        <!--   Mode="{x:Bind ViewModel.Game.Mode, Mode=OneWay}" 
-             
+        <Controls:InfoView Grid.Column="0"
+            Mode="{x:Bind ViewModel.Game.Mode, Mode=OneWay}" 
             SpecificInfoToRow1="{x:Bind ViewModel.InfoViewRow1, Mode=OneWay}"
-            SpecificInfoToRow2="{x:Bind ViewModel.InfoViewRow2, Mode=OneWay}"/>-->
+            SpecificInfoToRow2="{x:Bind ViewModel.InfoViewRow2, Mode=OneWay}"/>
 
         <!-- Grid for players  -->
         <Grid Grid.Column="1" Padding="0,20,0,10">

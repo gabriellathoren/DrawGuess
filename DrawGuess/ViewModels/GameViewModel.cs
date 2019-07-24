@@ -35,7 +35,6 @@ namespace DrawGuess.ViewModels
             }
         }
 
-
         private string errorMessage;
         public string ErrorMessage
         {
@@ -113,7 +112,16 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        public bool ShowInfoView { get; set; }
+        private bool showInfoView;
+        public bool ShowInfoView
+        {
+            get { return this.showInfoView; }
+            set
+            {
+                this.showInfoView = value;
+                this.OnPropertyChanged();
+            }
+        }
 
         private bool showGame;
         public bool ShowGame
@@ -122,7 +130,6 @@ namespace DrawGuess.ViewModels
             set
             {
                 this.showGame = value;
-                ShowInfoView = !value;
                 this.OnPropertyChanged();
             }
         }
@@ -137,6 +144,7 @@ namespace DrawGuess.ViewModels
             InfoViewRow1 = "";
             InfoViewRow2 = "";
             ShowGame = false;
+            ShowInfoView = false;
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

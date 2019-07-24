@@ -34,6 +34,10 @@ namespace DrawGuess.Pages
             this.InitializeComponent();
             ViewModel = new GameViewModel();
 
+            // Initialize the InkCanvas
+            InkCanvas.InkPresenter.InputDeviceTypes =
+                Windows.UI.Core.CoreInputDeviceTypes.Mouse |
+                Windows.UI.Core.CoreInputDeviceTypes.Pen;
 
             //Listen to callbacks from Photon
             LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
@@ -155,8 +159,7 @@ namespace DrawGuess.Pages
                 //Start game if there are 2 or more players 
                 if (ViewModel.Players.Count > 1 && ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
                 {
-                    Game.StartGame();
-                    return;
+                    StartGame();
                 }
                 //Stop game if there are less players than two
                 else if (ViewModel.Players.Count < 2 && !ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
@@ -170,15 +173,15 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void GetGameMode()
+        public void StartGame()
         {
             try
             {
-                ViewModel.Game.Mode = Game.GetGameMode();
+                Game.StartGame();
             }
             catch(Exception)
             {
-                ViewModel.ErrorMessage = "Could not get game mode";
+                ViewModel.ErrorMessage = "Could not start game";
             }
         }
 
@@ -297,9 +300,7 @@ namespace DrawGuess.Pages
                 {
                     SetHint();
                     GetRandomLetters();
-                }
-
-                SetGameMode();                
+                }            
             }
             catch(Exception e)
             {
@@ -312,7 +313,8 @@ namespace DrawGuess.Pages
             try
             {
                 UpdatePlayerList();
-                GetGame();                
+                GetGame();
+                SetGameMode();
             }
             catch (Exception ex)
             {

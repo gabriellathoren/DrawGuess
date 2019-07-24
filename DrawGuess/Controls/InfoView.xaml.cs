@@ -143,17 +143,9 @@ namespace DrawGuess.Controls
                     Row1FontSize = 62;
                     Row1 = "Waiting for other players\r\nto join...";
                     break;
-                case GameMode.EndingGame:
-                    Row1FontSize = 62;
-                    Row1 = "Winner: " + SpecificInfoToRow1;
-                    break;
                 case GameMode.StartingGame:
                     Row1FontSize = 62;
                     Row1 = "Starting new game";
-                    break;
-                case GameMode.StartingRound:
-                    Row1FontSize = 62;
-                    Row1 = "ROUND " + SpecificInfoToRow1;
                     break;
                 case GameMode.RevealingRoles:
                     Row1FontSize = 62;
@@ -164,6 +156,14 @@ namespace DrawGuess.Controls
                         Row2 = "Secret word: " + SpecificInfoToRow2;
                         Row2FontSize = 40;
                     }
+                    break;
+                case GameMode.StartingRound:
+                    Row1FontSize = 62;
+                    Row1 = "ROUND " + SpecificInfoToRow1;
+                    break;                
+                case GameMode.EndingGame:
+                    Row1FontSize = 62;
+                    Row1 = "Winner: " + SpecificInfoToRow1;
                     break;
                 default:
                     break;
