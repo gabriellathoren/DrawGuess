@@ -145,7 +145,7 @@ namespace DrawGuess.Controls
                     break;
                 case GameMode.StartingGame:
                     Row1FontSize = 62;
-                    Row1 = "Starting new game";
+                    Row1 = "Starting new game...";
                     break;
                 case GameMode.RevealingRoles:
                     Row1FontSize = 62;

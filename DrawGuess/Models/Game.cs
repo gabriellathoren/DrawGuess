@@ -134,7 +134,7 @@ namespace DrawGuess.Models
                     { "random_letters", randomLetters }, //Set random letters
                     { "round", 1 }, //Set round
                 };
-                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
                 //Set current user to painter
                 Hashtable playerProperties = new Hashtable() { { "painter", true } };
