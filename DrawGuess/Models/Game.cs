@@ -13,6 +13,7 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace DrawGuess.Models
@@ -136,28 +137,34 @@ namespace DrawGuess.Models
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
-                var data = new Dictionary<string, object>() {
+                var data = new Hashtable() {
                     { "mode" , GameMode.StartingGame },
-                    { "game_name", (App.Current as App).LoadBalancingClient.CurrentRoom.Name }
+                    { "gameName", (App.Current as App).LoadBalancingClient.CurrentRoom.Name },
+                    { "eventType", GameMode.StartingGame }
                 };
 
+                //Raise starting game event
                 (App.Current as App).LoadBalancingClient.OpRaiseEvent(
                     Convert.ToByte(GameMode.StartingGame), 
                     data,
                     new RaiseEventOptions() { Flags = new WebFlags(0) { HttpForward = true } },
                     SendOptions.SendReliable
                  );
-
-                 /// <param name="eventCode">Identifies this type of event (and the content). Your game's event codes can start with 0.</param>
-                 /// <param name="customEventContent">Any serializable datatype (including Hashtable like the other OpRaiseEvent overloads).</param>
-                 /// <param name="raiseEventOptions">Contains used send options. If you pass null, the default options will be used.</param>
-                 /// <param name="sendOptions">Send options for reliable, encryption etc</param>
-                 /// <returns>If operation could be enqueued for sending. Sent when calling: Service or SendOutgoingCommands.</returns>
-        //public virtual bool OpRaiseEvent(byte eventCode, object customEventContent, RaiseEventOptions raiseEventOptions, SendOptions sendOptions)
-
+                
                 //Set current user to painter
                 Hashtable playerProperties = new Hashtable() { { "painter", true } };
                 (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
+
+                var updateSharedGroupTask = Task.Run(() =>
+                {
+                    PlayFabClientAPI.UpdateSharedGroupDataAsync(
+                        new UpdateSharedGroupDataRequest() {
+                            SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
+                            Data = new Dictionary<string, string>() { { "mode", GameMode.StartingGame.ToString() } } }
+                    );
+                });
+
+                updateSharedGroupTask.Wait();
             }
             catch (Exception e)
             {
@@ -205,6 +212,16 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not create room");
             }
+
+            //Create shared group data
+            var createSharedGroupTask = Task.Run(() =>
+            {
+                PlayFabClientAPI.CreateSharedGroupAsync(
+                    new CreateSharedGroupRequest() { SharedGroupId = gameName }
+                );
+            });
+
+            createSharedGroupTask.Wait();
         }
 
         public static Game GetGame()

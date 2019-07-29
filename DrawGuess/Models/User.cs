@@ -227,33 +227,6 @@ namespace DrawGuess.Models
                 throw new ArgumentNullException(nameof(password));
             }
 
-            //try
-            //{
-            //    var registerTask = PlayFabClientAPI.RegisterPlayFabUserAsync(
-            //        new RegisterPlayFabUserRequest()
-            //        {
-            //            DisplayName = user.FirstName + " " + user.LastName,
-            //            Email = user.Email,
-            //            Password = password,
-            //            TitleId = (App.Current as App).PlayFabTitleId
-            //        }
-            //    );
-
-            //    var apiError = registerTask.Result.Error;
-            //    var apiResult = registerTask.Result.Result;
-
-            //    if (apiError != null)
-            //    {   
-            //        throw new Exception(apiError.ErrorMessage);
-            //    }
-
-            //}
-            //catch (Exception e)
-            //{
-            //    throw e; 
-            //}
-
-
             byte[] salt = Crypting.CreateSalt();
             String passwordHash = Crypting.CreatePassword(salt, password);
 

@@ -143,6 +143,7 @@ namespace DrawGuess.Pages
                 ViewModel.Players.Remove(p);
                 SetPlacement();
                 SetGameMode();
+                GetGame();
             }
             catch (Exception)
             {
