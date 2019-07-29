@@ -34,8 +34,7 @@ namespace DrawGuess.Models
         public string SecretWord { get; set; }
         public string RandomLetters { get; set; }
         public int Round { get; set; }
-        public GameMode Mode { get; set; }
-        
+        public GameMode Mode { get; set; }       
 
         public bool LeftRoom = false;
         
@@ -135,6 +134,25 @@ namespace DrawGuess.Models
                     { "round", 1 }, //Set round
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
+                var data = new Dictionary<string, object>() {
+                    { "mode" , GameMode.StartingGame },
+                    { "game_name", (App.Current as App).LoadBalancingClient.CurrentRoom.Name }
+                };
+
+                (App.Current as App).LoadBalancingClient.OpRaiseEvent(
+                    Convert.ToByte(GameMode.StartingGame), 
+                    data,
+                    new RaiseEventOptions() { Flags = new WebFlags(0) { HttpForward = true } },
+                    SendOptions.SendReliable
+                 );
+
+                 /// <param name="eventCode">Identifies this type of event (and the content). Your game's event codes can start with 0.</param>
+                 /// <param name="customEventContent">Any serializable datatype (including Hashtable like the other OpRaiseEvent overloads).</param>
+                 /// <param name="raiseEventOptions">Contains used send options. If you pass null, the default options will be used.</param>
+                 /// <param name="sendOptions">Send options for reliable, encryption etc</param>
+                 /// <returns>If operation could be enqueued for sending. Sent when calling: Service or SendOutgoingCommands.</returns>
+        //public virtual bool OpRaiseEvent(byte eventCode, object customEventContent, RaiseEventOptions raiseEventOptions, SendOptions sendOptions)
 
                 //Set current user to painter
                 Hashtable playerProperties = new Hashtable() { { "painter", true } };
