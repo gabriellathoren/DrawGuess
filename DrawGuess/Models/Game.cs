@@ -23,6 +23,7 @@ namespace DrawGuess.Models
         StartingRound,
         RevealingRoles, 
         Playing, 
+        EndingRound,
         EndingGame
     }
 
