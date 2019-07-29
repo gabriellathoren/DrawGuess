@@ -119,6 +119,21 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not join room");
             }
+
+            var update = new AddSharedGroupMembersRequest()
+            {
+                PlayFabIds = new List<string>() { (App.Current as App).LoadBalancingClient.LocalPlayer.UserId },
+                SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name
+            };
+
+            var addToSharedGroupTask = Task.Run(() =>
+            {
+                PlayFabClientAPI.AddSharedGroupMembersAsync(
+                    update
+                );
+            });
+
+            addToSharedGroupTask.Wait();
         }
         
         public static void StartGame()
@@ -155,12 +170,17 @@ namespace DrawGuess.Models
                 Hashtable playerProperties = new Hashtable() { { "painter", true } };
                 (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
 
+                var update = new UpdateSharedGroupDataRequest()
+                {
+                    SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
+                    Data = new Dictionary<string, string>() { { "mode", GameMode.StartingGame.ToString() } },
+                    Permission = UserDataPermission.Public
+                };
+
                 var updateSharedGroupTask = Task.Run(() =>
                 {
                     PlayFabClientAPI.UpdateSharedGroupDataAsync(
-                        new UpdateSharedGroupDataRequest() {
-                            SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
-                            Data = new Dictionary<string, string>() { { "mode", GameMode.StartingGame.ToString() } } }
+                        update
                     );
                 });
 
