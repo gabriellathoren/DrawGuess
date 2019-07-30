@@ -92,6 +92,7 @@ namespace DrawGuess.Models
                     }
                     else
                     {
+                        SetPlayerPoints(0);
                         player.Points = 0;
                     }
 
@@ -169,9 +170,8 @@ namespace DrawGuess.Models
                  );
                 
                 //Set current user to painter
-                Hashtable playerProperties = new Hashtable() { { "painter", true } };
-                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
-
+                //Hashtable playerProperties = new Hashtable() { { "painter", true } };
+                //(App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
 
                 var updatedata = new Dictionary<string, string>();
                 updatedata.Add("mode", GameMode.StartingGame.ToString());
