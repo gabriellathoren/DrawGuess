@@ -289,6 +289,20 @@ namespace DrawGuess.Models
                 {
                     throw new Exception();
                 }
+
+                //Add player to shared group 
+                var removeFromSharedGroupTask = Task.Run(() =>
+                {
+                    PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
+                    {
+                        FunctionName = "RemoveMember",
+                        FunctionParameter = new {
+                            SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
+                            PlayFabId = (App.Current as App).User.PlayFabId
+                         },
+                        GeneratePlayStreamEvent = true,
+                    });
+                });
             }
             catch (Exception)
             {
