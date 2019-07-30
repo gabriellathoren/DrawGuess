@@ -119,17 +119,19 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not join room");
             }
+            
+            var members = new List<string>();
+            members.Add((App.Current as App).User.PlayFabId); 
 
-            var update = new AddSharedGroupMembersRequest()
-            {
-                PlayFabIds = new List<string>() { (App.Current as App).LoadBalancingClient.LocalPlayer.UserId },
-                SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name
-            };
-
+            //Add player to shared group 
             var addToSharedGroupTask = Task.Run(() =>
             {
                 PlayFabClientAPI.AddSharedGroupMembersAsync(
-                    update
+                    new AddSharedGroupMembersRequest()
+                    {
+                        PlayFabIds = members,
+                        SharedGroupId = gameName                         
+                    }
                 );
             });
 
@@ -170,10 +172,14 @@ namespace DrawGuess.Models
                 Hashtable playerProperties = new Hashtable() { { "painter", true } };
                 (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
 
+
+                var updatedata = new Dictionary<string, string>();
+                updatedata.Add("mode", GameMode.StartingGame.ToString());
+
                 var update = new UpdateSharedGroupDataRequest()
                 {
                     SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
-                    Data = new Dictionary<string, string>() { { "mode", GameMode.StartingGame.ToString() } },
+                    Data = updatedata,
                     Permission = UserDataPermission.Public
                 };
 
@@ -219,12 +225,12 @@ namespace DrawGuess.Models
                     IsOpen = true,
                     CustomRoomProperties = new Hashtable() {
                         { "C0", 1 },
-                        { "mode", GameMode.WaitingForPlayers }
+                        { "mode", GameMode.WaitingForPlayers } 
                     },
                     EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
                     PlayerTtl = 30000, //Keep actor in room 30 seconds after it was disconnected  
                     CustomRoomPropertiesForLobby = new string[] { "C0" }, // this makes "C0" available in the lobby
-                    PublishUserId = true,
+                    PublishUserId = true, 
                 }
             };
 
@@ -232,6 +238,8 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not create room");
             }
+
+            //ta bort om finns
 
             //Create shared group data
             var createSharedGroupTask = Task.Run(() =>

@@ -108,6 +108,7 @@ namespace DrawGuess.Security
         {
             //We can player PlayFabId. This will come in handy during next step
             string _playFabPlayerIdCache = obj.PlayFabId;
+            (App.Current as App).User.PlayFabId = obj.PlayFabId;
 
             var photonAuthTokenTask = await PlayFabClientAPI.GetPhotonAuthenticationTokenAsync(new GetPhotonAuthenticationTokenRequest()
             {
