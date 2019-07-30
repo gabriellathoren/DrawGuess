@@ -154,16 +154,9 @@ namespace DrawGuess.Models
                 var data = new Hashtable() {
                     { "mode" , GameMode.StartingGame },
                     { "gameName", (App.Current as App).LoadBalancingClient.CurrentRoom.Name },
-                    { "eventType", GameMode.StartingGame }
-                };
-
-                //Raise starting game event
-                (App.Current as App).LoadBalancingClient.OpRaiseEvent(
-                    Convert.ToByte(GameMode.StartingGame), 
-                    data,
-                    new RaiseEventOptions() { Flags = new WebFlags(0) { HttpForward = true } },
-                    SendOptions.SendReliable
-                 );
+                    { "eventType", GameMode.StartingGame },
+                    { "round", 1 }
+                };                
                 
                 //Set current user to painter
                 //Hashtable playerProperties = new Hashtable() { { "painter", true } };
@@ -185,6 +178,14 @@ namespace DrawGuess.Models
                 });
 
                 updateSharedGroupTask.Wait();
+
+                //Raise starting game event
+                (App.Current as App).LoadBalancingClient.OpRaiseEvent(
+                    Convert.ToByte(GameMode.StartingGame),
+                    data,
+                    new RaiseEventOptions() { Flags = new WebFlags(0) { HttpForward = true } },
+                    SendOptions.SendReliable
+                 );
             }
             catch (Exception e)
             {
@@ -236,7 +237,7 @@ namespace DrawGuess.Models
             //If there are already a shared group data for the room in PLayfab, remove it 
             var removeSharedGroupTask = Task.Run(() =>
             {
-                PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
+                var t = PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
                 {
                     FunctionName = "RemoveSharedGroup",
                     FunctionParameter = new
@@ -245,6 +246,8 @@ namespace DrawGuess.Models
                     },
                     GeneratePlayStreamEvent = true,
                 });
+
+                t.Wait();
             });
 
             removeSharedGroupTask.Wait();
@@ -252,9 +255,10 @@ namespace DrawGuess.Models
             //Create shared group data
             var createSharedGroupTask = Task.Run(() =>
             {
-                PlayFabClientAPI.CreateSharedGroupAsync(
+                var t = PlayFabClientAPI.CreateSharedGroupAsync(
                     new CreateSharedGroupRequest() { SharedGroupId = gameName }
                 );
+                t.Wait();
             });
 
             createSharedGroupTask.Wait();
