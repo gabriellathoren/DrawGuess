@@ -120,20 +120,16 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not join room");
             }
-            
-            var members = new List<string>();
-            members.Add((App.Current as App).User.PlayFabId); 
 
             //Add player to shared group 
             var addToSharedGroupTask = Task.Run(() =>
             {
-                PlayFabClientAPI.AddSharedGroupMembersAsync(
-                    new AddSharedGroupMembersRequest()
-                    {
-                        PlayFabIds = members,
-                        SharedGroupId = gameName                         
-                    }
-                );
+                PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "AddMember",
+                    FunctionParameter = new { SharedGroupId = gameName, PlayFabId = (App.Current as App).User.PlayFabId },
+                    GeneratePlayStreamEvent = true,
+                });
             });
 
             addToSharedGroupTask.Wait();
