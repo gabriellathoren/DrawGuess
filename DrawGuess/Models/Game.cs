@@ -171,18 +171,16 @@ namespace DrawGuess.Models
 
                 var updatedata = new Dictionary<string, string>();
                 updatedata.Add("mode", GameMode.StartingGame.ToString());
-
-                var update = new UpdateSharedGroupDataRequest()
-                {
-                    SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
-                    Data = updatedata,
-                    Permission = UserDataPermission.Public
-                };
-
+                
                 var updateSharedGroupTask = Task.Run(() =>
                 {
                     PlayFabClientAPI.UpdateSharedGroupDataAsync(
-                        update
+                        new UpdateSharedGroupDataRequest()
+                        {
+                            SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
+                            Data = updatedata,
+                            Permission = UserDataPermission.Public
+                        }
                     );
                 });
 
@@ -235,7 +233,21 @@ namespace DrawGuess.Models
                 throw new PhotonException("Could not create room");
             }
 
-            //ta bort om finns
+            //If there are already a shared group data for the room in PLayfab, remove it 
+            var removeSharedGroupTask = Task.Run(() =>
+            {
+                PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
+                {
+                    FunctionName = "RemoveSharedGroup",
+                    FunctionParameter = new
+                    {
+                        SharedGroupId = gameName,
+                    },
+                    GeneratePlayStreamEvent = true,
+                });
+            });
+
+            removeSharedGroupTask.Wait();
 
             //Create shared group data
             var createSharedGroupTask = Task.Run(() =>
