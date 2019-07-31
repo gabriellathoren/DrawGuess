@@ -12,48 +12,133 @@ using System.ComponentModel;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace DrawGuess.Models
 {
-    public enum GameMode : int {
+    public enum GameMode : int
+    {
         WaitingForPlayers = 1,
         StartingGame,
         StartingRound,
-        RevealingRoles, 
-        Playing, 
+        RevealingRoles,
+        Playing,
         EndingRound,
         EndingGame
     }
 
-    public class Game
+    public class Game : INotifyPropertyChanged
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
-        public Boolean Full { get; set; }
-        public string SecretWord { get; set; }
-        public string RandomLetters { get; set; }
-        public int Round { get; set; }
-        public GameMode Mode { get; set; }       
-
-        public bool LeftRoom = false;
-        
-        private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
-
-        public int NumberOfPlayers
+        private int id;
+        public int Id
         {
-            get { return _numberOfPlayers; }
+            get { return this.id; }
             set
             {
-                _numberOfPlayers = value;
-                if (this.NumberOfPlayers >= 8) { Full = true; }
-                else { Full = false; }
+                this.id = value;
+                this.OnPropertyChanged();
             }
         }
-        private int _numberOfPlayers;
 
+        private string name;
+        public string Name
+        {
+            get { return this.name; }
+            set
+            {
+                this.name = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private bool full;
+        public bool Full
+        {
+            get { return this.full; }
+            set
+            {
+                this.full = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private string secretWord;
+        public string SecretWord
+        {
+            get { return this.secretWord; }
+            set
+            {
+                this.secretWord = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private string randomLetters;
+        public string RandomLetters
+        {
+            get { return this.randomLetters; }
+            set
+            {
+                this.randomLetters = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private int round;
+        public int Round
+        {
+            get { return this.round; }
+            set
+            {
+                this.round = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private GameMode mode;
+        public GameMode Mode
+        {
+            get { return mode; }
+            set
+            {
+                if (!(mode.Equals(value)))
+                {
+                    mode = value;
+
+                    if (LoadBalancingClient.LocalPlayer.CustomProperties.ContainsKey("painter"))
+                    {
+                        if ((bool)LoadBalancingClient.LocalPlayer.CustomProperties["painter"])
+                        {
+                            ChangeMode();
+                        }
+                    }
+                }
+                else
+                {
+                    mode = value;
+                }
+                this.OnPropertyChanged();
+            }
+        }        
+
+        private int numberOfPlayers;
+        public int NumberOfPlayers
+        {
+            get { return numberOfPlayers; }
+            set
+            {
+                numberOfPlayers = value;
+                if (this.NumberOfPlayers >= 8) { Full = true; }
+                else { Full = false; }
+                this.OnPropertyChanged();
+            }
+        }
+
+        public bool LeftRoom = false;
+        private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
 
         public Game()
         {
@@ -65,7 +150,7 @@ namespace DrawGuess.Models
             LeftRoom = true;
         }
 
-        public static ObservableCollection<Player> GetPlayers()
+        public ObservableCollection<Player> GetPlayers()
         {
             var players = new ObservableCollection<Player>();
 
@@ -86,7 +171,7 @@ namespace DrawGuess.Models
                     player.UserId = p.Value.UserId;
 
 
-                    if(p.Value.CustomProperties.ContainsKey("points"))
+                    if (p.Value.CustomProperties.ContainsKey("points"))
                     {
                         player.Points = (int)p.Value.CustomProperties["points"];
                     }
@@ -107,8 +192,6 @@ namespace DrawGuess.Models
             return players;
         }
 
-        
-
         public static void JoinGame(string gameName)
         {
             var roomParams = new EnterRoomParams()
@@ -120,22 +203,9 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not join room");
             }
-
-            //Add player to shared group 
-            var addToSharedGroupTask = Task.Run(() =>
-            {
-                PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
-                {
-                    FunctionName = "AddMember",
-                    FunctionParameter = new { SharedGroupId = gameName, PlayFabId = (App.Current as App).User.PlayFabId },
-                    GeneratePlayStreamEvent = true,
-                });
-            });
-
-            addToSharedGroupTask.Wait();
         }
-        
-        public static void StartGame()
+
+        public void StartGame()
         {
             try
             {
@@ -147,45 +217,13 @@ namespace DrawGuess.Models
                     { "mode", GameMode.StartingGame }, //Change game status to started
                     { "secret_word", secretWord }, //Secret word
                     { "random_letters", randomLetters }, //Set random letters
-                    { "round", 1 }, //Set round
+                    { "round", 1 }, //Set round              
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
-                var data = new Hashtable() {
-                    { "mode" , GameMode.StartingGame },
-                    { "gameName", (App.Current as App).LoadBalancingClient.CurrentRoom.Name },
-                    { "eventType", GameMode.StartingGame },
-                    { "round", 1 }
-                };                
-                
                 //Set current user to painter
-                //Hashtable playerProperties = new Hashtable() { { "painter", true } };
-                //(App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
-
-                var updatedata = new Dictionary<string, string>();
-                updatedata.Add("mode", GameMode.StartingGame.ToString());
-                
-                var updateSharedGroupTask = Task.Run(() =>
-                {
-                    PlayFabClientAPI.UpdateSharedGroupDataAsync(
-                        new UpdateSharedGroupDataRequest()
-                        {
-                            SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
-                            Data = updatedata,
-                            Permission = UserDataPermission.Public
-                        }
-                    );
-                });
-
-                updateSharedGroupTask.Wait();
-
-                //Raise starting game event
-                (App.Current as App).LoadBalancingClient.OpRaiseEvent(
-                    Convert.ToByte(GameMode.StartingGame),
-                    data,
-                    new RaiseEventOptions() { Flags = new WebFlags(0) { HttpForward = true } },
-                    SendOptions.SendReliable
-                 );
+                Hashtable playerProperties = new Hashtable() { { "painter", true } };
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
             }
             catch (Exception e)
             {
@@ -193,14 +231,77 @@ namespace DrawGuess.Models
             }
         }
 
-        public static void StopGame()
+        public async Task SetMode(GameMode mode, int waitingTime)
+        {
+            await Task.Delay(waitingTime);
+            
+            Hashtable customProperties = new Hashtable() {
+                { "mode", mode }
+            };
+            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+        }
+
+        public void SetRound(int round)
+        {
+            Hashtable customProperties = new Hashtable() { { "round", round } };
+            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+        }
+
+        public void ChangeMode()
+        {
+            switch (Mode)
+            {
+                case GameMode.WaitingForPlayers:
+                    //TODO: Stop all change mode tasks
+                    break;
+                case GameMode.StartingGame:
+                    //Set game mode to StartingRound
+                    StartGame();
+                    Task startTask = SetMode(GameMode.StartingRound, 7000);
+                    break;
+                case GameMode.StartingRound:
+                    //Set game mode to RevealingRoles
+                    Task revealTask = SetMode(GameMode.RevealingRoles, 7000);
+                    break;
+                case GameMode.RevealingRoles:
+                    //Set game mode to RevealingRoles
+                    Task playTtask = SetMode(GameMode.Playing, 7000);
+                    break;
+                case GameMode.Playing:
+                    //Set game mode to RevealingRoles
+                    Task endRoundTask = SetMode(GameMode.EndingRound, 60000);
+                    break;
+                case GameMode.EndingRound:
+                    //If round is 8, the game has come to an end
+                    if (Round == 8)
+                    {
+                        //Set game mode to end game
+                        Task endGameTask = SetMode(GameMode.EndingGame, 7000);
+                    }
+                    else
+                    {
+                        //Set game mode to start new round
+                        SetRound(Round + 1);
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 7000);
+                    }
+                    break;
+                case GameMode.EndingGame:
+                    //Set game mode to RevealingRoles
+                    Task startNewGameTask = SetMode(GameMode.StartingGame, 7000);
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public void StopGame()
         {
             //Change game status to stopped
             Hashtable customProperties = new Hashtable() { { "mode", GameMode.WaitingForPlayers } };
             (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
         }
 
-        public static void SetPlayerPoints(int points)
+        public void SetPlayerPoints(int points)
         {
             Hashtable customProperties = new Hashtable() { { "points", points } };
             (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
@@ -220,12 +321,12 @@ namespace DrawGuess.Models
                     IsOpen = true,
                     CustomRoomProperties = new Hashtable() {
                         { "C0", 1 },
-                        { "mode", GameMode.WaitingForPlayers } 
+                        { "mode", GameMode.WaitingForPlayers }
                     },
                     EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
                     PlayerTtl = 30000, //Keep actor in room 30 seconds after it was disconnected  
                     CustomRoomPropertiesForLobby = new string[] { "C0" }, // this makes "C0" available in the lobby
-                    PublishUserId = true, 
+                    PublishUserId = true,
                 }
             };
 
@@ -233,63 +334,32 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not create room");
             }
-
-            //If there are already a shared group data for the room in PLayfab, remove it 
-            var removeSharedGroupTask = Task.Run(() =>
-            {
-                var t = PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
-                {
-                    FunctionName = "RemoveSharedGroup",
-                    FunctionParameter = new
-                    {
-                        SharedGroupId = gameName,
-                    },
-                    GeneratePlayStreamEvent = true,
-                });
-
-                t.Wait();
-            });
-
-            removeSharedGroupTask.Wait();
-
-            //Create shared group data
-            var createSharedGroupTask = Task.Run(() =>
-            {
-                var t = PlayFabClientAPI.CreateSharedGroupAsync(
-                    new CreateSharedGroupRequest() { SharedGroupId = gameName }
-                );
-                t.Wait();
-            });
-
-            createSharedGroupTask.Wait();
         }
 
-        public static Game GetGame()
+        public void UpdateGame()
         {
             try
             {
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
 
-                Game game = new Game()
-                {
-                    Name = room.Name,
-                    Mode = (GameMode)room.CustomProperties["mode"]
-                };
+                Name = room.Name.ToUpper();
 
-                if(room.CustomProperties.ContainsKey("round"))
+                if (room.CustomProperties.ContainsKey("mode"))
                 {
-                    game.Round = (int)room.CustomProperties["round"];
+                    Mode = (GameMode)room.CustomProperties["mode"];
                 }
-                if(room.CustomProperties.ContainsKey("random_letters"))
+                if (room.CustomProperties.ContainsKey("round"))
                 {
-                    game.RandomLetters = (string)room.CustomProperties["random_letters"];
+                    Round = (int)room.CustomProperties["round"];
                 }
-                if(room.CustomProperties.ContainsKey("secret_word"))
+                if (room.CustomProperties.ContainsKey("random_letters"))
                 {
-                    game.SecretWord = (string)room.CustomProperties["secret_word"];
-                }   
-
-                return game;
+                    RandomLetters = (string)room.CustomProperties["random_letters"];
+                }
+                if (room.CustomProperties.ContainsKey("secret_word"))
+                {
+                    SecretWord = (string)room.CustomProperties["secret_word"];
+                }
             }
             catch (Exception e)
             {
@@ -305,20 +375,6 @@ namespace DrawGuess.Models
                 {
                     throw new Exception();
                 }
-
-                //Add player to shared group 
-                var removeFromSharedGroupTask = Task.Run(() =>
-                {
-                    PlayFabClientAPI.ExecuteCloudScriptAsync(new ExecuteCloudScriptRequest()
-                    {
-                        FunctionName = "RemoveMember",
-                        FunctionParameter = new {
-                            SharedGroupId = (App.Current as App).LoadBalancingClient.CurrentRoom.Name,
-                            PlayFabId = (App.Current as App).User.PlayFabId
-                         },
-                        GeneratePlayStreamEvent = true,
-                    });
-                });
             }
             catch (Exception)
             {
@@ -341,6 +397,13 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not get games");
             }
+        }
+
+        public event PropertyChangedEventHandler PropertyChanged = delegate { };
+
+        public void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        {
+            this.PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

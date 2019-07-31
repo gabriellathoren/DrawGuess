@@ -19,7 +19,6 @@ namespace DrawGuess.ViewModels
             set
             {
                 this.game = value;
-                Game.Name = Game.Name.ToUpper();
                 this.OnPropertyChanged();
             }
         }
@@ -137,6 +136,7 @@ namespace DrawGuess.ViewModels
 
         public GameViewModel()
         {
+            Game = new Game();
             Players = new ObservableCollection<Player>();
             Guess = new ObservableCollection<string>();
             RandomLetters = new ObservableCollection<string>();

@@ -48,6 +48,8 @@ namespace DrawGuess.Pages
         {
             try
             {
+                Hashtable data = (Hashtable)sender;
+
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
@@ -139,6 +141,8 @@ namespace DrawGuess.Pages
         {
             try
             {
+                //TODO: Check if player was painter
+
                 Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
                 ViewModel.Players.Remove(p);
                 SetPlacement();
@@ -163,51 +167,21 @@ namespace DrawGuess.Pages
                 //Stop game if there are less players than two
                 else if (ViewModel.Players.Count < 2 && !ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
                 {
-                    Game.StopGame();
-                }
-                else
-                {
-                    switch(ViewModel.Game.Mode)
-                    {
-                        case GameMode.RevealingRoles:
-                            ViewModel.InfoViewRow1 = ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
-                            if(ViewModel.PainterView)
-                            {
-                                ViewModel.InfoViewRow2 = ViewModel.Game.SecretWord;
-                            }
-                            break;
-                        case GameMode.Playing:
-                            ViewModel.ShowInfoView = false;
-                            ViewModel.ShowGame = true; 
-                            break;
-                        case GameMode.StartingRound:
-                            ViewModel.InfoViewRow2 = ViewModel.Game.Round.ToString();
-                            break;
-                        case GameMode.EndingGame:
-                            ViewModel.InfoViewRow1 = GetWinners();
-                            break;
-                        default:
-                            break;
-                    }
+                    ViewModel.Game.StopGame();
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 ViewModel.ErrorMessage = "Could not set game mode";
             }
         }
 
-        public string GetWinners()
-        {
-            return "";
-            //ViewModel.Players.Where(x => x.Points).ToList();
-        }
 
         public void StartGame()
         {
             try
             {
-                Game.StartGame();
+                ViewModel.Game.StartGame();
             }
             catch(Exception)
             {
@@ -225,7 +199,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                Game.SetPlayerPoints(points);
+                ViewModel.Game.SetPlayerPoints(points);
             }
             catch (Exception)
             {
@@ -237,7 +211,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                ViewModel.Players = Game.GetPlayers();
+                ViewModel.Players = ViewModel.Game.GetPlayers();
             }
             catch (Exception e)
             {
@@ -320,17 +294,75 @@ namespace DrawGuess.Pages
             }
         }
 
+        public void UpdateInfoView()
+        {
+            switch (ViewModel.Game.Mode)
+            {
+                case GameMode.WaitingForPlayers:
+                    ViewModel.ShowInfoView = true;
+                    ViewModel.ShowGame = false;
+                    break;
+                case GameMode.StartingGame:
+                    ViewModel.ShowInfoView = true;
+                    ViewModel.ShowGame = false;
+                    break;
+                case GameMode.StartingRound:
+                    ViewModel.ShowInfoView = true;
+                    ViewModel.ShowGame = false;
+                    ViewModel.InfoViewRow2 = ViewModel.Game.Round.ToString();
+                    break;
+                case GameMode.RevealingRoles:
+                    ViewModel.ShowInfoView = true;
+                    ViewModel.ShowGame = false;
+                    ViewModel.InfoViewRow1 = ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
+                    if (ViewModel.PainterView) { ViewModel.InfoViewRow2 = ViewModel.Game.SecretWord; }
+                    break;
+                case GameMode.Playing:
+                    ViewModel.ShowInfoView = false;
+                    ViewModel.ShowGame = true;
+                    break;
+                case GameMode.EndingRound:
+                    ViewModel.ShowInfoView = true;
+                    ViewModel.ShowGame = true;
+                    ViewModel.InfoViewRow1 = ViewModel.Game.SecretWord;
+                    break;
+                case GameMode.EndingGame:
+                    ViewModel.ShowInfoView = true;
+                    ViewModel.ShowGame = true;
+                    ViewModel.InfoViewRow1 = GetWinners();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        public string GetWinners()
+        {
+            string winners = "";
+            var maxPoints = ViewModel.Players.Max(x => x.Points);
+            var winnerList = ViewModel.Players.Where(x => x.Points == maxPoints).ToList();
+
+            foreach (var winner in winnerList)
+            {
+                winners += winner.NickName + " ";
+            }
+
+            return winners;
+        }
+
         public void GetGame()
         {
             try
-            {
-                ViewModel.Game = Game.GetGame();
+            {         
+                ViewModel.Game.UpdateGame();
 
-                if(!string.IsNullOrEmpty(ViewModel.Game.SecretWord))
+                if (!string.IsNullOrEmpty(ViewModel.Game.SecretWord))
                 {
                     SetHint();
                     GetRandomLetters();
-                }            
+                }
+
+                UpdateInfoView();
             }
             catch(Exception e)
             {
