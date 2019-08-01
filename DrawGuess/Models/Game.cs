@@ -396,12 +396,12 @@ namespace DrawGuess.Models
                 case GameMode.StartingGame:
                     //Set game mode to StartingRound
                     stopTasks = false;
-                    Task startingRoundTask = SetMode(GameMode.StartingRound, 5);
+                    Task startingRoundTask = SetMode(GameMode.StartingRound, 3);
                     break;
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles
                     StartRound(Round);
-                    Task revealTask = SetMode(GameMode.RevealingRoles, 5);
+                    Task revealTask = SetMode(GameMode.RevealingRoles, 3);
                     break;
                 case GameMode.RevealingRoles:
                     //Set game mode to RevealingRoles
@@ -416,29 +416,19 @@ namespace DrawGuess.Models
                     if (Round == 8)
                     {
                         //Set game mode to end game
-                        Task endGameTask = SetMode(GameMode.EndingGame, 5);
+                        Task endGameTask = SetMode(GameMode.EndingGame, 3);
                     }
                     else
                     {
                         //Set game mode to start new round
                         SetRound(Round + 1);
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 5);
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 3);
                     }
                     break;
                 case GameMode.EndingGame:
                     //Set game mode to RevealingRoles
                     SetRound(1);
-                    Task startNewGameTask = SetMode(GameMode.StartingGame, 5);
-                    break;
-                case GameMode.PainterLeft:
-                    if(LoadBalancingClient.CurrentRoom.Players.Count < 2)
-                    {
-                        Task waitingTask = SetMode(GameMode.WaitingForPlayers, 5);
-                    }
-                    else
-                    {
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 5);
-                    }
+                    Task startNewGameTask = SetMode(GameMode.StartingGame, 3);
                     break;
                 default:
                     break;
