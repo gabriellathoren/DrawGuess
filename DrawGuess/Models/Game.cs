@@ -278,8 +278,8 @@ namespace DrawGuess.Models
                         }
                     }
                 }
-            //Set current user to painter if there are no painter already
-            (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(painterProperties);
+                //Set current user to painter if there are no painter already
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(painterProperties);
             }
             catch(Exception e)
             {
@@ -332,14 +332,15 @@ namespace DrawGuess.Models
         {
             int i = 0;
             bool done = false;
-            while(!stopTasks || !done)
+            while(!stopTasks && !done)
             {
                 await Task.Delay(100);
                 
-                if(i<waitingTimeSec)
+                if(i>=(waitingTimeSec*10))
                 {
                     done = true;
                 }
+                i++;
             }
 
             Hashtable customProperties = new Hashtable() {
@@ -367,6 +368,7 @@ namespace DrawGuess.Models
                     //Set game mode to StartingRound
                     stopTasks = false;
                     StartRound(Round);
+                    Task startingRoundTask = SetMode(GameMode.StartingRound, 7);
                     break;
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles

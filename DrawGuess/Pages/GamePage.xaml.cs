@@ -41,6 +41,33 @@ namespace DrawGuess.Pages
             LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
             LoadBalancingClient.InRoomCallbackTargets.PlayerLeftRoom += PlayerLeftRoom;
             LoadBalancingClient.InRoomCallbackTargets.RoomPropertiesUpdate += RoomPropertiesUpdate;
+            LoadBalancingClient.InRoomCallbackTargets.PlayerPropertiesUpdate += PlayerPropertiesUpdate;
+        }
+
+        //Listener for player changes
+        private async void PlayerPropertiesUpdate(object sender, EventArgs e)
+        {
+            try
+            {
+                Hashtable data = (Hashtable)sender;
+
+                if(data.ContainsKey("painter"))
+                {
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        UpdatePlayerList();
+                    });
+                }
+            }
+            catch (Exception)
+            {
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        ViewModel.ErrorMessage = "Could not update room";
+                    });
+            }
         }
 
         //Listener for room changes
@@ -191,8 +218,7 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = "Could not set game mode";
             }
         }
-
-
+        
         public void StartGame()
         {
             try

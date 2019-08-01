@@ -3615,6 +3615,7 @@ namespace Photon.Realtime
         public event EventHandler PlayerEnteredRoom;
         public event EventHandler PlayerLeftRoom;
         public event EventHandler RoomPropertiesUpdate;
+        public event EventHandler PlayerPropertiesUpdate;
 
         private HashSet<IInRoomCallbacks> targetsToAdd;
         private HashSet<IInRoomCallbacks> targetsToRemove;
@@ -3706,6 +3707,8 @@ namespace Photon.Realtime
             {
                 target.OnPlayerPropertiesUpdate(targetPlayer, changedProp);
             }
+            EventHandler handler = PlayerPropertiesUpdate;
+            handler?.Invoke(changedProp, null);
         }
 
         public void OnMasterClientSwitched(Player newMasterClient)
