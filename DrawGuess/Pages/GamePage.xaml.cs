@@ -140,7 +140,7 @@ namespace DrawGuess.Pages
                         AddPlayer(player);
                     });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
@@ -362,7 +362,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Painter: " + ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
                     InfoView.ShowSecretWord = false;
-                    if (ViewModel.PainterView) {
+                    if (ViewModel.Players.Where(x => x.IsCurrentUser == true).First().Painter) {
                         InfoView.ShowSecretWord = true;
                         InfoView.Row2 = "Secret word: " + ViewModel.Game.SecretWord;
                         InfoView.TwoRows = true;                        

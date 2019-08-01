@@ -231,12 +231,42 @@ namespace DrawGuess.Models
         {
             try
             {
+                stopTasks = true;
+
                 Round = 1;
                 Hashtable customProperties = new Hashtable() {
                     { "mode", GameMode.StartingGame }, //Change game status to started
                     { "round", Round }, //Set round         
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
+                SetPainter();
+            }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not start game", e);
+            }
+        }
+
+        public void ClearGame()
+        {
+            try
+            {
+                Round = 1;
+                Hashtable customProperties = new Hashtable() {
+                    { "round", Round }, //Set round         
+                };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                customProperties = new Hashtable() {
+                    { "painter", false }, //Set round         
+                };
+
+                foreach (var player in photonPlayers)
+                {
+                    player.Value.SetCustomProperties(customProperties);
+                }
 
                 SetPainter();
             }
@@ -346,7 +376,7 @@ namespace DrawGuess.Models
             Hashtable customProperties = new Hashtable() {
                     { "mode", mode }
                 };
-            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+            LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
         }
 
         public void SetRound(int round)
@@ -361,17 +391,16 @@ namespace DrawGuess.Models
             switch (Mode)
             {
                 case GameMode.WaitingForPlayers:
-                    //Stop all ev. change mode tasks
-                    stopTasks = true;
+                    ClearGame();
                     break;
                 case GameMode.StartingGame:
                     //Set game mode to StartingRound
                     stopTasks = false;
-                    StartRound(Round);
                     Task startingRoundTask = SetMode(GameMode.StartingRound, 7);
                     break;
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles
+                    StartRound(Round);
                     Task revealTask = SetMode(GameMode.RevealingRoles, 7);
                     break;
                 case GameMode.RevealingRoles:
@@ -402,7 +431,14 @@ namespace DrawGuess.Models
                     Task startNewGameTask = SetMode(GameMode.StartingGame, 7);
                     break;
                 case GameMode.PainterLeft:
-
+                    if(LoadBalancingClient.CurrentRoom.Players.Count < 2)
+                    {
+                        Task waitingTask = SetMode(GameMode.WaitingForPlayers, 7);
+                    }
+                    else
+                    {
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 7);
+                    }
                     break;
                 default:
                     break;
@@ -439,7 +475,7 @@ namespace DrawGuess.Models
                         { "mode", GameMode.WaitingForPlayers }
                     },
                     EmptyRoomTtl = 0, //Keep room 0 seconds after the last person leaves room 
-                    PlayerTtl = 30000, //Keep actor in room 30 seconds after it was disconnected  
+                    PlayerTtl = 0, //Keep actor in room 30 seconds after it was disconnected  
                     CustomRoomPropertiesForLobby = new string[] { "C0" }, // this makes "C0" available in the lobby
                     PublishUserId = true,
                 }

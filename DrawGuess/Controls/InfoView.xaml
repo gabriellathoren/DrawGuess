@@ -10,11 +10,13 @@
     <!-- View for waiting mode -->
     <Grid Grid.Column="0" Background="#80000000">
         <Image Source="/Assets/Components/colorsplash.png" Height="800"/>
-        <TextBlock HorizontalTextAlignment="Center" FontFamily="{StaticResource Akronim}" Foreground="White" FontSize="{x:Bind Row1FontSize, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Run Text="{x:Bind Row1, Mode=OneWay}"/>
-        </TextBlock>
-        <TextBlock HorizontalTextAlignment="Center" FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="{x:Bind Row2FontSize, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center">
-            <Run Text="{x:Bind Row2, Mode=OneWay}"/>
-        </TextBlock>
+        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
+            <TextBlock FontFamily="{StaticResource Akronim}" Foreground="White" FontSize="{x:Bind Row1FontSize, Mode=OneWay}" HorizontalTextAlignment="Center">
+                <Run Text="{x:Bind Row1, Mode=OneWay}"/>
+            </TextBlock>
+            <TextBlock FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="{x:Bind Row2FontSize, Mode=OneWay}" HorizontalTextAlignment="Center">
+                <Run Text="{x:Bind Row2, Mode=OneWay}"/>
+            </TextBlock>
+        </StackPanel>        
     </Grid>
 </UserControl>

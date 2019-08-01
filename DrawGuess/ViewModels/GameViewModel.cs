@@ -77,18 +77,7 @@ namespace DrawGuess.ViewModels
                 this.OnPropertyChanged();
             }
         }
-
-        private bool painterView;
-        public bool PainterView
-        {
-            get { return this.painterView; }
-            set
-            {
-                this.painterView = value;
-                this.OnPropertyChanged();
-            }
-        }
-
+        
         private bool showInfoView;
         public bool ShowInfoView
         {
