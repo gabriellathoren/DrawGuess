@@ -195,13 +195,13 @@ namespace DrawGuess.Pages
                 else
                 {
                     ViewModel.Players.Remove(p);
+                    SetGameMode();
                 }
                 
                 SetPlacement();
-                //SetGameMode();
                 GetGame();
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 ViewModel.ErrorMessage = "Could not remove player properly";
             }
