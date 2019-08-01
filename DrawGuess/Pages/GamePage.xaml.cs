@@ -107,7 +107,7 @@ namespace DrawGuess.Pages
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        RemovePlayer(player);
+                        Task removeTask = RemovePlayer(player);
                     });
             }
             catch (Exception)
@@ -164,7 +164,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public async void RemovePlayer(Models.Player player)
+        public async Task RemovePlayer(Models.Player player)
         {
             try
             {
@@ -185,11 +185,11 @@ namespace DrawGuess.Pages
 
                     if (LoadBalancingClient.CurrentRoom.Players.Count < 2)
                     {
-                        Task waitingTask = ViewModel.Game.SetMode(GameMode.WaitingForPlayers, 3);
+                        Task waitingTask = ViewModel.Game.SetMode(GameMode.WaitingForPlayers, 5);
                     }
                     else
                     {
-                        Task startNewRoundTask = ViewModel.Game.SetMode(GameMode.StartingRound, 3);
+                        Task startNewRoundTask = ViewModel.Game.SetMode(GameMode.StartingRound, 5);
                     }
                 }
                 else
@@ -198,7 +198,7 @@ namespace DrawGuess.Pages
                 }
                 
                 SetPlacement();
-                SetGameMode();
+                //SetGameMode();
                 GetGame();
             }
             catch (Exception)

@@ -231,8 +231,6 @@ namespace DrawGuess.Models
         {
             try
             {
-                stopTasks = true;
-
                 Round = 1;
                 Hashtable customProperties = new Hashtable() {
                     { "mode", GameMode.StartingGame }, //Change game status to started
@@ -267,6 +265,8 @@ namespace DrawGuess.Models
                 {
                     player.Value.SetCustomProperties(customProperties);
                 }
+
+                StopTasks = true;
             }
             catch (Exception e)
             {
@@ -360,7 +360,7 @@ namespace DrawGuess.Models
         {
             int i = 0;
             bool done = false;
-            while(!stopTasks && !done)
+            while(!StopTasks && !done)
             {
                 await Task.Delay(100);
                 
@@ -393,7 +393,7 @@ namespace DrawGuess.Models
                     break;
                 case GameMode.StartingGame:
                     //Set game mode to StartingRound
-                    stopTasks = false;
+                    StopTasks = false;
                     Task startingRoundTask = SetMode(GameMode.StartingRound, 3);
                     break;
                 case GameMode.StartingRound:
