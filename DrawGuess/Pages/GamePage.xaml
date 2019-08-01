@@ -54,7 +54,7 @@
 
             <StackPanel Orientation="Horizontal" Grid.Row="0" HorizontalAlignment="Left">
                 <TextBlock Text="ROUND" FontSize="14" Foreground="Black" Margin="0,0,3,0" FontFamily="{StaticResource RobotoLight}"/>
-                <TextBlock Text="{x:Bind ViewModel.Game.Round}" FontFamily="{StaticResource RobotoLight}" FontSize="14" Foreground="Black"/>
+                <TextBlock Text="{x:Bind ViewModel.Game.Round, Mode=OneWay}" FontFamily="{StaticResource RobotoLight}" FontSize="14" Foreground="Black"/>
             </StackPanel>
 
             <Grid Grid.Row="1" BorderBrush="black" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
