@@ -149,8 +149,8 @@ namespace DrawGuess.Models
             }
         }
 
-
         public bool LeftRoom = false;
+        public bool ChangingMode = false;
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
         
         public Game()
@@ -298,7 +298,7 @@ namespace DrawGuess.Models
                             //If a painter existed last round, but there are no next player in the list, set the first player in the list as painter
                             else
                             {
-                                photonPlayers[0].SetCustomProperties(painterProperties);
+                                photonPlayers.First().Value.SetCustomProperties(painterProperties);
                             }
 
                             //Remove current painter as painter
@@ -376,7 +376,7 @@ namespace DrawGuess.Models
 
             Hashtable customProperties = new Hashtable() {
                     { "mode", mode }
-                };
+            };
             LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
         }
 
@@ -389,6 +389,9 @@ namespace DrawGuess.Models
 
         public void ChangeMode()
         {
+            //if (ChangingMode) { return; }
+            //ChangingMode = true;             
+
             switch (Mode)
             {
                 case GameMode.WaitingForPlayers:
@@ -434,6 +437,8 @@ namespace DrawGuess.Models
                 default:
                     break;
             }
+
+            //ChangingMode = false;
         }
 
         public void StopGame()
@@ -484,23 +489,37 @@ namespace DrawGuess.Models
             {
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
 
-                Name = room.Name.ToUpper();
-
+                if (Name != room.Name)
+                {
+                    Name = room.Name.ToUpper();
+                }     
                 if (room.CustomProperties.ContainsKey("mode"))
                 {
-                    Mode = (GameMode)room.CustomProperties["mode"];
+                    if(Mode != (GameMode)room.CustomProperties["mode"])
+                    {
+                        Mode = (GameMode)room.CustomProperties["mode"];
+                    }
                 }
                 if (room.CustomProperties.ContainsKey("round"))
                 {
-                    Round = (int)room.CustomProperties["round"];
+                    if(Round != (int)room.CustomProperties["round"])
+                    {
+                        Round = (int)room.CustomProperties["round"];
+                    }
                 }
                 if (room.CustomProperties.ContainsKey("random_letters"))
                 {
-                    RandomLetters = (string)room.CustomProperties["random_letters"];
+                    if(RandomLetters != (string)room.CustomProperties["random_letters"])
+                    {
+                        RandomLetters = (string)room.CustomProperties["random_letters"];
+                    }
                 }
                 if (room.CustomProperties.ContainsKey("secret_word"))
                 {
-                    SecretWord = (string)room.CustomProperties["secret_word"];
+                    if (SecretWord != (string)room.CustomProperties["secret_word"])
+                    {
+                        SecretWord = (string)room.CustomProperties["secret_word"];
+                    }
                 }
             }
             catch (Exception e)
