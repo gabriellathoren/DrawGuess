@@ -293,7 +293,7 @@ namespace DrawGuess.Models
                             //If a painter existed last round, set the next player in the list as painter 
                             if (photonPlayers.Count > (playerIndex + 1))
                             {
-                                photonPlayers[playerIndex + 1].SetCustomProperties(painterProperties);
+                                photonPlayers.ElementAt(playerIndex + 1).Value.SetCustomProperties(painterProperties);
                             }
                             //If a painter existed last round, but there are no next player in the list, set the first player in the list as painter
                             else
