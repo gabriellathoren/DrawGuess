@@ -396,48 +396,48 @@ namespace DrawGuess.Models
                 case GameMode.StartingGame:
                     //Set game mode to StartingRound
                     stopTasks = false;
-                    Task startingRoundTask = SetMode(GameMode.StartingRound, 7);
+                    Task startingRoundTask = SetMode(GameMode.StartingRound, 5);
                     break;
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles
                     StartRound(Round);
-                    Task revealTask = SetMode(GameMode.RevealingRoles, 7);
+                    Task revealTask = SetMode(GameMode.RevealingRoles, 5);
                     break;
                 case GameMode.RevealingRoles:
                     //Set game mode to RevealingRoles
-                    Task playTtask = SetMode(GameMode.Playing, 7);
+                    Task playTtask = SetMode(GameMode.Playing, 5);
                     break;
                 case GameMode.Playing:
                     //Set game mode to RevealingRoles
-                    Task endRoundTask = SetMode(GameMode.EndingRound, 60);
+                    Task endRoundTask = SetMode(GameMode.EndingRound, 6); //TODO: CHANGE TO 60
                     break;
                 case GameMode.EndingRound:
                     //If round is 8, the game has come to an end
                     if (Round == 8)
                     {
                         //Set game mode to end game
-                        Task endGameTask = SetMode(GameMode.EndingGame, 7);
+                        Task endGameTask = SetMode(GameMode.EndingGame, 5);
                     }
                     else
                     {
                         //Set game mode to start new round
                         SetRound(Round + 1);
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 7);
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 5);
                     }
                     break;
                 case GameMode.EndingGame:
                     //Set game mode to RevealingRoles
                     SetRound(1);
-                    Task startNewGameTask = SetMode(GameMode.StartingGame, 7);
+                    Task startNewGameTask = SetMode(GameMode.StartingGame, 5);
                     break;
                 case GameMode.PainterLeft:
                     if(LoadBalancingClient.CurrentRoom.Players.Count < 2)
                     {
-                        Task waitingTask = SetMode(GameMode.WaitingForPlayers, 7);
+                        Task waitingTask = SetMode(GameMode.WaitingForPlayers, 5);
                     }
                     else
                     {
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 7);
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 5);
                     }
                     break;
                 default:

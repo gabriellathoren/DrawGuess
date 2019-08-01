@@ -5,8 +5,13 @@
     xmlns:local="using:DrawGuess.Controls"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:Converter="using:DrawGuess.Converters"
     mc:Ignorable="d">
 
+    <UserControl.Resources>
+        <Converter:VisibilityConverter x:Key="VisibilityConverter" />
+    </UserControl.Resources>
+        
     <!-- View for waiting mode -->
     <Grid Grid.Column="0" Background="#80000000">
         <Image Source="/Assets/Components/colorsplash.png" Height="800"/>
@@ -14,7 +19,8 @@
             <TextBlock FontFamily="{StaticResource Akronim}" Foreground="White" FontSize="{x:Bind Row1FontSize, Mode=OneWay}" HorizontalTextAlignment="Center">
                 <Run Text="{x:Bind Row1, Mode=OneWay}"/>
             </TextBlock>
-            <TextBlock FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="{x:Bind Row2FontSize, Mode=OneWay}" HorizontalTextAlignment="Center">
+            <TextBlock FontFamily="{StaticResource RobotoRegular}" Foreground="White" FontSize="{x:Bind Row2FontSize, Mode=OneWay}" HorizontalTextAlignment="Center" 
+                       Visibility="{x:Bind TwoRows, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                 <Run Text="{x:Bind Row2, Mode=OneWay}"/>
             </TextBlock>
         </StackPanel>        

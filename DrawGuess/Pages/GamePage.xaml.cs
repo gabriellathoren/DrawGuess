@@ -339,6 +339,8 @@ namespace DrawGuess.Pages
         public void UpdateInfoView()
         {
             InfoView.TwoRows = false;
+            InfoView.Row1 = "";
+            InfoView.Row2 = "";
 
             switch (ViewModel.Game.Mode)
             {
