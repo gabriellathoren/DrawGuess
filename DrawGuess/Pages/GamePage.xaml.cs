@@ -129,7 +129,7 @@ namespace DrawGuess.Pages
             {
                 ViewModel.Players.Add(player);
                 SetPlacement();
-                SetGameMode();
+                //SetGameMode();
             }
             catch(Exception)
             {
