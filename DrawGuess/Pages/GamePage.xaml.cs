@@ -137,14 +137,30 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void RemovePlayer(Models.Player player)
+        public async void RemovePlayer(Models.Player player)
         {
             try
             {
-                //TODO: Check if player was painter
-
                 Models.Player p = ViewModel.Players.Where(x => x.UserId.Equals(player.UserId)).First();
-                ViewModel.Players.Remove(p);
+
+                //If leaving player was painter
+                if(p.Painter == true)
+                {
+                    ViewModel.Players.Remove(p);
+
+                    //Change game mode
+                    await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);
+
+                    //Set new random painter
+                    Random rnd = new Random();
+                    int newPainterIndex = rnd.Next(ViewModel.Players.Count);
+                    ViewModel.Game.SetSpecificPainter(ViewModel.Players[newPainterIndex]);
+                }
+                else
+                {
+                    ViewModel.Players.Remove(p);
+                }
+                
                 SetPlacement();
                 SetGameMode();
                 GetGame();
@@ -340,6 +356,10 @@ namespace DrawGuess.Pages
                     ViewModel.ShowGame = true;
                     InfoView.Row1 = "Winner: " + GetWinners();
                     break;
+                case GameMode.PainterLeft:
+                    ViewModel.ShowInfoView = true;
+                    InfoView.Row1 = "Painter left the game";
+                    break;
                 default:
                     break;
             }
@@ -386,6 +406,7 @@ namespace DrawGuess.Pages
                 UpdatePlayerList();
                 GetGame();
                 SetGameMode();
+                SetPlayerPoints(0);
             }
             catch (Exception ex)
             {

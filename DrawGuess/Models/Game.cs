@@ -27,7 +27,8 @@ namespace DrawGuess.Models
         RevealingRoles,
         Playing,
         EndingRound,
-        EndingGame
+        EndingGame,
+        PainterLeft
     }
 
     public class Game : INotifyPropertyChanged
@@ -122,7 +123,7 @@ namespace DrawGuess.Models
                 }
                 this.OnPropertyChanged();
             }
-        }        
+        }
 
         private int numberOfPlayers;
         public int NumberOfPlayers
@@ -137,9 +138,21 @@ namespace DrawGuess.Models
             }
         }
 
+        private bool stopTasks;
+        public bool StopTasks
+        {
+            get { return this.stopTasks; }
+            set
+            {
+                this.stopTasks = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+
         public bool LeftRoom = false;
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
-
+        
         public Game()
         {
             LoadBalancingClient.MatchMakingCallbackTargets.LeftRoom += RoomLeft;
@@ -181,6 +194,15 @@ namespace DrawGuess.Models
                         player.Points = 0;
                     }
 
+                    if (p.Value.CustomProperties.ContainsKey("painter"))
+                    {
+                        player.Painter = (bool)p.Value.CustomProperties["painter"];
+                    }
+                    else
+                    {
+                        player.Painter = false;
+                    }
+
                     players.Add(player);
                 }
             }
@@ -209,21 +231,14 @@ namespace DrawGuess.Models
         {
             try
             {
-                //Get secret word and random letters for the hint
-                string secretWord = WordHelper.RandomizeSecretWord();
-                string randomLetters = WordHelper.SetRandomLetters(secretWord);
-
+                Round = 1;
                 Hashtable customProperties = new Hashtable() {
                     { "mode", GameMode.StartingGame }, //Change game status to started
-                    { "secret_word", secretWord }, //Secret word
-                    { "random_letters", randomLetters }, //Set random letters
-                    { "round", 1 }, //Set round              
+                    { "round", Round }, //Set round         
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
-                //Set current user to painter
-                Hashtable playerProperties = new Hashtable() { { "painter", true } };
-                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(playerProperties);
+                SetPainter();
             }
             catch (Exception e)
             {
@@ -231,13 +246,105 @@ namespace DrawGuess.Models
             }
         }
 
-        public async Task SetMode(GameMode mode, int waitingTime)
+        public void SetPainter()
         {
-            await Task.Delay(waitingTime);
-            
+            try
+            {
+                //Set painter                
+                Hashtable painterProperties = new Hashtable() { { "painter", true } };
+                Hashtable notPainterProperties = new Hashtable() { { "painter", true } };
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+
+                foreach (var p in photonPlayers)
+                {
+                    if (p.Value.CustomProperties.ContainsKey("painter"))
+                    {
+                        if ((bool)p.Value.CustomProperties["painter"])
+                        {
+                            //If a painter existed last round, set the next player in the list as painter 
+                            if (photonPlayers.Count > (p.Key + 1))
+                            {
+                                photonPlayers[p.Key + 1].SetCustomProperties(painterProperties);
+                            }
+                            //If a painter existed last round, but there are no next player in the list, set the first player in the list as painter
+                            else
+                            {
+                                photonPlayers[0].SetCustomProperties(painterProperties);
+                            }
+
+                            //Remove current painter as painter
+                            p.Value.SetCustomProperties(notPainterProperties);
+                            return;
+                        }
+                    }
+                }
+            //Set current user to painter if there are no painter already
+            (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(painterProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set painter", e);
+            }
+        }
+
+        public void SetSpecificPainter(Models.Player p)
+        {
+            try
+            {
+                Hashtable painterProperties = new Hashtable() { { "painter", true } };
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == p.UserId).FirstOrDefault().Value;
+                newPainter.SetCustomProperties(painterProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set painter", e);
+            }
+        }
+
+        public void StartRound(int round)
+        {
+            try
+            {
+                //Get secret word and random letters for the hint
+                string secretWord = WordHelper.RandomizeSecretWord();
+                string randomLetters = WordHelper.SetRandomLetters(secretWord);
+
+                Hashtable customProperties = new Hashtable() {
+                    { "secret_word", secretWord }, //Secret word
+                    { "random_letters", randomLetters }, //Set random letters
+                    { "round", round }, //Set round         
+                };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });    
+                
+                if(round > 1)
+                {
+                    SetPainter();
+                }
+            }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not start round", e);
+            }
+        }
+
+        public async Task SetMode(GameMode mode, int waitingTimeSec)
+        {
+            int i = 0;
+            bool done = false;
+            while(!stopTasks || !done)
+            {
+                await Task.Delay(100);
+                
+                if(i<waitingTimeSec)
+                {
+                    done = true;
+                }
+            }
+
             Hashtable customProperties = new Hashtable() {
-                { "mode", mode }
-            };
+                    { "mode", mode }
+                };
             (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
         }
 
@@ -245,6 +352,7 @@ namespace DrawGuess.Models
         {
             Hashtable customProperties = new Hashtable() { { "round", round } };
             (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+            Round = round;
         }
 
         public void ChangeMode()
@@ -252,42 +360,47 @@ namespace DrawGuess.Models
             switch (Mode)
             {
                 case GameMode.WaitingForPlayers:
-                    //TODO: Stop all change mode tasks
+                    //Stop all ev. change mode tasks
+                    stopTasks = true;
                     break;
                 case GameMode.StartingGame:
                     //Set game mode to StartingRound
-                    StartGame();
-                    Task startTask = SetMode(GameMode.StartingRound, 7000);
+                    stopTasks = false;
+                    StartRound(Round);
                     break;
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles
-                    Task revealTask = SetMode(GameMode.RevealingRoles, 7000);
+                    Task revealTask = SetMode(GameMode.RevealingRoles, 7);
                     break;
                 case GameMode.RevealingRoles:
                     //Set game mode to RevealingRoles
-                    Task playTtask = SetMode(GameMode.Playing, 7000);
+                    Task playTtask = SetMode(GameMode.Playing, 7);
                     break;
                 case GameMode.Playing:
                     //Set game mode to RevealingRoles
-                    Task endRoundTask = SetMode(GameMode.EndingRound, 60000);
+                    Task endRoundTask = SetMode(GameMode.EndingRound, 60);
                     break;
                 case GameMode.EndingRound:
                     //If round is 8, the game has come to an end
                     if (Round == 8)
                     {
                         //Set game mode to end game
-                        Task endGameTask = SetMode(GameMode.EndingGame, 7000);
+                        Task endGameTask = SetMode(GameMode.EndingGame, 7);
                     }
                     else
                     {
                         //Set game mode to start new round
                         SetRound(Round + 1);
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 7000);
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 7);
                     }
                     break;
                 case GameMode.EndingGame:
                     //Set game mode to RevealingRoles
-                    Task startNewGameTask = SetMode(GameMode.StartingGame, 7000);
+                    SetRound(1);
+                    Task startNewGameTask = SetMode(GameMode.StartingGame, 7);
+                    break;
+                case GameMode.PainterLeft:
+
                     break;
                 default:
                     break;
