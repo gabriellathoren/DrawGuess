@@ -283,6 +283,7 @@ namespace DrawGuess.Models
                 Hashtable notPainterProperties = new Hashtable() { { "painter", true } };
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
 
+                int playerIndex = 0;
                 foreach (var p in photonPlayers)
                 {
                     if (p.Value.CustomProperties.ContainsKey("painter"))
@@ -290,9 +291,9 @@ namespace DrawGuess.Models
                         if ((bool)p.Value.CustomProperties["painter"])
                         {
                             //If a painter existed last round, set the next player in the list as painter 
-                            if (photonPlayers.Count > (p.Key + 1))
+                            if (photonPlayers.Count > (playerIndex + 1))
                             {
-                                photonPlayers[p.Key + 1].SetCustomProperties(painterProperties);
+                                photonPlayers[playerIndex + 1].SetCustomProperties(painterProperties);
                             }
                             //If a painter existed last round, but there are no next player in the list, set the first player in the list as painter
                             else
@@ -305,6 +306,8 @@ namespace DrawGuess.Models
                             return;
                         }
                     }
+
+                    playerIndex++;
                 }
                 //Set current user to painter if there are no painter already
                 (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(painterProperties);

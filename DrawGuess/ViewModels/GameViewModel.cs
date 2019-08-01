@@ -51,7 +51,7 @@ namespace DrawGuess.ViewModels
             get { return this.players; }
             set
             {
-                this.players = value;
+                this.players = value;        
                 this.OnPropertyChanged();
             }
         }
@@ -85,6 +85,17 @@ namespace DrawGuess.ViewModels
             set
             {
                 this.showInfoView = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private bool painterView;
+        public bool PainterView
+        {
+            get { return this.painterView; }
+            set
+            {
+                this.painterView = value;
                 this.OnPropertyChanged();
             }
         }

@@ -380,6 +380,20 @@ namespace DrawGuess.Pages
                     }
                     break;
                 case GameMode.Playing:
+                    if(ViewModel.Players.Where(x => x.IsCurrentUser == true).First().Painter)
+                    {
+                        ViewModel.PainterView = true;
+                        var secret = new ObservableCollection<string>();
+                        foreach(var letter in ViewModel.Game.SecretWord)
+                        {
+                            secret.Add(letter.ToString());
+                        }
+                        ViewModel.Guess = secret;
+                    }
+                    else
+                    {
+                        ViewModel.PainterView = false;
+                    }
                     ViewModel.ShowInfoView = false;
                     ViewModel.ShowGame = true;
                     break;
