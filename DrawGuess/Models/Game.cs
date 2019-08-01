@@ -267,8 +267,6 @@ namespace DrawGuess.Models
                 {
                     player.Value.SetCustomProperties(customProperties);
                 }
-
-                SetPainter();
             }
             catch (Exception e)
             {
