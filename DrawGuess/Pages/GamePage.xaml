@@ -87,11 +87,7 @@
         </Grid>
 
         <!-- View for info mode -->
-        <Controls:InfoView Grid.Column="0"
-            Mode="{x:Bind ViewModel.Game.Mode, Mode=OneWay}" 
-            SpecificInfoToRow1="{x:Bind ViewModel.InfoViewRow1, Mode=OneWay}"
-            SpecificInfoToRow2="{x:Bind ViewModel.InfoViewRow2, Mode=OneWay}"
-            ShowSecretWord ="{x:Bind ViewModel.PainterView}"
+        <Controls:InfoView x:Name="InfoView" Grid.Column="0"
             Visibility="{x:Bind ViewModel.ShowInfoView, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
 
         <!-- Grid for players  -->

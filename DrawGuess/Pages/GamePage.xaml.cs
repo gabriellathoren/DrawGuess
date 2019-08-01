@@ -296,26 +296,35 @@ namespace DrawGuess.Pages
 
         public void UpdateInfoView()
         {
+            InfoView.TwoRows = false;
+
             switch (ViewModel.Game.Mode)
             {
-                case GameMode.WaitingForPlayers:
+               case GameMode.WaitingForPlayers:
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
+                    InfoView.Row1 = "Waiting for other players\r\nto join...";
                     break;
                 case GameMode.StartingGame:
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
+                    InfoView.Row1 = "Starting new game...";
                     break;
                 case GameMode.StartingRound:
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
-                    ViewModel.InfoViewRow2 = ViewModel.Game.Round.ToString();
+                    InfoView.Row1 = "ROUND " + ViewModel.Game.Round.ToString();
                     break;
                 case GameMode.RevealingRoles:
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
-                    ViewModel.InfoViewRow1 = ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
-                    if (ViewModel.PainterView) { ViewModel.InfoViewRow2 = ViewModel.Game.SecretWord; }
+                    InfoView.Row1 = "Painter: " + ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
+                    InfoView.ShowSecretWord = false;
+                    if (ViewModel.PainterView) {
+                        InfoView.ShowSecretWord = true;
+                        InfoView.Row2 = "Secret word: " + ViewModel.Game.SecretWord;
+                        InfoView.TwoRows = true;                        
+                    }
                     break;
                 case GameMode.Playing:
                     ViewModel.ShowInfoView = false;
@@ -324,12 +333,12 @@ namespace DrawGuess.Pages
                 case GameMode.EndingRound:
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
-                    ViewModel.InfoViewRow1 = ViewModel.Game.SecretWord;
+                    InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;
                     break;
                 case GameMode.EndingGame:
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
-                    ViewModel.InfoViewRow1 = GetWinners();
+                    InfoView.Row1 = "Winner: " + GetWinners();
                     break;
                 default:
                     break;

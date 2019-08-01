@@ -65,28 +65,6 @@ namespace DrawGuess.Controls
             }
         }
 
-        private string specificInfoToRow1;
-        public string SpecificInfoToRow1
-        {
-            get { return this.specificInfoToRow1; }
-            set
-            {
-                this.specificInfoToRow1 = value;
-                this.OnPropertyChanged();
-            }
-        }
-
-        private string specificInfoToRow2;
-        public string SpecificInfoToRow2
-        {
-            get { return this.specificInfoToRow2; }
-            set
-            {
-                this.specificInfoToRow2 = value;
-                this.OnPropertyChanged();
-            }
-        }
-
         private bool twoRows;
         public bool TwoRows
         {
@@ -109,17 +87,6 @@ namespace DrawGuess.Controls
             }
         }
 
-        private GameMode mode;
-        public GameMode Mode {
-            get { return this.mode; }
-            set
-            {
-                this.mode = value;
-                SetMode();
-                this.OnPropertyChanged();
-            }
-        }
-
         public InfoView()
         {
             this.InitializeComponent();
@@ -128,50 +95,8 @@ namespace DrawGuess.Controls
             Row2FontSize = 40;
             Row1 = "";
             Row2 = "";
-            SpecificInfoToRow1 = "";
-            SpecificInfoToRow2 = "";
             TwoRows = false;
             ShowSecretWord = false;
-        }
-
-        public void SetMode()
-        {
-
-            switch (Mode)
-            {
-                case GameMode.WaitingForPlayers:
-                    Row1FontSize = 62;
-                    Row1 = "Waiting for other players\r\nto join...";
-                    break;
-                case GameMode.StartingGame:
-                    Row1FontSize = 62;
-                    Row1 = "Starting new game...";
-                    break;
-                case GameMode.StartingRound:
-                    Row1FontSize = 62;
-                    Row1 = "ROUND " + SpecificInfoToRow1;
-                    break;
-                case GameMode.RevealingRoles:
-                    Row1FontSize = 62;
-                    Row1 = "Painter: " + SpecificInfoToRow1;
-                    if (ShowSecretWord)
-                    {
-                        TwoRows = true;
-                        Row2 = "Secret word: " + SpecificInfoToRow2;
-                        Row2FontSize = 40;
-                    }
-                    break;
-                case GameMode.EndingRound:
-                    Row1FontSize = 62;
-                    Row1 = "The secret word was: " + SpecificInfoToRow1;
-                    break;
-                case GameMode.EndingGame:
-                    Row1FontSize = 62;
-                    Row1 = "Winner: " + SpecificInfoToRow1;
-                    break;
-                default:
-                    break;
-            }
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
