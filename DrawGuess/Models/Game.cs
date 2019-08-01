@@ -273,14 +273,14 @@ namespace DrawGuess.Models
                 throw new PhotonException("Could not start game", e);
             }
         }
-
+        
         public void SetPainter()
         {
             try
             {
                 //Set painter                
                 Hashtable painterProperties = new Hashtable() { { "painter", true } };
-                Hashtable notPainterProperties = new Hashtable() { { "painter", true } };
+                Hashtable notPainterProperties = new Hashtable() { { "painter", false } };
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
 
                 int playerIndex = 0;
