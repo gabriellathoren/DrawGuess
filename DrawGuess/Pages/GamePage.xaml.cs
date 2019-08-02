@@ -178,10 +178,6 @@ namespace DrawGuess.Pages
                     //Change game mode
                     await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);
 
-                    //Set new random painter
-                    Random rnd = new Random();
-                    int newPainterIndex = rnd.Next(ViewModel.Players.Count);
-                    ViewModel.Game.SetSpecificPainter(ViewModel.Players[newPainterIndex]);
 
                     if (LoadBalancingClient.CurrentRoom.Players.Count < 2)
                     {
@@ -189,7 +185,11 @@ namespace DrawGuess.Pages
                     }
                     else
                     {
-                        Task startNewRoundTask = ViewModel.Game.SetMode(GameMode.StartingRound, 5);
+                        //Set new random painter
+                        Random rnd = new Random();
+                        int newPainterIndex = rnd.Next(ViewModel.Players.Count);
+                        ViewModel.Game.SetSpecificPainter(ViewModel.Players[newPainterIndex]);
+                        Task startNewRoundTask = ViewModel.Game.SetMode(GameMode.StartingRoundAfterPainterLeft, 5);                        
                     }
                 }
                 else

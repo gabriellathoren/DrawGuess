@@ -28,7 +28,8 @@ namespace DrawGuess.Models
         Playing,
         EndingRound,
         EndingGame,
-        PainterLeft
+        PainterLeft,
+        StartingRoundAfterPainterLeft
     }
 
     public class Game : INotifyPropertyChanged
@@ -347,11 +348,6 @@ namespace DrawGuess.Models
                     { "round", round }, //Set round         
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });    
-                
-                if(round > 1)
-                {
-                    SetPainter();
-                }
             }
             catch (Exception e)
             {
@@ -405,7 +401,13 @@ namespace DrawGuess.Models
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles
                     StartRound(Round);
+                    if (Round > 1) { SetPainter(); }
                     Task revealTask = SetMode(GameMode.RevealingRoles, 3);
+                    break;
+                case GameMode.StartingRoundAfterPainterLeft:
+                    //Set game mode to RevealingRoles
+                    StartRound(Round);
+                    Task revealTask2 = SetMode(GameMode.RevealingRoles, 3);
                     break;
                 case GameMode.RevealingRoles:
                     //Set game mode to RevealingRoles
