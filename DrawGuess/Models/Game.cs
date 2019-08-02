@@ -251,6 +251,8 @@ namespace DrawGuess.Models
         {
             try
             {
+                StopTasks = true;
+
                 Round = 1;
                 Hashtable customProperties = new Hashtable() {
                     { "round", Round }, //Set round         
@@ -266,8 +268,6 @@ namespace DrawGuess.Models
                 {
                     player.Value.SetCustomProperties(customProperties);
                 }
-
-                StopTasks = true;
             }
             catch (Exception e)
             {
@@ -370,10 +370,13 @@ namespace DrawGuess.Models
                 i++;
             }
 
-            Hashtable customProperties = new Hashtable() {
+            if(!StopTasks)
+            {
+                Hashtable customProperties = new Hashtable() {
                     { "mode", mode }
-            };
-            LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                };
+                LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+            }            
         }
 
         public void SetRound(int round)
@@ -385,9 +388,6 @@ namespace DrawGuess.Models
 
         public void ChangeMode()
         {
-            //if (ChangingMode) { return; }
-            //ChangingMode = true;             
-
             switch (Mode)
             {
                 case GameMode.WaitingForPlayers:
@@ -439,15 +439,21 @@ namespace DrawGuess.Models
                 default:
                     break;
             }
-
-            //ChangingMode = false;
         }
 
         public void StopGame()
         {
-            //Change game status to stopped
-            Hashtable customProperties = new Hashtable() { { "mode", GameMode.WaitingForPlayers } };
-            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+            try
+            {
+                StopTasks = true;
+                //Change game status to stopped
+                Hashtable customProperties = new Hashtable() { { "mode", GameMode.WaitingForPlayers } };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not stop game", e);
+            }
         }
 
         public void SetPlayerPoints(int points)

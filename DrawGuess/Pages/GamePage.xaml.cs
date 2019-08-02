@@ -177,8 +177,7 @@ namespace DrawGuess.Pages
 
                     //Change game mode
                     await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);
-
-
+                    
                     if (LoadBalancingClient.CurrentRoom.Players.Count < 2)
                     {
                         Task waitingTask = ViewModel.Game.SetMode(GameMode.WaitingForPlayers, 5);
