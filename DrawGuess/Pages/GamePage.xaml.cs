@@ -423,11 +423,15 @@ namespace DrawGuess.Pages
                 {
                     letters.Add(new Letter()
                     {
-                        Character = ViewModel.Game.RandomLetters[i].ToString()
+                        Character = ViewModel.Game.RandomLetters[i].ToString(),
+                        Visibility = true
                     });                    
                 }
 
                 ViewModel.RandomLetters = letters;
+
+                //Set correct answer to false when new round is set
+                SetCorrectAnswer(false);
             }
             catch (Exception e)
             {

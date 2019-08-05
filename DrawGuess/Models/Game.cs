@@ -356,7 +356,8 @@ namespace DrawGuess.Models
                     { "random_letters", randomLetters }, //Set random letters
                     { "round", round }, //Set round         
                 };
-                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });    
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
             }
             catch (Exception e)
             {

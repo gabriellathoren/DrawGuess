@@ -76,8 +76,8 @@
                     <TemplateSelectors:LetterTemplateSelector LetterTemplate="{StaticResource LetterTemplate}" MissingLetterTemplate="{StaticResource MissingLetterTemplate}" SpacingTemplate="{StaticResource SpacingTemplate}"  />
                 </GridView.ItemTemplateSelector>
             </GridView>
-            <GridView Height="130" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="HintGrid" ItemTemplate="{StaticResource LetterTemplate}" IsItemClickEnabled="False" Tapped="Letter_Tapped" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center" Padding="0">
-                <GridView.ItemsPanel >
+            <GridView Height="130" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="HintGrid" ItemTemplate="{StaticResource LetterTemplate}" IsItemClickEnabled="False" Tapped="Letter_Tapped" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center" Padding="0" Margin="0">
+                <GridView.ItemsPanel>
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"  MaximumRowsOrColumns="10"/>
                     </ItemsPanelTemplate>
