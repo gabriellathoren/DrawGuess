@@ -34,6 +34,18 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private Player currentPlayer; 
+
+        public Player CurrentPlayer
+        {
+            get { return this.currentPlayer; }
+            set
+            {
+                this.currentPlayer = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private string errorMessage;
         public string ErrorMessage
         {
@@ -51,7 +63,8 @@ namespace DrawGuess.ViewModels
             get { return this.players; }
             set
             {
-                this.players = value;        
+                this.players = value;
+                this.currentPlayer = players.Where(x => x.IsCurrentUser == true).FirstOrDefault();
                 this.OnPropertyChanged();
             }
         }

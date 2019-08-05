@@ -204,6 +204,15 @@ namespace DrawGuess.Models
                         player.Painter = false;
                     }
 
+                    if (p.Value.CustomProperties.ContainsKey("correct_guess"))
+                    {
+                        player.RightAnswer = (bool)p.Value.CustomProperties["correct_guess"];
+                    }
+                    else
+                    {
+                        player.RightAnswer = false;
+                    }
+
                     players.Add(player);
                 }
             }
@@ -459,6 +468,12 @@ namespace DrawGuess.Models
         public void SetPlayerPoints(int points)
         {
             Hashtable customProperties = new Hashtable() { { "points", points } };
+            (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+        }
+
+        public void SetCorrectAnswer(bool correctGuess)
+        {
+            Hashtable customProperties = new Hashtable() { { "correct_guess", correctGuess } };
             (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
         }
 

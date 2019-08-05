@@ -91,6 +91,11 @@ namespace DrawGuess.Models
         public Player()
         {
             Placement = 0;
+            RightAnswer = false;
+            Painter = false;
+            IsCurrentUser = false;
+            Points = 0;
+            NickName = "";
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

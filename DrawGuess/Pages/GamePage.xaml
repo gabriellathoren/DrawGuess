@@ -18,7 +18,7 @@
         <Converter:ColorConverter x:Key="ColorConverter" />
 
         <DataTemplate x:DataType="Models:Letter" x:Name="MissingLetterTemplate">
-            <Grid x:Name="NoLetter" Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
+            <Grid x:Name="NoLetter">
                 <Image Source="/Assets/Components/missing_letter.png" Width="44" Margin="4,0,4,0"/>
             </Grid>
         </DataTemplate>
@@ -28,9 +28,9 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="Models:Letter" x:Name="LetterTemplate">
-            <Grid Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
+            <Grid Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" VerticalAlignment="Center">
                 <Image Source="/Assets/Components/letter.png" Width="52"/>
-                <TextBlock Margin="0,-5,0,0" Text="{x:Bind Character}" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontFamily="{StaticResource RobotoLight}"/>
+                <TextBlock Text="{x:Bind Character}" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontFamily="{StaticResource RobotoLight}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -66,7 +66,7 @@
                 <InkToolbarBallpointPenButton />
             </InkToolbar>
 
-            <GridView x:Name="GuessGrid" SelectionMode="Single" IsItemClickEnabled="False" Tapped="GuessLetter_Tapped"  Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">
+            <GridView Height="70" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="GuessGrid" SelectionMode="Single" IsItemClickEnabled="False" Tapped="GuessLetter_Tapped" Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -76,7 +76,7 @@
                     <TemplateSelectors:LetterTemplateSelector LetterTemplate="{StaticResource LetterTemplate}" MissingLetterTemplate="{StaticResource MissingLetterTemplate}" SpacingTemplate="{StaticResource SpacingTemplate}"  />
                 </GridView.ItemTemplateSelector>
             </GridView>
-            <GridView x:Name="HintGrid" ItemTemplate="{StaticResource LetterTemplate}" IsItemClickEnabled="False" Tapped="Letter_Tapped" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center">
+            <GridView Height="130" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="HintGrid" ItemTemplate="{StaticResource LetterTemplate}" IsItemClickEnabled="False" Tapped="Letter_Tapped" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"  MaximumRowsOrColumns="10"/>

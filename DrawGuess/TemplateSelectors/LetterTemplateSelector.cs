@@ -1,4 +1,5 @@
-﻿using System;
+﻿using DrawGuess.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,16 +18,16 @@ namespace DrawGuess.TemplateSelectors
 
         protected override DataTemplate SelectTemplateCore(object item, DependencyObject container)
         {
-            string letter = item.ToString();
+            Letter letter = (Letter) item;
 
             DataTemplate _returnTemplate = new DataTemplate();
             var itemsControl = ItemsControl.ItemsControlFromItemContainer(container);
 
-            if (letter.Equals(""))
+            if (letter.Character.Equals(""))
             {
                 _returnTemplate = MissingLetterTemplate;
             }
-            else if (letter.Equals(" "))
+            else if (letter.Character.Equals(" "))
             {
                 _returnTemplate = SpacingTemplate;
             }
