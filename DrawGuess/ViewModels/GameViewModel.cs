@@ -56,8 +56,8 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private ObservableCollection<string> randomLetters;
-        public ObservableCollection<string> RandomLetters
+        private ObservableCollection<Letter> randomLetters;
+        public ObservableCollection<Letter> RandomLetters
         {
             get { return this.randomLetters; }
             set
@@ -67,8 +67,8 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private ObservableCollection<string> guess;
-        public ObservableCollection<string> Guess
+        private ObservableCollection<Letter> guess;
+        public ObservableCollection<Letter> Guess
         {
             get { return this.guess; }
             set
@@ -116,8 +116,8 @@ namespace DrawGuess.ViewModels
         {
             Game = new Game();
             Players = new ObservableCollection<Player>();
-            Guess = new ObservableCollection<string>();
-            RandomLetters = new ObservableCollection<string>();
+            Guess = new ObservableCollection<Letter>();
+            RandomLetters = new ObservableCollection<Letter>();
             User = (App.Current as App).User;
             ShowGame = false;
             ShowInfoView = false;

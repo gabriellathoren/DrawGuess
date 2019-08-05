@@ -17,20 +17,20 @@
         <Converter:VisibilityConverter x:Key="VisibilityConverter" />
         <Converter:ColorConverter x:Key="ColorConverter" />
 
-        <DataTemplate x:DataType="x:String" x:Name="MissingLetterTemplate">
-            <Grid x:Name="NoLetter">
+        <DataTemplate x:DataType="Models:Letter" x:Name="MissingLetterTemplate">
+            <Grid x:Name="NoLetter" Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                 <Image Source="/Assets/Components/missing_letter.png" Width="44" Margin="4,0,4,0"/>
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:DataType="x:String" x:Name="SpacingTemplate">
+        <DataTemplate x:DataType="Models:Letter" x:Name="SpacingTemplate">
             <Grid x:Name="Spacing" Width="44" Margin="4,0,4,0"/>
         </DataTemplate>
 
-        <DataTemplate x:DataType="x:String" x:Name="LetterTemplate">
-            <Grid>
+        <DataTemplate x:DataType="Models:Letter" x:Name="LetterTemplate">
+            <Grid Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
                 <Image Source="/Assets/Components/letter.png" Width="52"/>
-                <TextBlock Margin="0,-5,0,0" Text="{x:Bind}" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontFamily="{StaticResource RobotoLight}"/>
+                <TextBlock Margin="0,-5,0,0" Text="{x:Bind Character}" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontFamily="{StaticResource RobotoLight}"/>
             </Grid>
         </DataTemplate>
     </Page.Resources>
@@ -66,7 +66,7 @@
                 <InkToolbarBallpointPenButton />
             </InkToolbar>
 
-            <GridView SelectionMode="None" Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">
+            <GridView x:Name="GuessGrid" SelectionMode="Single" IsItemClickEnabled="False" Tapped="GuessLetter_Tapped"  Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" />
@@ -76,7 +76,7 @@
                     <TemplateSelectors:LetterTemplateSelector LetterTemplate="{StaticResource LetterTemplate}" MissingLetterTemplate="{StaticResource MissingLetterTemplate}" SpacingTemplate="{StaticResource SpacingTemplate}"  />
                 </GridView.ItemTemplateSelector>
             </GridView>
-            <GridView ItemTemplate="{StaticResource LetterTemplate}" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center">
+            <GridView x:Name="HintGrid" ItemTemplate="{StaticResource LetterTemplate}" IsItemClickEnabled="False" Tapped="Letter_Tapped" SelectionMode="Single" Grid.Row="4" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.RandomLetters, Mode=OneWay}" HorizontalContentAlignment="Center">
                 <GridView.ItemsPanel >
                     <ItemsPanelTemplate>
                         <ItemsWrapGrid Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center"  MaximumRowsOrColumns="10"/>
@@ -113,6 +113,7 @@
                 <TextBlock Text="GAME" FontFamily="{StaticResource RobotoLight}" FontSize="12" Margin="0,0,2,0"/>
                 <TextBlock Text="{x:Bind ViewModel.Game.Name}" FontFamily="{StaticResource RobotoLight}" FontSize="12"/>
             </StackPanel>
+            
             <ListView x:Name="PlayerList" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" Margin="0,10,0,10" HorizontalContentAlignment="Stretch">
 
                 <ListView.ItemContainerStyle>

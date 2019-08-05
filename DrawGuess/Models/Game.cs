@@ -415,7 +415,7 @@ namespace DrawGuess.Models
                     break;
                 case GameMode.Playing:
                     //Set game mode to RevealingRoles
-                    Task endRoundTask = SetMode(GameMode.EndingRound, 6); //TODO: CHANGE TO 60
+                    Task endRoundTask = SetMode(GameMode.EndingRound, 60); 
                     break;
                 case GameMode.EndingRound:
                     //If round is 8, the game has come to an end

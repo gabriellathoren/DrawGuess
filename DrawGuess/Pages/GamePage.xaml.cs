@@ -156,7 +156,6 @@ namespace DrawGuess.Pages
             {
                 ViewModel.Players.Add(player);
                 SetPlacement();
-                //SetGameMode();
             }
             catch(Exception)
             {
@@ -285,12 +284,14 @@ namespace DrawGuess.Pages
         {
             try
             {
-                var letters = new ObservableCollection<string>();
+                var letters = new ObservableCollection<Letter>();
 
                 //Set hinting boxes based on number of letters in secret word
                 for (int i = 0; i < ViewModel.Game.RandomLetters.Length; i++)
                 {
-                    letters.Add(ViewModel.Game.RandomLetters[i].ToString());
+                    letters.Add(new Letter() {
+                        Character = ViewModel.Game.RandomLetters[i].ToString()
+                    });
                 }
 
                 ViewModel.RandomLetters = letters;
@@ -303,18 +304,18 @@ namespace DrawGuess.Pages
 
         public void SetHint()
         {
-            var hint = new ObservableCollection<string>();
+            var hint = new ObservableCollection<Letter>();
 
             //Set hinting boxes based on number of letters in secret word
             for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
             {
                 if(ViewModel.Game.SecretWord[i].ToString().Equals(" "))
                 {
-                    hint.Add(" ");
+                    hint.Add(new Letter() { Character = " " });
                 }
                 else
                 {
-                    hint.Add("");
+                    hint.Add(new Letter() { Character = "" });
                 }                
             }
 
@@ -382,10 +383,10 @@ namespace DrawGuess.Pages
                     if(ViewModel.Players.Where(x => x.IsCurrentUser == true).First().Painter)
                     {
                         ViewModel.PainterView = true;
-                        var secret = new ObservableCollection<string>();
+                        var secret = new ObservableCollection<Letter>();
                         foreach(var letter in ViewModel.Game.SecretWord)
                         {
-                            secret.Add(letter.ToString());
+                            secret.Add(new Letter() { Character = letter.ToString() });
                         }
                         ViewModel.Guess = secret;
                     }
@@ -423,7 +424,7 @@ namespace DrawGuess.Pages
 
             foreach (var winner in winnerList)
             {
-                winners += winner.NickName + " ";
+                winners += winner.NickName + "\r\n";
             }
 
             return winners;
@@ -483,5 +484,78 @@ namespace DrawGuess.Pages
             Quit();
         }
 
+        public bool CheckGuess()
+        {
+            if(ViewModel.Guess.Equals(ViewModel.Game.SecretWord))
+            {
+                return true; 
+            }
+
+            return false; 
+        }
+
+        private void Letter_Tapped(object sender, TappedRoutedEventArgs e)
+        {           
+            try
+            {
+                //Get selected letter
+                var letter = (Letter)HintGrid.SelectedItem;
+                
+                //Get index of guess to replace with guessed letter
+                var letterPlace = ViewModel.Guess.IndexOf(ViewModel.Guess.Where(x => x.Character == "").First());
+                ViewModel.Guess[letterPlace] = letter;
+
+                //Hide guess letter from hinting letters
+                ViewModel.RandomLetters[HintGrid.SelectedIndex].Visibility = false; 
+
+                //If the letter is placed in the last space of letter check if correct
+                if (ViewModel.Guess.Count <= (letterPlace+1))
+                {
+                    //If guess is correct
+                    if(CheckGuess())
+                    {
+                        //TODO: Show correct guess view
+                    }
+
+                    //If guess is incorrect, remove guess from hint
+                    SetHint();
+
+                    //Wait 3 sec before continuing 
+                    Task.Delay(3000);
+
+                    //Show all letters in random letters again
+                    foreach(var l in ViewModel.RandomLetters)
+                    {
+                        l.Visibility = false;
+                    }
+
+                    //TODO: Show incorrect guess view
+                }
+            }
+            catch (Exception)
+            {
+                ViewModel.ErrorMessage = "Could not add letter to guess";
+            }            
+        }
+
+        private void GuessLetter_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            try
+            {
+                //Get selected letter
+                var letter = (Letter)GuessGrid.SelectedItem;
+
+                //Remove letter from 
+                ViewModel.Guess.Remove(letter);
+
+                //Show letter in random letters again
+                var hintLetter = ViewModel.RandomLetters.Where(x => x.Character == letter.Character).FirstOrDefault();
+                hintLetter.Visibility = true; 
+            }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not remove letter from guess";
+            }
+        }
     }
 }
