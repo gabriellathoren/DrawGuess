@@ -49,8 +49,6 @@ namespace DrawGuess.Pages
         {
             try
             {
-                Hashtable data = (Hashtable)sender;
-
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 () =>
                 {
@@ -280,7 +278,23 @@ namespace DrawGuess.Pages
                 foreach (var p in ViewModel.Game.GetPlayers())
                 {
                     var player = ViewModel.Players.Where(x => x.UserId == p.UserId).First();
-                    player = p;
+
+                    if(player.Points != p.Points)
+                    {
+                        player.Points = p.Points;
+                    }
+                    if(player.RightAnswer != p.RightAnswer)
+                    {
+                        player.RightAnswer = p.RightAnswer;
+                    }
+                    if (player.Placement != p.Placement)
+                    {
+                        player.Placement = p.Placement;
+                    }
+                    if (player.Painter != p.Painter)
+                    {
+                        player.Painter = p.Painter;
+                    }
                 }
             }
             catch (Exception e)
