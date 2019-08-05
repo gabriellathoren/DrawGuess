@@ -123,8 +123,7 @@ namespace DrawGuess.ViewModels
                 this.OnPropertyChanged();
             }
         }
-
-
+                
         public GameViewModel()
         {
             Game = new Game();

@@ -417,14 +417,13 @@ namespace DrawGuess.Pages
             try
             {
                 var letters = new ObservableCollection<Letter>();
-
+                
                 //Set hinting boxes based on number of letters in secret word
                 for (int i = 0; i < ViewModel.Game.RandomLetters.Length; i++)
                 {
                     letters.Add(new Letter()
                     {
-                        Character = ViewModel.Game.RandomLetters[i].ToString(),
-                        Visibility = true
+                        Character = ViewModel.Game.RandomLetters[i].ToString()
                     });                    
                 }
 
@@ -551,10 +550,10 @@ namespace DrawGuess.Pages
                 var letterPlace = ViewModel.Guess.IndexOf(ViewModel.Guess.Where(x => x.Character == "").First());
                 letter.Visibility = true;
                 ViewModel.Guess[letterPlace] = letter;
-
+                
                 //Hide guess letter from hinting letters
                 ViewModel.RandomLetters[HintGrid.SelectedIndex].Visibility = false;
-
+                
                 //If the letter is placed in the last space of letter check if correct
                 if (ViewModel.Guess.Count <= (letterPlace + 1))
                 {
@@ -603,7 +602,7 @@ namespace DrawGuess.Pages
                 ViewModel.Guess[GuessGrid.SelectedIndex] = new Letter() { Character = "" };
 
                 //Show letter in random letters again
-                var hintLetter = ViewModel.RandomLetters.Where(x => x.Character == letter.Character && x.Visibility == false).FirstOrDefault();
+                var hintLetter = ViewModel.RandomLetters.Where(x => x.Character == letter.Character && x.Visibility == !false).FirstOrDefault();
                 hintLetter.Visibility = true;
             }
             catch (Exception ex)

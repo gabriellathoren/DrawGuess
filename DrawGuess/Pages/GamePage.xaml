@@ -18,7 +18,7 @@
         <Converter:ColorConverter x:Key="ColorConverter" />
 
         <DataTemplate x:DataType="Models:Letter" x:Name="MissingLetterTemplate">
-            <Grid x:Name="NoLetter">
+            <Grid x:Name="NoLetter" VerticalAlignment="Center">
                 <Image Source="/Assets/Components/missing_letter.png" Width="44" Margin="4,0,4,0"/>
             </Grid>
         </DataTemplate>
@@ -28,9 +28,11 @@
         </DataTemplate>
 
         <DataTemplate x:DataType="Models:Letter" x:Name="LetterTemplate">
-            <Grid Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" VerticalAlignment="Center">
-                <Image Source="/Assets/Components/letter.png" Width="52"/>
+            <Grid VerticalAlignment="Center">
+                <Image Source="/Assets/Components/letter.png" Width="50"/>
                 <TextBlock Text="{x:Bind Character}" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontFamily="{StaticResource RobotoLight}"/>
+                <StackPanel Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" Grid.Row="4" Background="White" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
+                </StackPanel>
             </Grid>
         </DataTemplate>
     </Page.Resources>

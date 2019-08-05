@@ -27,7 +27,7 @@ namespace DrawGuess.Models
             get { return this.visibility; }
             set
             {
-                this.visibility = value;
+                this.visibility = !value;
                 this.OnPropertyChanged();
             }
         }
