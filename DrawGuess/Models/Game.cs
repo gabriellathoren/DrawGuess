@@ -506,8 +506,10 @@ namespace DrawGuess.Models
             }
         }
 
-        public void UpdateGame()
+        public bool UpdateGame()
         {
+            bool ChangedSecreWord = false; 
+
             try
             {
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
@@ -542,6 +544,7 @@ namespace DrawGuess.Models
                     if (SecretWord != (string)room.CustomProperties["secret_word"])
                     {
                         SecretWord = (string)room.CustomProperties["secret_word"];
+                        ChangedSecreWord = true; 
                     }
                 }
             }
@@ -549,6 +552,8 @@ namespace DrawGuess.Models
             {
                 throw new PhotonException("Could not get game", e);
             }
+
+            return ChangedSecreWord; 
         }
 
         public void LeaveGame()

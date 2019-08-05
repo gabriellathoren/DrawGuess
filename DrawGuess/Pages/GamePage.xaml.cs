@@ -54,7 +54,7 @@ namespace DrawGuess.Pages
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 () =>
                 {
-                    UpdatePlayerList();
+                    UpdatePlayers();
                 });
             }
             catch (Exception)
@@ -234,13 +234,7 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = "Could not start game";
             }
         }
-
-        public void UpdatePlayerList()
-        {
-            GetPlayers();
-            SetPlacement();
-        }
-
+        
         public void SetPlayerPoints(int points)
         {
             try
@@ -270,6 +264,7 @@ namespace DrawGuess.Pages
             try
             {
                 ViewModel.Players = ViewModel.Game.GetPlayers();
+                SetPlacement();
             }
             catch (Exception e)
             {
@@ -277,47 +272,21 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void GetRandomLetters()
+        public void UpdatePlayers()
         {
             try
             {
-                var letters = new ObservableCollection<Letter>();
-
-                //Set hinting boxes based on number of letters in secret word
-                for (int i = 0; i < ViewModel.Game.RandomLetters.Length; i++)
+                //Update existing player's information
+                foreach (var p in ViewModel.Game.GetPlayers())
                 {
-                    letters.Add(new Letter()
-                    {
-                        Character = ViewModel.Game.RandomLetters[i].ToString()
-                    });
+                    var player = ViewModel.Players.Where(x => x.UserId == p.UserId).First();
+                    player = p;
                 }
-
-                ViewModel.RandomLetters = letters;
             }
             catch (Exception e)
             {
                 ViewModel.ErrorMessage = e.Message;
             }
-        }
-
-        public void SetHint()
-        {
-            var hint = new ObservableCollection<Letter>();
-
-            //Set hinting boxes based on number of letters in secret word
-            for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
-            {
-                if (ViewModel.Game.SecretWord[i].ToString().Equals(" "))
-                {
-                    hint.Add(new Letter() { Character = " " });
-                }
-                else
-                {
-                    hint.Add(new Letter() { Character = "" });
-                }
-            }
-
-            ViewModel.Guess = hint;
         }
 
         public void SetPlacement()
@@ -429,16 +398,61 @@ namespace DrawGuess.Pages
             return winners;
         }
 
+        public void GetRandomLetters()
+        {
+            try
+            {
+                var letters = new ObservableCollection<Letter>();
+
+                //Set hinting boxes based on number of letters in secret word
+                for (int i = 0; i < ViewModel.Game.RandomLetters.Length; i++)
+                {
+                    letters.Add(new Letter()
+                    {
+                        Character = ViewModel.Game.RandomLetters[i].ToString()
+                    });                    
+                }
+
+                ViewModel.RandomLetters = letters;
+            }
+            catch (Exception e)
+            {
+                ViewModel.ErrorMessage = e.Message;
+            }
+        }
+
+        public void SetHint()
+        {
+            var hint = new ObservableCollection<Letter>();
+
+            //Set hinting boxes based on number of letters in secret word
+            for (int i = 0; i < ViewModel.Game.SecretWord.Length; i++)
+            {
+                if (ViewModel.Game.SecretWord[i].ToString().Equals(" "))
+                {
+                    hint.Add(new Letter() { Character = " " });
+                }
+                else
+                {
+                    hint.Add(new Letter() { Character = "" });
+                }
+            }
+
+            ViewModel.Guess = hint;
+        }
+
         public void GetGame()
         {
             try
             {
-                ViewModel.Game.UpdateGame();
-
-                if (!string.IsNullOrEmpty(ViewModel.Game.SecretWord))
+                //Update game, if the secret word was updated, the viewmodel must be updated as well
+                if(ViewModel.Game.UpdateGame())
                 {
-                    SetHint();
-                    GetRandomLetters();
+                    if (!string.IsNullOrEmpty(ViewModel.Game.SecretWord))
+                    {
+                        SetHint();
+                        GetRandomLetters();
+                    }
                 }
 
                 UpdateInfoView();
@@ -453,7 +467,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                UpdatePlayerList();
+                GetPlayers();
                 GetGame();
                 SetGameMode();
                 SetPlayerPoints(0);
@@ -546,7 +560,7 @@ namespace DrawGuess.Pages
                     }
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ViewModel.ErrorMessage = "Could not add letter to guess";
             }
@@ -574,7 +588,7 @@ namespace DrawGuess.Pages
                 var hintLetter = ViewModel.RandomLetters.Where(x => x.Character == letter.Character && x.Visibility == false).FirstOrDefault();
                 hintLetter.Visibility = true;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 ViewModel.ErrorMessage = "Could not remove letter from guess";
             }
