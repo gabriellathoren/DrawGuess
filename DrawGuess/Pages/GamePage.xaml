@@ -29,7 +29,7 @@
 
         <DataTemplate x:DataType="Models:Letter" x:Name="LetterTemplate">
             <Grid VerticalAlignment="Center">
-                <Image Source="/Assets/Components/letter.png" Width="50"/>
+                <Image Source="/Assets/Components/letter.png" Width="52"/>
                 <TextBlock Text="{x:Bind Character}" Foreground="Black" VerticalAlignment="Center" HorizontalAlignment="Center" FontSize="36" FontFamily="{StaticResource RobotoLight}"/>
                 <StackPanel Visibility="{x:Bind Visibility, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" Grid.Row="4" Background="White" VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 </StackPanel>
