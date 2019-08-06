@@ -172,6 +172,7 @@ namespace DrawGuess.Pages
 
         public async void SetStrokes()
         {
+            AddStrokes = true; 
             while(AddStrokes)
             {
                 try
