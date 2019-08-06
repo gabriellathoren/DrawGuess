@@ -28,6 +28,7 @@ namespace DrawGuess.Pages
     {
         public GameViewModel ViewModel { get; set; }
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
+        public bool AddStrokes { get; set; }
 
         public GamePage()
         {
@@ -72,11 +73,22 @@ namespace DrawGuess.Pages
             {
                 Hashtable data = (Hashtable)sender;
 
-                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                if(data.ContainsKey("strokes"))
+                {
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+                    () =>
+                    {
+                        GetStrokes();
+                    });
+                }
+                else
+                {
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
                         GetGame();
                     });
+                }
             }
             catch (Exception)
             {
@@ -143,6 +155,34 @@ namespace DrawGuess.Pages
                         ViewModel.ErrorMessage = "Could not update player list";
                     });
             }
+        }
+
+        public void GetStrokes()
+        {
+            try
+            {
+                ViewModel.Game.GetStrokes();
+                InkCanvas.InkPresenter.StrokeContainer.AddStrokes(ViewModel.Game.Strokes);                
+            }
+            catch (Exception)
+            {
+                ViewModel.ErrorMessage = "Could not set strokes";
+            }
+        }
+
+        public async void SetStrokes()
+        {
+            while(AddStrokes)
+            {
+                try
+                {
+                    ViewModel.Game.SetStrokes(InkCanvas.InkPresenter.StrokeContainer.GetStrokes());
+                }
+                catch (Exception)
+                {
+                    ViewModel.ErrorMessage = "Could not set strokes";
+                }
+            }            
         }
 
         public void AddPlayer(Models.Player player)
@@ -364,6 +404,8 @@ namespace DrawGuess.Pages
                 case GameMode.Playing:
                     if (ViewModel.CurrentPlayer.Painter)
                     {
+                        //Start task to update strokes 
+                        Task task = Task.Run((Action)SetStrokes);
                         ViewModel.PainterView = true;
                         var secret = new ObservableCollection<Letter>();
                         foreach (var letter in ViewModel.Game.SecretWord)
@@ -380,6 +422,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowGame = true;
                     break;
                 case GameMode.EndingRound:
+                    AddStrokes = false;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
                     InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;

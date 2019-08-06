@@ -7,6 +7,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Input.Inking;
 
 namespace DrawGuess.ViewModels
 {
@@ -123,7 +124,18 @@ namespace DrawGuess.ViewModels
                 this.OnPropertyChanged();
             }
         }
-                
+
+        private IEnumerable<InkStroke> strokes;
+        public IEnumerable<InkStroke> Strokes
+        {
+            get { return this.strokes; }
+            set
+            {
+                this.strokes = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         public GameViewModel()
         {
             Game = new Game();

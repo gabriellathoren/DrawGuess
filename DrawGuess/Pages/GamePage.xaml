@@ -60,7 +60,7 @@
             </StackPanel>
 
             <Grid Grid.Row="1" BorderBrush="black" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <InkCanvas x:Name="InkCanvas" />
+                <InkCanvas x:Name="InkCanvas"  />
             </Grid>
 
             <InkToolbar InitialControls="None" Background="Black"  TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2">

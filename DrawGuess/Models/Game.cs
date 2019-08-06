@@ -16,6 +16,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.UI.Input.Inking;
 
 namespace DrawGuess.Models
 {
@@ -146,6 +147,17 @@ namespace DrawGuess.Models
             set
             {
                 this.stopTasks = value;
+                this.OnPropertyChanged();
+            }
+        }
+
+        private IEnumerable<InkStroke> strokes;
+        public IEnumerable<InkStroke> Strokes
+        {
+            get { return this.strokes; }
+            set
+            {
+                this.strokes = value;
                 this.OnPropertyChanged();
             }
         }
@@ -343,6 +355,26 @@ namespace DrawGuess.Models
             }
         }
 
+        public void SetStrokes(IReadOnlyList<InkStroke> strokes)
+        {
+            try
+            {
+                //Get secret word and random letters for the hint
+                string secretWord = WordHelper.RandomizeSecretWord();
+                string randomLetters = WordHelper.SetRandomLetters(secretWord);
+
+                Hashtable customProperties = new Hashtable() {
+                    { "strokes", strokes }, 
+                };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
+            }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not set strokes", e);
+            }
+        }
+
         public void StartRound(int round)
         {
             try
@@ -396,6 +428,19 @@ namespace DrawGuess.Models
             Round = round;
         }
 
+        public void GetStrokes()
+        {
+            Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
+
+            if (room.CustomProperties.ContainsKey("strokes"))
+            {
+                if (Strokes != (IEnumerable<InkStroke>)room.CustomProperties["strokes"])
+                {
+                    Strokes = (IEnumerable<InkStroke>)room.CustomProperties["strokes"];
+                }
+            }
+        }
+
         public void ChangeMode()
         {
             switch (Mode)
@@ -424,8 +469,8 @@ namespace DrawGuess.Models
                     Task playTtask = SetMode(GameMode.Playing, 5);
                     break;
                 case GameMode.Playing:
-                    //Set game mode to RevealingRoles
-                    Task endRoundTask = SetMode(GameMode.EndingRound, 60); 
+                    //Set game mode to EndingRound
+                    Task endRoundTask = SetMode(GameMode.EndingRound, 60);
                     break;
                 case GameMode.EndingRound:
                     //If round is 8, the game has come to an end
@@ -546,6 +591,13 @@ namespace DrawGuess.Models
                     {
                         SecretWord = (string)room.CustomProperties["secret_word"];
                         ChangedSecreWord = true; 
+                    }
+                }
+                if (room.CustomProperties.ContainsKey("strokes"))
+                {
+                    if (Strokes != (IEnumerable<InkStroke>)room.CustomProperties["strokes"])
+                    {
+                        Strokes = (IEnumerable<InkStroke>)room.CustomProperties["strokes"];
                     }
                 }
             }
