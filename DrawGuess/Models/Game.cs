@@ -151,8 +151,8 @@ namespace DrawGuess.Models
             }
         }
 
-        private IEnumerable<InkStroke> strokes;
-        public IEnumerable<InkStroke> Strokes
+        private InkStroke strokes;
+        public InkStroke Strokes
         {
             get { return this.strokes; }
             set
@@ -355,16 +355,12 @@ namespace DrawGuess.Models
             }
         }
 
-        public void SetStrokes(IReadOnlyList<InkStroke> strokes)
+        public void AddStrokes(byte[] strokes)
         {
             try
             {
-                //Get secret word and random letters for the hint
-                string secretWord = WordHelper.RandomizeSecretWord();
-                string randomLetters = WordHelper.SetRandomLetters(secretWord);
-
                 Hashtable customProperties = new Hashtable() {
-                    { "strokes", strokes }, 
+                    { "strokes", strokes },
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
@@ -428,17 +424,16 @@ namespace DrawGuess.Models
             Round = round;
         }
 
-        public void GetStrokes()
+        public byte[] GetStrokes()
         {
             Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
 
             if (room.CustomProperties.ContainsKey("strokes"))
             {
-                if (Strokes != (IEnumerable<InkStroke>)room.CustomProperties["strokes"])
-                {
-                    Strokes = (IEnumerable<InkStroke>)room.CustomProperties["strokes"];
-                }
+                return (byte[])room.CustomProperties["strokes"];
             }
+
+            return new byte[0]; 
         }
 
         public void ChangeMode()
@@ -593,13 +588,13 @@ namespace DrawGuess.Models
                         ChangedSecreWord = true; 
                     }
                 }
-                if (room.CustomProperties.ContainsKey("strokes"))
-                {
-                    if (Strokes != (IEnumerable<InkStroke>)room.CustomProperties["strokes"])
-                    {
-                        Strokes = (IEnumerable<InkStroke>)room.CustomProperties["strokes"];
-                    }
-                }
+                //if (room.CustomProperties.ContainsKey("strokes"))
+                //{
+                //    if (Strokes != (IEnumerable<InkStroke>)room.CustomProperties["strokes"])
+                //    {
+                //        Strokes = (IEnumerable<InkStroke>)room.CustomProperties["strokes"];
+                //    }
+                //}
             }
             catch (Exception e)
             {
