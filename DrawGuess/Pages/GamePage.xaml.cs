@@ -54,6 +54,9 @@ namespace DrawGuess.Pages
         {
             try
             {
+                //Do not update strokes if player is painter
+                if(ViewModel.CurrentPlayer.Painter) { return; }
+
                 var strokes = args.Strokes;
                 //create stream
                 InMemoryRandomAccessStream testStream = new InMemoryRandomAccessStream();
