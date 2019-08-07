@@ -65,11 +65,12 @@
                 <StackPanel Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Converter={StaticResource InverseConverter}, Mode=OneWay}"
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             Background="Transparent"/>
+                <TextBlock Text="{x:Bind ViewModel.Game.Timer, Mode=OneWay}" Foreground="Black" FontFamily="{StaticResource RobotoLight}" FontSize="42" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,10,0"/>
             </Grid>
 
             <InkToolbar InitialControls="None" Background="Black" TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2">
-                <InkToolbarEraserButton Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Mode=OneWay}"/>
-                <InkToolbarBallpointPenButton Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Mode=OneWay}"/>
+                <InkToolbarEraserButton IsEnabled="{x:Bind ViewModel.CurrentPlayer.Painter, Mode=OneWay}"/>
+                <InkToolbarBallpointPenButton IsEnabled="{x:Bind ViewModel.CurrentPlayer.Painter, Mode=OneWay}"/>
             </InkToolbar>
 
             <GridView Height="70" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="GuessGrid" SelectionMode="Single" IsItemClickEnabled="False" Tapped="GuessLetter_Tapped" Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">

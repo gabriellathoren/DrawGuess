@@ -151,6 +151,17 @@ namespace DrawGuess.Models
             }
         }
 
+        private int timer;
+        public int Timer
+        {
+            get { return timer; }
+            set
+            {
+                timer = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         public bool LeftRoom = false;
         public bool ChangingMode = false;
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
@@ -158,6 +169,7 @@ namespace DrawGuess.Models
         public Game()
         {
             LoadBalancingClient.MatchMakingCallbackTargets.LeftRoom += RoomLeft;
+            Timer = 0;
         }
 
         private void RoomLeft(object sender, EventArgs e)
@@ -344,7 +356,7 @@ namespace DrawGuess.Models
             }
         }
 
-        public void AddStrokes(byte[] strokes) //, byte[] newStrokes)
+        public void AddStrokes(byte[] strokes) 
         {
             try
             {
@@ -408,6 +420,28 @@ namespace DrawGuess.Models
             }            
         }
 
+        public async Task MoveFromPlayingMode(GameMode mode)
+        {
+            bool done = false;
+            while (!StopTasks && !done)
+            {
+                await Task.Delay(100);
+
+                if (Timer <= 0)
+                {
+                    done = true;
+                }
+            }
+
+            if (!StopTasks)
+            {
+                Hashtable customProperties = new Hashtable() {
+                    { "mode", mode }
+                };
+                LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+            }
+        }
+
         public void SetRound(int round)
         {
             Hashtable customProperties = new Hashtable() { { "round", round } };
@@ -456,7 +490,7 @@ namespace DrawGuess.Models
                     break;
                 case GameMode.Playing:
                     //Set game mode to EndingRound
-                    Task endRoundTask = SetMode(GameMode.EndingRound, 60);
+                    Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound);
                     break;
                 case GameMode.EndingRound:
                     //If round is 8, the game has come to an end

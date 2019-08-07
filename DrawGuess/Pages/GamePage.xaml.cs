@@ -426,6 +426,8 @@ namespace DrawGuess.Pages
 
         public void UpdateInfoView()
         {
+            if(ViewModel.CurrentMode == ViewModel.Game.Mode) { return; }
+
             InfoView.TwoRows = false;
             InfoView.Row1 = "";
             InfoView.Row2 = "";
@@ -433,23 +435,27 @@ namespace DrawGuess.Pages
             switch (ViewModel.Game.Mode)
             {
                 case GameMode.WaitingForPlayers:
+                    ViewModel.CurrentMode = GameMode.WaitingForPlayers; 
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Waiting for other players\r\nto join...";
                     break;
                 case GameMode.StartingGame:
+                    ViewModel.CurrentMode = GameMode.StartingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Starting new game...";
                     break;
                 case GameMode.StartingRound:
+                    ViewModel.CurrentMode = GameMode.StartingRound;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "ROUND " + ViewModel.Game.Round.ToString();
-                    InkCanvas.InkPresenter.StrokeContainer = new Windows.UI.Input.Inking.InkStrokeContainer();
-                    //TODO: Reset strokes in Photon
+                    //TODO: Behövs den? 
+                    InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
                     break;
                 case GameMode.RevealingRoles:
+                    ViewModel.CurrentMode = GameMode.RevealingRoles;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Painter: " + ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
@@ -462,6 +468,7 @@ namespace DrawGuess.Pages
                     }
                     break;
                 case GameMode.Playing:
+                    ViewModel.CurrentMode = GameMode.Playing;
                     if (ViewModel.CurrentPlayer.Painter)
                     {
                         ViewModel.PainterView = true;
@@ -478,19 +485,25 @@ namespace DrawGuess.Pages
                     }
                     ViewModel.ShowInfoView = false;
                     ViewModel.ShowGame = true;
+                    ViewModel.Game.Timer = 60;
+                    //Start CoundDown task
+                    Task task = Task.Run((Action)CountDown);
                     break;
                 case GameMode.EndingRound:
+                    ViewModel.CurrentMode = GameMode.EndingRound;
                     AddStrokes = false;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
                     InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;
                     break;
                 case GameMode.EndingGame:
+                    ViewModel.CurrentMode = GameMode.EndingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
                     InfoView.Row1 = "Winner: " + GetWinners();
                     break;
                 case GameMode.PainterLeft:
+                    ViewModel.CurrentMode = GameMode.PainterLeft;
                     ViewModel.ShowInfoView = true;
                     InfoView.Row1 = "Painter left the game";
                     break;
@@ -557,6 +570,24 @@ namespace DrawGuess.Pages
             }
 
             ViewModel.Guess = hint;
+        }
+
+        public async void CountDown()
+        {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                SetTimer();
+            });
+        }
+
+        public async void SetTimer()
+        {
+            //Count down from 60 seconds to 0, so players nows how long the round has left 
+            while (ViewModel.Game.Timer > 0)
+            {
+                ViewModel.Game.Timer -= 1;
+                await Task.Delay(1000);
+            }
         }
 
         public void GetGame()
@@ -661,11 +692,11 @@ namespace DrawGuess.Pages
                 {
                     //If guess is correct
                     if (CheckGuess())
-                    {
-                        //TODO: Show correct guess view
-                        //TODO: Points depending on when 
-                        SetPlayerPoints(10);
+                    {                        
+                        //Setpoints depending on how fast the answer was made
+                        SetPlayerPoints(ViewModel.Game.Timer);
                         SetCorrectAnswer(true);
+                        //TODO: Show correct guess view
                         return;
                     }
 

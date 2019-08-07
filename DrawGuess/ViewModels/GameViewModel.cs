@@ -36,7 +36,6 @@ namespace DrawGuess.ViewModels
         }
 
         private Player currentPlayer; 
-
         public Player CurrentPlayer
         {
             get { return this.currentPlayer; }
@@ -125,13 +124,13 @@ namespace DrawGuess.ViewModels
             }
         }
 
-        private IEnumerable<InkStroke> strokes;
-        public IEnumerable<InkStroke> Strokes
+        private GameMode currentMode;
+        public GameMode CurrentMode
         {
-            get { return this.strokes; }
+            get { return currentMode; }
             set
             {
-                this.strokes = value;
+                currentMode = value;
                 this.OnPropertyChanged();
             }
         }
