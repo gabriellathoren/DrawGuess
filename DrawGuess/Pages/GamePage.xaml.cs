@@ -407,7 +407,7 @@ namespace DrawGuess.Pages
                 {
                     if (!ViewModel.Players.Any(x => !x.RightAnswer && !x.Painter))
                     {
-                        await ViewModel.Game.SetMode(GameMode.EndingRound, 0);
+                        await ViewModel.Game.SetMode(GameMode.EndingRound, 5);
                     }
                 }
                 
