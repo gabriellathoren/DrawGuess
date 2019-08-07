@@ -31,7 +31,6 @@ namespace DrawGuess.Pages
     {
         public GameViewModel ViewModel { get; set; }
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
-        public bool AddStrokes { get; set; }
 
         public GamePage()
         {
@@ -491,7 +490,6 @@ namespace DrawGuess.Pages
                     break;
                 case GameMode.EndingRound:
                     ViewModel.CurrentMode = GameMode.EndingRound;
-                    AddStrokes = false;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
                     InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;
