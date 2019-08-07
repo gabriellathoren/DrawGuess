@@ -124,6 +124,17 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private bool showPlacement;
+        public bool ShowPlacement
+        {
+            get { return this.showPlacement; }
+            set
+            {
+                this.showPlacement = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private GameMode currentMode;
         public GameMode CurrentMode
         {
@@ -144,6 +155,7 @@ namespace DrawGuess.ViewModels
             User = (App.Current as App).User;
             ShowGame = false;
             ShowInfoView = false;
+            ShowPlacement = false; 
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };

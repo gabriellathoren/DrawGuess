@@ -27,11 +27,11 @@
         <controls:Navigation Grid.ColumnSpan="4" Grid.Row="0" />
 
         <StackPanel Grid.Row="1" Grid.Column="1" Padding="40,0,40,0">
-            <Button HorizontalAlignment="Center" Padding="0" Background="Transparent"  Margin="0,20,0,0" VerticalAlignment="Top">
+            <Button IsEnabled="False" HorizontalAlignment="Center" Padding="0" Background="Transparent"  Margin="0,20,0,0" VerticalAlignment="Top">
                 <Grid>
                     <PersonPicture x:Name="profilePicture" UseLayoutRounding="False" Initials="{x:Bind ViewModel.Initials, Mode=TwoWay}" RequestedTheme="Dark" Height="200" Width="200"/>
-                    <Rectangle Fill="Black" Opacity="0.7" HorizontalAlignment="Stretch" Height="60" VerticalAlignment="Bottom"/>
-                    <TextBlock Height="40" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Text="CHANGE IMAGE" FontSize="12" FontFamily="{StaticResource RobotoLight}"/>
+                    <!--<Rectangle Fill="Black" Opacity="0.7" HorizontalAlignment="Stretch" Height="60" VerticalAlignment="Bottom"/>
+                    <TextBlock Height="40" VerticalAlignment="Bottom"  HorizontalAlignment="Center" Text="CHANGE IMAGE" FontSize="12" FontFamily="{StaticResource RobotoLight}"/>-->
                 </Grid>
             </Button>
        

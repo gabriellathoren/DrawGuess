@@ -67,11 +67,19 @@ namespace DrawGuess.Pages
         {
             try
             {
+                Hashtable data = (Hashtable)sender;
+
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                 () =>
                 {
                     UpdatePlayers();
-                });
+
+                    //Only update order of list if points are changed
+                    if (data.ContainsKey("points"))
+                    {
+                        SetPlacement();
+                    }
+                 });
             }
             catch (Exception)
             {
@@ -367,7 +375,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void UpdatePlayers()
+        public async void UpdatePlayers()
         {
             try
             {
@@ -393,6 +401,16 @@ namespace DrawGuess.Pages
                         player.Painter = p.Painter;
                     }
                 }
+
+                //If all users have guessed correct, continue to next step
+                if(ViewModel.CurrentPlayer.Painter)
+                {
+                    if (!ViewModel.Players.Any(x => x.RightAnswer == false))
+                    {
+                        await ViewModel.Game.SetMode(GameMode.EndingRound, 0);
+                    }
+                }
+                
             }
             catch (Exception e)
             {
@@ -402,9 +420,18 @@ namespace DrawGuess.Pages
 
         public void SetPlacement()
         {
-            ViewModel.Players = new ObservableCollection<Models.Player>(ViewModel.Players.OrderBy(x => x.Points).ToList());
+            ViewModel.Players = new ObservableCollection<Models.Player>(ViewModel.Players.OrderByDescending(x => x.Points).ToList());
 
-            int placement = 0;
+            if (!ViewModel.Players.Any(p => p.Points != 0))
+            {
+                foreach (Models.Player p in ViewModel.Players)
+                {
+                    p.Placement = 0;
+                }
+                return; 
+            }
+
+            int placement = 1;
             foreach (Models.Player p in ViewModel.Players)
             {
                 if (ViewModel.Players.IndexOf(p) == 0)
