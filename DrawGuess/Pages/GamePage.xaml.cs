@@ -128,7 +128,7 @@ namespace DrawGuess.Pages
             {
                 Hashtable data = (Hashtable)sender;
 
-                if (data.ContainsKey("strokes"))
+                if (data.ContainsKey("strokes") && !ViewModel.CurrentPlayer.Painter)
                 {
                     await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
