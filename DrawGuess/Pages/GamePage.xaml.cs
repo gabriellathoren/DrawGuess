@@ -182,6 +182,13 @@ namespace DrawGuess.Pages
             {
                 byte[] strokesByte = ViewModel.Game.GetStrokes();
 
+                //If strokes is empty, clear the InkCanvas
+                if(strokesByte == null || strokesByte.Length < 1)
+                {
+                    InkCanvas.InkPresenter.StrokeContainer.Clear();
+                    return;
+                }
+
                 //From bytes to strokes
                 using (InMemoryRandomAccessStream stream2 = new InMemoryRandomAccessStream())
                 {
@@ -195,7 +202,7 @@ namespace DrawGuess.Pages
                     stream2.Dispose();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 ViewModel.ErrorMessage = "Could not set strokes";
             }
