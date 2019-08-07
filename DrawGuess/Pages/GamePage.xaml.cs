@@ -64,32 +64,34 @@ namespace DrawGuess.Pages
         {
             try
             {
-                //Do not update strokes if player is painter
-                if(ViewModel.CurrentPlayer.Painter) { return; }
+                //Update strokes in Photon if player is painter
+                if(ViewModel.CurrentPlayer.Painter) {
+                    //create stream
+                    InMemoryRandomAccessStream testStream = new InMemoryRandomAccessStream();
+                    using (IOutputStream outputStream = testStream.GetOutputStreamAt(0))
+                    {
+                        //save inkstrokes to the stream 
+                        await InkCanvas.InkPresenter.StrokeContainer.SaveAsync(outputStream); //All strokes
+                        await outputStream.FlushAsync();
+                    }
+                    //use datareader to read the stream
+                    var dr = new DataReader(testStream.GetInputStreamAt(0));
+                    //create byte array
+                    var bytes = new byte[testStream.Size];
+                    //load stream
+                    await dr.LoadAsync((uint)testStream.Size);
+                    //save to byte array
+                    dr.ReadBytes(bytes);
 
-                var newStrokes = args.Strokes; // New strokes
-                var strokeContainer = InkCanvas.InkPresenter.StrokeContainer; //Whole stroke container
+                    //InkCanvas.InkPresenter.StrokeContainer.Clear();
 
-                //create stream
-                InMemoryRandomAccessStream testStream = new InMemoryRandomAccessStream();
-                using (IOutputStream outputStream = testStream.GetOutputStreamAt(0))
-                {
-                    //save inkstrokes to the stream 
-                    await InkCanvas.InkPresenter.StrokeContainer.SaveAsync(outputStream); //All strokes
-                    await outputStream.FlushAsync();
+                    ViewModel.Game.AddStrokes(bytes);
                 }
-                //use datareader to read the stream
-                var dr = new DataReader(testStream.GetInputStreamAt(0));
-                //create byte array
-                var bytes = new byte[testStream.Size];
-                //load stream
-                await dr.LoadAsync((uint)testStream.Size);
-                //save to byte array
-                dr.ReadBytes(bytes);
 
-                //InkCanvas.InkPresenter.StrokeContainer.Clear();
+                //var newStrokes = args.Strokes; // New strokes
+                //var strokeContainer = InkCanvas.InkPresenter.StrokeContainer; //Whole stroke container
 
-                ViewModel.Game.AddStrokes(bytes);
+                
             }
             catch (Exception e)
             {
@@ -215,7 +217,7 @@ namespace DrawGuess.Pages
             try
             {
                 byte[] strokesByte = ViewModel.Game.GetStrokes();
-                
+
                 //From bytes to strokes
                 using (InMemoryRandomAccessStream stream2 = new InMemoryRandomAccessStream())
                 {
