@@ -40,7 +40,7 @@ namespace DrawGuess.Pages
 
             // Initialize the InkCanvas
             InkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen;
-            InkCanvas.InkPresenter.StrokeContainer = new Windows.UI.Input.Inking.InkStrokeContainer();
+            InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
             InkCanvas.InkPresenter.StrokesCollected += Strokes_StrokesChanged;
             InkCanvas.InkPresenter.StrokesErased += Strokes_StrokesErased;
 
@@ -51,54 +51,17 @@ namespace DrawGuess.Pages
             LoadBalancingClient.InRoomCallbackTargets.PlayerPropertiesUpdate += PlayerPropertiesUpdate;
         }
 
-        private void Strokes_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
+        //Listener for removing strokes to InkCanvas
+        private async void Strokes_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
         {
-            //Do not update strokes if player is painter
-            if (ViewModel.CurrentPlayer.Painter) { return; }
-
-            var earasedStrokes = args.Strokes; // New strokes
-            var strokeContainer = InkCanvas.InkPresenter.StrokeContainer; //Whole stroke container
+            await UpdateStrokes();
         }
 
+        //Listener for adding new strokes to InkCanvas
         private async void Strokes_StrokesChanged(InkPresenter sender, InkStrokesCollectedEventArgs args)
         {
-            try
-            {
-                //Update strokes in Photon if player is painter
-                if(ViewModel.CurrentPlayer.Painter) {
-                    //create stream
-                    InMemoryRandomAccessStream testStream = new InMemoryRandomAccessStream();
-                    using (IOutputStream outputStream = testStream.GetOutputStreamAt(0))
-                    {
-                        //save inkstrokes to the stream 
-                        await InkCanvas.InkPresenter.StrokeContainer.SaveAsync(outputStream); //All strokes
-                        await outputStream.FlushAsync();
-                    }
-                    //use datareader to read the stream
-                    var dr = new DataReader(testStream.GetInputStreamAt(0));
-                    //create byte array
-                    var bytes = new byte[testStream.Size];
-                    //load stream
-                    await dr.LoadAsync((uint)testStream.Size);
-                    //save to byte array
-                    dr.ReadBytes(bytes);
-
-                    //InkCanvas.InkPresenter.StrokeContainer.Clear();
-
-                    ViewModel.Game.AddStrokes(bytes);
-                }
-
-                //var newStrokes = args.Strokes; // New strokes
-                //var strokeContainer = InkCanvas.InkPresenter.StrokeContainer; //Whole stroke container
-
-                
-            }
-            catch (Exception e)
-            {
-                ViewModel.ErrorMessage = "Could not set strokes";
-            }
+            await UpdateStrokes();
         }
-
 
         //Listener for player changes
         private async void PlayerPropertiesUpdate(object sender, EventArgs e)
@@ -211,6 +174,7 @@ namespace DrawGuess.Pages
                     });
             }
         }
+        
 
         public async void GetStrokes()
         {
@@ -237,37 +201,40 @@ namespace DrawGuess.Pages
             }
         }
 
-        public async void SetStrokes()
+        public async Task UpdateStrokes()
         {
-            AddStrokes = true;
-            while (AddStrokes)
+            try
             {
-                try
+                //Update strokes in Photon if player is painter
+                if (ViewModel.CurrentPlayer.Painter)
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                    () =>
+                    //create stream
+                    InMemoryRandomAccessStream testStream = new InMemoryRandomAccessStream();
+                    using (IOutputStream outputStream = testStream.GetOutputStreamAt(0))
                     {
-                        var strokes = InkCanvas.InkPresenter.StrokeContainer.GetStrokes();
+                        //save inkstrokes to the stream 
+                        await InkCanvas.InkPresenter.StrokeContainer.SaveAsync(outputStream); //All strokes
+                        await outputStream.FlushAsync();
+                    }
+                    //use datareader to read the stream
+                    var dr = new DataReader(testStream.GetInputStreamAt(0));
+                    //create byte array
+                    var bytes = new byte[testStream.Size];
+                    //load stream
+                    await dr.LoadAsync((uint)testStream.Size);
+                    //save to byte array
+                    dr.ReadBytes(bytes);
 
-                        InkCanvas.InkPresenter.StrokeContainer.Clear();
-                        Task.Delay(1000);
-                        //ViewModel.Game.SetStrokes(strokes);
-                        //InkCanvas.InkPresenter.StrokeContainer.AddStrokes(strokes);
-
-                        foreach (var stroke in strokes)
-                        {
-                            InkCanvas.InkPresenter.StrokeContainer.AddStroke(stroke);
-                        }
-                    });
-                    await Task.Delay(100);
-                }
-                catch (Exception e)
-                {
-                    ViewModel.ErrorMessage = "Could not set strokes";
+                    //Send strokes to Photon
+                    ViewModel.Game.AddStrokes(bytes);
                 }
             }
+            catch (Exception e)
+            {
+                ViewModel.ErrorMessage = "Could not set strokes";
+            }            
         }
-
+        
         public void AddPlayer(Models.Player player)
         {
             try
@@ -489,8 +456,7 @@ namespace DrawGuess.Pages
                 case GameMode.Playing:
                     if (ViewModel.CurrentPlayer.Painter)
                     {
-                        //Start task to update strokes 
-                        //Task task = Task.Run((Action)SetStrokes);
+                        InkCanvas.InkPresenter.StrokeContainer.Clear();
                         ViewModel.PainterView = true;
                         var secret = new ObservableCollection<Letter>();
                         foreach (var letter in ViewModel.Game.SecretWord)
@@ -617,6 +583,7 @@ namespace DrawGuess.Pages
                 SetGameMode();
                 SetPlayerPoints(0);
                 SetCorrectAnswer(false);
+                GetStrokes();
             }
             catch (Exception ex)
             {

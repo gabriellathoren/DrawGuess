@@ -151,17 +151,6 @@ namespace DrawGuess.Models
             }
         }
 
-        private InkStroke strokes;
-        public InkStroke Strokes
-        {
-            get { return this.strokes; }
-            set
-            {
-                this.strokes = value;
-                this.OnPropertyChanged();
-            }
-        }
-
         public bool LeftRoom = false;
         public bool ChangingMode = false;
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
@@ -383,7 +372,8 @@ namespace DrawGuess.Models
                 Hashtable customProperties = new Hashtable() {
                     { "secret_word", secretWord }, //Secret word
                     { "random_letters", randomLetters }, //Set random letters
-                    { "round", round }, //Set round         
+                    { "round", round }, //Set round     
+                    { "strokes", new byte[0] } //Clear strokes
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
@@ -589,13 +579,6 @@ namespace DrawGuess.Models
                         ChangedSecreWord = true; 
                     }
                 }
-                //if (room.CustomProperties.ContainsKey("strokes"))
-                //{
-                //    if (Strokes != (IEnumerable<InkStroke>)room.CustomProperties["strokes"])
-                //    {
-                //        Strokes = (IEnumerable<InkStroke>)room.CustomProperties["strokes"];
-                //    }
-                //}
             }
             catch (Exception e)
             {
