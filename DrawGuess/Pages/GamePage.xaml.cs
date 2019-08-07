@@ -42,12 +42,22 @@ namespace DrawGuess.Pages
             InkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen;
             InkCanvas.InkPresenter.StrokeContainer = new Windows.UI.Input.Inking.InkStrokeContainer();
             InkCanvas.InkPresenter.StrokesCollected += Strokes_StrokesChanged;
+            InkCanvas.InkPresenter.StrokesErased += Strokes_StrokesErased;
 
             //Listen to callbacks from Photon
             LoadBalancingClient.InRoomCallbackTargets.PlayerEnteredRoom += PlayerEnteredRoom;
             LoadBalancingClient.InRoomCallbackTargets.PlayerLeftRoom += PlayerLeftRoom;
             LoadBalancingClient.InRoomCallbackTargets.RoomPropertiesUpdate += RoomPropertiesUpdate;
             LoadBalancingClient.InRoomCallbackTargets.PlayerPropertiesUpdate += PlayerPropertiesUpdate;
+        }
+
+        private void Strokes_StrokesErased(InkPresenter sender, InkStrokesErasedEventArgs args)
+        {
+            //Do not update strokes if player is painter
+            if (ViewModel.CurrentPlayer.Painter) { return; }
+
+            var earasedStrokes = args.Strokes; // New strokes
+            var strokeContainer = InkCanvas.InkPresenter.StrokeContainer; //Whole stroke container
         }
 
         private async void Strokes_StrokesChanged(InkPresenter sender, InkStrokesCollectedEventArgs args)
@@ -57,13 +67,15 @@ namespace DrawGuess.Pages
                 //Do not update strokes if player is painter
                 if(ViewModel.CurrentPlayer.Painter) { return; }
 
-                var strokes = args.Strokes;
+                var newStrokes = args.Strokes; // New strokes
+                var strokeContainer = InkCanvas.InkPresenter.StrokeContainer; //Whole stroke container
+
                 //create stream
                 InMemoryRandomAccessStream testStream = new InMemoryRandomAccessStream();
                 using (IOutputStream outputStream = testStream.GetOutputStreamAt(0))
                 {
                     //save inkstrokes to the stream 
-                    await InkCanvas.InkPresenter.StrokeContainer.SaveAsync(outputStream);
+                    await InkCanvas.InkPresenter.StrokeContainer.SaveAsync(outputStream); //All strokes
                     await outputStream.FlushAsync();
                 }
                 //use datareader to read the stream
@@ -74,7 +86,9 @@ namespace DrawGuess.Pages
                 await dr.LoadAsync((uint)testStream.Size);
                 //save to byte array
                 dr.ReadBytes(bytes);
-                
+
+                //InkCanvas.InkPresenter.StrokeContainer.Clear();
+
                 ViewModel.Game.AddStrokes(bytes);
             }
             catch (Exception e)
@@ -112,7 +126,7 @@ namespace DrawGuess.Pages
             {
                 Hashtable data = (Hashtable)sender;
 
-                if(data.ContainsKey("strokes"))
+                if (data.ContainsKey("strokes"))
                 {
                     await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
@@ -201,14 +215,19 @@ namespace DrawGuess.Pages
             try
             {
                 byte[] strokesByte = ViewModel.Game.GetStrokes();
-                Stream stream = new MemoryStream(strokesByte);
-                // Open a file stream for reading.
-                //IRandomAccessStream rastream = await stream.OpenAsync(Windows.Storage.FileAccessMode.Read);
-                // Read from file.
-                await InkCanvas.InkPresenter.StrokeContainer.LoadAsync(stream.AsRandomAccessStream());
-                stream.Dispose();
+                
+                //From bytes to strokes
+                using (InMemoryRandomAccessStream stream2 = new InMemoryRandomAccessStream())
+                {
+                    await stream2.WriteAsync(strokesByte.AsBuffer());
+                    //await InkCanvas.InkPresenter.StrokeContainer.LoadAsync(stream);
 
-                //InkCanvas.InkPresenter.StrokeContainer.AddStrokes(ViewModel.Game.Strokes);                
+                    using (var inputStream = stream2.GetInputStreamAt(0))
+                    {
+                        await InkCanvas.InkPresenter.StrokeContainer.LoadAsync(inputStream);
+                    }
+                    stream2.Dispose();
+                }
             }
             catch (Exception)
             {
@@ -218,8 +237,8 @@ namespace DrawGuess.Pages
 
         public async void SetStrokes()
         {
-            AddStrokes = true; 
-            while(AddStrokes)
+            AddStrokes = true;
+            while (AddStrokes)
             {
                 try
                 {
@@ -233,7 +252,7 @@ namespace DrawGuess.Pages
                         //ViewModel.Game.SetStrokes(strokes);
                         //InkCanvas.InkPresenter.StrokeContainer.AddStrokes(strokes);
 
-                        foreach(var stroke in strokes)
+                        foreach (var stroke in strokes)
                         {
                             InkCanvas.InkPresenter.StrokeContainer.AddStroke(stroke);
                         }
@@ -244,7 +263,7 @@ namespace DrawGuess.Pages
                 {
                     ViewModel.ErrorMessage = "Could not set strokes";
                 }
-            }            
+            }
         }
 
         public void AddPlayer(Models.Player player)
@@ -334,7 +353,7 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = "Could not start game";
             }
         }
-        
+
         public void SetPlayerPoints(int points)
         {
             try
@@ -381,11 +400,11 @@ namespace DrawGuess.Pages
                 {
                     var player = ViewModel.Players.Where(x => x.UserId == p.UserId).First();
 
-                    if(player.Points != p.Points)
+                    if (player.Points != p.Points)
                     {
                         player.Points = p.Points;
                     }
-                    if(player.RightAnswer != p.RightAnswer)
+                    if (player.RightAnswer != p.RightAnswer)
                     {
                         player.RightAnswer = p.RightAnswer;
                     }
@@ -524,14 +543,14 @@ namespace DrawGuess.Pages
             try
             {
                 var letters = new ObservableCollection<Letter>();
-                
+
                 //Set hinting boxes based on number of letters in secret word
                 for (int i = 0; i < ViewModel.Game.RandomLetters.Length; i++)
                 {
                     letters.Add(new Letter()
                     {
                         Character = ViewModel.Game.RandomLetters[i].ToString()
-                    });                    
+                    });
                 }
 
                 ViewModel.RandomLetters = letters;
@@ -570,7 +589,7 @@ namespace DrawGuess.Pages
             try
             {
                 //Update game, if the secret word was updated, the viewmodel must be updated as well
-                if(ViewModel.Game.UpdateGame())
+                if (ViewModel.Game.UpdateGame())
                 {
                     if (!string.IsNullOrEmpty(ViewModel.Game.SecretWord))
                     {
@@ -626,9 +645,9 @@ namespace DrawGuess.Pages
         {
             string guess = "";
 
-            foreach(var letter in ViewModel.Guess)
+            foreach (var letter in ViewModel.Guess)
             {
-                guess += letter.Character; 
+                guess += letter.Character;
             }
 
             if (guess.Equals(ViewModel.Game.SecretWord))
@@ -657,10 +676,10 @@ namespace DrawGuess.Pages
                 var letterPlace = ViewModel.Guess.IndexOf(ViewModel.Guess.Where(x => x.Character == "").First());
                 letter.Visibility = true;
                 ViewModel.Guess[letterPlace] = letter;
-                
+
                 //Hide guess letter from hinting letters
                 ViewModel.RandomLetters[HintGrid.SelectedIndex].Visibility = false;
-                
+
                 //If the letter is placed in the last space of letter check if correct
                 if (ViewModel.Guess.Count <= (letterPlace + 1))
                 {
@@ -695,7 +714,8 @@ namespace DrawGuess.Pages
             try
             {
                 //Remove possibility to remove letters if user is painter or user has made the correct guess already
-                if (ViewModel.PainterView || ViewModel.CurrentPlayer.RightAnswer == true) {
+                if (ViewModel.PainterView || ViewModel.CurrentPlayer.RightAnswer == true)
+                {
                     return;
                 }
 

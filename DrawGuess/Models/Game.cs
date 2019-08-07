@@ -355,12 +355,13 @@ namespace DrawGuess.Models
             }
         }
 
-        public void AddStrokes(byte[] strokes)
+        public void AddStrokes(byte[] strokes) //, byte[] newStrokes)
         {
             try
             {
                 Hashtable customProperties = new Hashtable() {
                     { "strokes", strokes },
+                   // { "newStrokes", newStrokes }
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
