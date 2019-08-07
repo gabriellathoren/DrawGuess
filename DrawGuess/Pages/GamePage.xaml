@@ -17,6 +17,7 @@
         <Converter:VisibilityConverter x:Key="VisibilityConverter" />
         <Converter:ColorConverter x:Key="ColorConverter" />
         <Converter:InverseBoolConverter x:Key="InverseConverter" />
+        <Converter:PlacementVisibilityConverter x:Key="PlacementVisibilityConverter" />        
 
         <DataTemplate x:DataType="Models:Letter" x:Name="MissingLetterTemplate">
             <Grid x:Name="NoLetter" VerticalAlignment="Center">
@@ -133,7 +134,7 @@
                 <ListView.ItemTemplate>
 
                     <DataTemplate x:DataType="Models:Player" >
-                        <Grid Background="{Binding Source={Binding}, Converter={StaticResource ColorConverter}}">
+                        <Grid Background="{Binding Source={Binding}, Converter={StaticResource ColorConverter}, Mode=OneWay}">
                             <Grid Padding="10,0,10,0" x:Name="PlayerItem" Height="50" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" >
 
                                 <Grid.ColumnDefinitions>
@@ -144,17 +145,16 @@
                                     <ColumnDefinition Width="30"/>
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Grid.Column="0" Text="{x:Bind Placement}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="20"/>
+                                <TextBlock Grid.Column="0" Text="{x:Bind Placement, Mode=OneWay}" Visibility="{x:Bind Placement, Converter={StaticResource PlacementVisibilityConverter}, Mode=OneWay}" VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="20"/>
                                 <PersonPicture HorizontalAlignment="Left" Width="40" Height="40" Grid.Column="1" VerticalAlignment="Center"/>
-                                <TextBlock TextWrapping="Wrap" TextTrimming="WordEllipsis"  HorizontalAlignment="Stretch" Grid.Column="2" Text="{x:Bind NickName}" VerticalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
+                                <TextBlock TextWrapping="Wrap" TextTrimming="WordEllipsis"  HorizontalAlignment="Stretch" Grid.Column="2" Text="{x:Bind NickName, Mode=OneWay}" VerticalAlignment="Center" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
                                 <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
-                                    <TextBlock Text="{x:Bind Points}" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
+                                    <TextBlock Text="{x:Bind Points, Mode=OneWay}" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
                                     <TextBlock Text=" p" FontFamily="{StaticResource RobotoLight}" FontSize="14"/>
                                 </StackPanel>
-                                <Image Width="15" VerticalAlignment="Center" x:Name="RightAnswer" Grid.Column="4" Source="/Assets/Components/check.png" Visibility="{Binding Path=RightAnswer, Converter={StaticResource VisibilityConverter}}"/>
-                                <Image Width="15" VerticalAlignment="Center" x:Name="Painter" Grid.Column="4" Source="/Assets/Components/pen.png" Visibility="{Binding Path=Painter, Converter={StaticResource VisibilityConverter}}"/>
-
-                            </Grid>
+                                <Image Width="15" VerticalAlignment="Center" x:Name="RightAnswer" Grid.Column="4" Source="/Assets/Components/check.png" Visibility="{Binding Path=RightAnswer, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                                <Image Width="15" VerticalAlignment="Center" x:Name="Painter" Grid.Column="4" Source="/Assets/Components/pen.png" Visibility="{Binding Path=Painter, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                             </Grid>
                         </Grid>
                     </DataTemplate>
                 </ListView.ItemTemplate>

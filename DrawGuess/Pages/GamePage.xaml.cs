@@ -375,23 +375,21 @@ namespace DrawGuess.Pages
                 //Update existing player's information
                 foreach (var p in ViewModel.Game.GetPlayers())
                 {
-                    var player = ViewModel.Players.Where(x => x.UserId == p.UserId).First();
-
-                    if (player.Points != p.Points)
+                    if (ViewModel.CurrentPlayer.Points != p.Points)
                     {
-                        player.Points = p.Points;
+                        ViewModel.CurrentPlayer.Points = p.Points;
                     }
-                    if (player.RightAnswer != p.RightAnswer)
+                    if (ViewModel.CurrentPlayer.RightAnswer != p.RightAnswer)
                     {
-                        player.RightAnswer = p.RightAnswer;
+                        ViewModel.CurrentPlayer.RightAnswer = p.RightAnswer;
                     }
-                    if (player.Placement != p.Placement)
+                    if (ViewModel.CurrentPlayer.Placement != p.Placement)
                     {
-                        player.Placement = p.Placement;
+                        ViewModel.CurrentPlayer.Placement = p.Placement;
                     }
-                    if (player.Painter != p.Painter)
+                    if (ViewModel.CurrentPlayer.Painter != p.Painter)
                     {
-                        player.Painter = p.Painter;
+                        ViewModel.CurrentPlayer.Painter = p.Painter;
                     }
                 }
             }
@@ -441,6 +439,8 @@ namespace DrawGuess.Pages
                     InfoView.Row1 = "Waiting for other players\r\nto join...";
                     break;
                 case GameMode.StartingGame:
+                    //Clear player points every new game
+                    SetPlayerPoints(0);
                     ViewModel.CurrentMode = GameMode.StartingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
@@ -452,7 +452,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "ROUND " + ViewModel.Game.Round.ToString();
                     //TODO: Behövs den? 
-                    InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
+                    //InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
                     break;
                 case GameMode.RevealingRoles:
                     ViewModel.CurrentMode = GameMode.RevealingRoles;
@@ -692,9 +692,10 @@ namespace DrawGuess.Pages
                 {
                     //If guess is correct
                     if (CheckGuess())
-                    {                        
+                    {
                         //Setpoints depending on how fast the answer was made
-                        SetPlayerPoints(ViewModel.Game.Timer);
+                        var points = ViewModel.Game.Timer;                         
+                        SetPlayerPoints(ViewModel.CurrentPlayer.Points + points);
                         SetCorrectAnswer(true);
                         //TODO: Show correct guess view
                         return;
