@@ -374,21 +374,23 @@ namespace DrawGuess.Pages
                 //Update existing player's information
                 foreach (var p in ViewModel.Game.GetPlayers())
                 {
+                    var player = ViewModel.Players.Where(x => x.UserId == p.UserId).First(); 
+
                     if (ViewModel.CurrentPlayer.Points != p.Points)
                     {
-                        ViewModel.CurrentPlayer.Points = p.Points;
+                        player.Points = p.Points;
                     }
                     if (ViewModel.CurrentPlayer.RightAnswer != p.RightAnswer)
                     {
-                        ViewModel.CurrentPlayer.RightAnswer = p.RightAnswer;
+                        player.RightAnswer = p.RightAnswer;
                     }
                     if (ViewModel.CurrentPlayer.Placement != p.Placement)
                     {
-                        ViewModel.CurrentPlayer.Placement = p.Placement;
+                        player.Placement = p.Placement;
                     }
                     if (ViewModel.CurrentPlayer.Painter != p.Painter)
                     {
-                        ViewModel.CurrentPlayer.Painter = p.Painter;
+                        player.Painter = p.Painter;
                     }
                 }
             }
@@ -402,7 +404,7 @@ namespace DrawGuess.Pages
         {
             ViewModel.Players = new ObservableCollection<Models.Player>(ViewModel.Players.OrderBy(x => x.Points).ToList());
 
-            int placement = 1;
+            int placement = 0;
             foreach (Models.Player p in ViewModel.Players)
             {
                 if (ViewModel.Players.IndexOf(p) == 0)
@@ -450,8 +452,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "ROUND " + ViewModel.Game.Round.ToString();
-                    //TODO: Behövs den? 
-                    //InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
+                    InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
                     break;
                 case GameMode.RevealingRoles:
                     ViewModel.CurrentMode = GameMode.RevealingRoles;
@@ -484,9 +485,8 @@ namespace DrawGuess.Pages
                     }
                     ViewModel.ShowInfoView = false;
                     ViewModel.ShowGame = true;
-                    ViewModel.Game.Timer = 60;
-                    //Start CoundDown task
-                    Task task = Task.Run((Action)CountDown);
+                    ViewModel.Game.Timer = 60;                    
+                    Task task = Task.Run((Action)CountDown); //Start CoundDown task
                     break;
                 case GameMode.EndingRound:
                     ViewModel.CurrentMode = GameMode.EndingRound;
@@ -498,7 +498,7 @@ namespace DrawGuess.Pages
                     ViewModel.CurrentMode = GameMode.EndingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
-                    InfoView.Row1 = "Winner: " + GetWinners();
+                    InfoView.Row1 = "Winner:\r\n" + GetWinners();
                     break;
                 case GameMode.PainterLeft:
                     ViewModel.CurrentMode = GameMode.PainterLeft;
