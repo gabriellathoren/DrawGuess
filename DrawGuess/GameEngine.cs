@@ -12,7 +12,6 @@ namespace DrawGuess
     {
 
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
-        public bool connectedToPhoton = false;
         public bool connectedToLobby = false;
 
         public GameEngine()
@@ -29,7 +28,7 @@ namespace DrawGuess
 
         private void ConnectedToMaster(object sender, EventArgs e)
         {
-            connectedToPhoton = true;
+            (App.Current as App).Connected = true; 
         }
 
         private void Disconnected(object sender, EventArgs e)

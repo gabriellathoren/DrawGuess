@@ -53,27 +53,37 @@ namespace DrawGuess.Pages
             LoadBalancingClient.MatchMakingCallbackTargets.JoinRoomFailed += JoinRoomFailed;
             LoadBalancingClient.LobbyCallbackTargets.UpdateRoomList += UpdateRoomList;
             
-            Connect();
+            if(!(App.Current as App).Connected)
+            {
+                Connect();
+            }
             GetGames();
             SortGameList();
         }
 
         public void Connect()
         {
-            //Connect user to Photon Cloud Server
-            GameEngine gameEngine = new GameEngine();
-            gameEngine.ConnectToMaster();
-
-            while (!gameEngine.connectedToPhoton)
+            try
             {
-                Task.Delay(25);
+                //Connect user to Photon Cloud Server
+                GameEngine gameEngine = new GameEngine();
+                gameEngine.ConnectToMaster();
+
+                while (!(App.Current as App).Connected)
+                {
+                    Task.Delay(25);
+                }
+
+                //Connect user to the right lobby
+                gameEngine.ConnectToLobby();
+                while (!gameEngine.connectedToLobby)
+                {
+                    Task.Delay(25);
+                }
             }
-
-            //Connect user to the right lobby
-            gameEngine.ConnectToLobby();
-            while (!gameEngine.connectedToLobby)
+            catch(Exception e)
             {
-                Task.Delay(25);
+                ViewModel.ErrorMessage = "Could not connect to Photon";
             }
         }
 
@@ -142,7 +152,7 @@ namespace DrawGuess.Pages
 
                 ViewModel.Items = list;
             }
-            catch(Exception)
+            catch(Exception e)
             {
                 ViewModel.ErrorMessage = "Could not get games";
             }
