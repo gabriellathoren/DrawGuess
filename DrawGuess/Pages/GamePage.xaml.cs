@@ -405,7 +405,7 @@ namespace DrawGuess.Pages
                 //If all users have guessed correct, continue to next step
                 if(ViewModel.CurrentPlayer.Painter)
                 {
-                    if (!ViewModel.Players.Any(x => x.RightAnswer == false))
+                    if (!ViewModel.Players.Any(x => !x.RightAnswer && !x.Painter))
                     {
                         await ViewModel.Game.SetMode(GameMode.EndingRound, 0);
                     }
