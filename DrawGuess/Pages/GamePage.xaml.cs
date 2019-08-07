@@ -91,18 +91,19 @@ namespace DrawGuess.Pages
             {
                 Hashtable data = (Hashtable)sender;
 
-                if (data.ContainsKey("strokes") && !ViewModel.CurrentPlayer.Painter)
+                if (data.ContainsKey("strokes"))
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                    () =>
+                    if (!ViewModel.CurrentPlayer.Painter)
                     {
-                        GetStrokes();
-                    });
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                        {
+                            GetStrokes();
+                        });
+                    }
                 }
                 else
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
-                    () =>
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                     {
                         GetGame();
                     });
@@ -174,7 +175,7 @@ namespace DrawGuess.Pages
                     });
             }
         }
-        
+
 
         public async void GetStrokes()
         {
@@ -183,7 +184,7 @@ namespace DrawGuess.Pages
                 byte[] strokesByte = ViewModel.Game.GetStrokes();
 
                 //If strokes is empty, clear the InkCanvas
-                if(strokesByte == null || strokesByte.Length < 1)
+                if (strokesByte == null || strokesByte.Length < 1)
                 {
                     InkCanvas.InkPresenter.StrokeContainer.Clear();
                     return;
@@ -239,9 +240,9 @@ namespace DrawGuess.Pages
             catch (Exception e)
             {
                 ViewModel.ErrorMessage = "Could not set strokes";
-            }            
+            }
         }
-        
+
         public void AddPlayer(Models.Player player)
         {
             try
@@ -463,7 +464,6 @@ namespace DrawGuess.Pages
                 case GameMode.Playing:
                     if (ViewModel.CurrentPlayer.Painter)
                     {
-                        InkCanvas.InkPresenter.StrokeContainer.Clear();
                         ViewModel.PainterView = true;
                         var secret = new ObservableCollection<Letter>();
                         foreach (var letter in ViewModel.Game.SecretWord)

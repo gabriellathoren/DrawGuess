@@ -16,6 +16,7 @@
     <Page.Resources>
         <Converter:VisibilityConverter x:Key="VisibilityConverter" />
         <Converter:ColorConverter x:Key="ColorConverter" />
+        <Converter:InverseBoolConverter x:Key="InverseConverter" />
 
         <DataTemplate x:DataType="Models:Letter" x:Name="MissingLetterTemplate">
             <Grid x:Name="NoLetter" VerticalAlignment="Center">
@@ -42,7 +43,7 @@
             <ColumnDefinition Width="3*"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-       
+
         <!-- View for game mode -->
         <Grid Grid.Column="0" Margin="20" Visibility="{x:Bind ViewModel.ShowGame, Converter={StaticResource VisibilityConverter}, Mode=OneWay}">
 
@@ -59,13 +60,16 @@
                 <TextBlock Text="{x:Bind ViewModel.Game.Round, Mode=OneWay}" FontFamily="{StaticResource RobotoLight}" FontSize="14" Foreground="Black"/>
             </StackPanel>
 
-            <Grid Grid.Row="1" BorderBrush="black" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <InkCanvas x:Name="InkCanvas"  />
+            <Grid Grid.Row="1" BorderBrush="Black" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                <InkCanvas x:Name="InkCanvas" />
+                <StackPanel Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Converter={StaticResource InverseConverter}, Mode=OneWay}"
+                            HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                            Background="Transparent"/>
             </Grid>
 
-            <InkToolbar InitialControls="None" Background="Black"  TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2">
-                <InkToolbarEraserButton/>
-                <InkToolbarBallpointPenButton />
+            <InkToolbar InitialControls="None" Background="Black" TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2">
+                <InkToolbarEraserButton Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Mode=OneWay}"/>
+                <InkToolbarBallpointPenButton Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Mode=OneWay}"/>
             </InkToolbar>
 
             <GridView Height="70" ScrollViewer.VerticalScrollBarVisibility="Disabled" x:Name="GuessGrid" SelectionMode="Single" IsItemClickEnabled="False" Tapped="GuessLetter_Tapped" Grid.Row="3" Margin="0,20,0,0" HorizontalAlignment="Center" ItemsSource="{x:Bind ViewModel.Guess, Mode=OneWay}" HorizontalContentAlignment="Center">
@@ -115,8 +119,8 @@
                 <TextBlock Text="GAME" FontFamily="{StaticResource RobotoLight}" FontSize="12" Margin="0,0,2,0"/>
                 <TextBlock Text="{x:Bind ViewModel.Game.Name}" FontFamily="{StaticResource RobotoLight}" FontSize="12"/>
             </StackPanel>
-            
-            <ListView x:Name="PlayerList" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" Margin="0,10,0,10" HorizontalContentAlignment="Stretch">
+
+            <ListView x:Name="PlayerList" Grid.Row="2" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" ItemsSource="{x:Bind ViewModel.Players, Mode=OneWay}" Margin="0,20,0,10" HorizontalContentAlignment="Stretch">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -162,6 +166,4 @@
             </StackPanel>
         </Grid>
     </Grid>
-
-
 </Page>

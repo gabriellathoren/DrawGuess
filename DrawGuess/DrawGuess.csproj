@@ -125,6 +125,7 @@
       <DependentUpon>InfoView.xaml</DependentUpon>
     </Compile>
     <Compile Include="Converters\ColorConverter.cs" />
+    <Compile Include="Converters\InverseBoolConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="Helpers\RoomHelper.cs" />
