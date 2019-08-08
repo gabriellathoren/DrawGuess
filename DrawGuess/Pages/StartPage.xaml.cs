@@ -95,7 +95,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                List<RoomInfo> rooms = (List<RoomInfo>)sender;
+                List<RoomInfo> rooms = (List<RoomInfo>)sender;                
                 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
