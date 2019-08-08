@@ -13,6 +13,7 @@ namespace DrawGuess
 
         private LoadBalancingClient LoadBalancingClient = (App.Current as App).LoadBalancingClient;
         public bool connectedToLobby = false;
+        public bool connected = false;
 
         public GameEngine()
         {
@@ -28,7 +29,7 @@ namespace DrawGuess
 
         private void ConnectedToMaster(object sender, EventArgs e)
         {
-            (App.Current as App).Connected = true; 
+            connected = true; 
         }
 
         private void Disconnected(object sender, EventArgs e)
@@ -71,7 +72,7 @@ namespace DrawGuess
 
         public void Disconnect()
         {
-            if ((App.Current as App).Connected)
+            if (connected)
             {
                 LoadBalancingClient.Disconnect();
             }

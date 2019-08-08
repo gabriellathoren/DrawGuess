@@ -58,9 +58,6 @@ namespace DrawGuess
         private bool shouldExit = false;
         public bool ShouldExit { get => shouldExit; set => shouldExit = value; }
 
-        private bool connected = false;
-        public bool Connected { get => connected; set => connected = value; }
-
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code

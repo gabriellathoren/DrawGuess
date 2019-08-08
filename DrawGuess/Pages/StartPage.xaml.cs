@@ -53,15 +53,21 @@ namespace DrawGuess.Pages
             LoadBalancingClient.MatchMakingCallbackTargets.JoinRoomFailed += JoinRoomFailed;
             LoadBalancingClient.LobbyCallbackTargets.UpdateRoomList += UpdateRoomList;
             
-            if(!(App.Current as App).Connected)
-            {
-                Connect();
+            
+            if(!(App.Current as App).LoadBalancingClient.IsUsingNameServer)
+            { 
+                ConnectToMaster();
             }
+            if (!(App.Current as App).LoadBalancingClient.InLobby)
+            {
+                ConnectToLobby();
+            }
+
             GetGames();
             SortGameList();
         }
 
-        public void Connect()
+        public void ConnectToMaster()
         {
             try
             {
@@ -69,19 +75,30 @@ namespace DrawGuess.Pages
                 GameEngine gameEngine = new GameEngine();
                 gameEngine.ConnectToMaster();
 
-                while (!(App.Current as App).Connected)
+                while (!gameEngine.connected)
                 {
                     Task.Delay(25);
                 }
+            }
+            catch(Exception e)
+            {
+                ViewModel.ErrorMessage = "Could not connect to Photon";
+            }
+        }
 
+        public void ConnectToLobby()
+        {
+            try
+            {
                 //Connect user to the right lobby
+                GameEngine gameEngine = new GameEngine();                
                 gameEngine.ConnectToLobby();
                 while (!gameEngine.connectedToLobby)
                 {
                     Task.Delay(25);
                 }
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 ViewModel.ErrorMessage = "Could not connect to Photon";
             }
