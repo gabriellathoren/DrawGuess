@@ -559,6 +559,14 @@ namespace DrawGuess.Models
             (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
         }
 
+        public void SetPlayerPoints(int points, Models.Player p)
+        {
+            Hashtable painterProperties = new Hashtable() { { "points", points } };
+            Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+            Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == p.UserId).FirstOrDefault().Value;
+            newPainter.SetCustomProperties(painterProperties);
+        }
+
         public void SetCorrectAnswer(bool correctGuess)
         {
             Hashtable customProperties = new Hashtable() { { "correct_guess", correctGuess } };

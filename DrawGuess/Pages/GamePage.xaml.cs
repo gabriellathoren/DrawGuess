@@ -163,7 +163,11 @@ namespace DrawGuess.Pages
                 {
                     UserId = newPlayer.UserId,
                     NickName = newPlayer.NickName,
-                    IsCurrentUser = false
+                    IsCurrentUser = false,
+                    Painter = false,
+                    RightAnswer = false,
+                    Points = 0,
+                    Placement = ViewModel.Players.Count()
                 };
 
                 if(newPlayer.CustomProperties.ContainsKey("Points"))
@@ -346,11 +350,19 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void SetPlayerPoints(int points)
+        public void SetPlayerPoints(int points, Models.Player p = null)
         {
             try
             {
-                ViewModel.Game.SetPlayerPoints(points);
+                if(p == null)
+                {
+                    ViewModel.Game.SetPlayerPoints(points);
+                }
+                else
+                {
+                    ViewModel.Game.SetPlayerPoints(points, p);
+                }
+
                 SetPlacement(); 
             }
             catch (Exception)
@@ -549,7 +561,7 @@ namespace DrawGuess.Pages
 
                     if(ViewModel.CurrentPlayer.RightAnswer)
                     {
-                        InfoView.Row1 = "Yay!\r\nYou guessed correct!";
+                        InfoView.Row1 = "Yay, you guessed correct!";
                     }
                     else
                     {
@@ -643,7 +655,7 @@ namespace DrawGuess.Pages
 
         public async void SetTimer()
         {
-            //Count down from 60 seconds to 0, so players nows how long the round has left 
+            //Count down from 90 seconds to 0, so players nows how long the round has left 
             while (ViewModel.Game.Timer > 0)
             {
                 ViewModel.Game.Timer -= 1;
@@ -757,6 +769,8 @@ namespace DrawGuess.Pages
                         //Setpoints depending on how fast the answer was made
                         var points = ViewModel.Game.Timer;                         
                         SetPlayerPoints(ViewModel.CurrentPlayer.Points + points);
+                        //Give painter 10 points because someone guessed the word correct
+                        SetPlayerPoints(10, ViewModel.Players.Where(x => x.Painter.Equals(true)).First());
                         SetCorrectAnswer(true);
                         //TODO: Show correct guess view
                         return;
