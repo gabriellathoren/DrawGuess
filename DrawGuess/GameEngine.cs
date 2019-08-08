@@ -33,7 +33,7 @@ namespace DrawGuess
 
         private void Disconnected(object sender, EventArgs e)
         {
-            throw new NotImplementedException();
+            (App.Current as App).LoadBalancingClient.ReconnectToMaster();
         }
 
         public void ConnectToMaster()
