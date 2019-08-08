@@ -93,6 +93,10 @@
             </GridView>
             <StackPanel Visibility="{x:Bind ViewModel.PainterView, Converter={StaticResource VisibilityConverter}, Mode=OneWay}" Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="White">
             </StackPanel>
+            <StackPanel Visibility="{x:Bind ViewModel.CurrentPlayer.RightAnswer, Mode=OneWay}"
+                        Grid.Row="4" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="White">
+                <TextBlock Text="You guessed it!" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="Gray" FontSize="22" FontFamily="{StaticResource RobotoThin}"></TextBlock>
+            </StackPanel>
         </Grid>
 
         <!-- View for info mode -->

@@ -384,7 +384,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void UpdatePlayers()
+        public async void UpdatePlayers()
         {
             try
             {
@@ -412,7 +412,11 @@ namespace DrawGuess.Pages
                 {
                     if (!ViewModel.Players.Any(x => !x.RightAnswer && !x.Painter))
                     {
-                        ViewModel.Game.Timer = 0;
+                        if(ViewModel.Game.Timer > 5)
+                        {
+                            await Task.Delay(3000);
+                            ViewModel.Game.Timer = 0;
+                        }
                     }
                 }
                 
