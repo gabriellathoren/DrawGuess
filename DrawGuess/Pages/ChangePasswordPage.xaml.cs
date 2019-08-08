@@ -99,7 +99,7 @@ namespace DrawGuess.Pages
                     {
                         Models.User.UpdatePassword(ViewModel.User.Email, ViewModel.NewPassword);
                         UpdatePasswordVault();
-                        this.Frame.Navigate(typeof(SettingsPage), "", new SuppressNavigationTransitionInfo());
+                        this.Frame.Navigate(typeof(StartPage), true, new SuppressNavigationTransitionInfo());
                     }
                 }
             }
@@ -124,7 +124,7 @@ namespace DrawGuess.Pages
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(StartPage), null, new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(StartPage), true, new SuppressNavigationTransitionInfo());
         }
 
         private void EnterPressed(object sender, KeyRoutedEventArgs e)

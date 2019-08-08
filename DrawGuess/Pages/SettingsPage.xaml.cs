@@ -74,7 +74,7 @@ namespace DrawGuess.Pages
                 try
                 {
                     Models.User.UpdateUser(ViewModel.User.FirstName, ViewModel.User.LastName, ViewModel.User.Email, ViewModel.User.ProfilePicture);
-                    this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
+                    this.Frame.Navigate(typeof(StartPage), true, new SuppressNavigationTransitionInfo());
                 }
                 catch (Exception)
                 {
@@ -87,7 +87,7 @@ namespace DrawGuess.Pages
 
         private void Cancel_Click(object sender, RoutedEventArgs e)
         {
-            this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
+            this.Frame.Navigate(typeof(StartPage), true, new SuppressNavigationTransitionInfo());
         }
     }
 }

@@ -51,20 +51,7 @@ namespace DrawGuess.Pages
             LoadBalancingClient.MatchMakingCallbackTargets.JoinedRoom += JoinedRoom;
             LoadBalancingClient.MatchMakingCallbackTargets.CreateRoomFailed += CreateRoomFailed;
             LoadBalancingClient.MatchMakingCallbackTargets.JoinRoomFailed += JoinRoomFailed;
-            LoadBalancingClient.LobbyCallbackTargets.UpdateRoomList += UpdateRoomList;
-            
-            
-            if(!(App.Current as App).LoadBalancingClient.IsUsingNameServer)
-            { 
-                ConnectToMaster();
-            }
-            if (!(App.Current as App).LoadBalancingClient.InLobby)
-            {
-                ConnectToLobby();
-            }
-
-            GetGames();
-            SortGameList();
+            LoadBalancingClient.LobbyCallbackTargets.UpdateRoomList += UpdateRoomList;            
         }
 
         public void ConnectToMaster()
@@ -213,6 +200,37 @@ namespace DrawGuess.Pages
                 {
                     Models.Game.JoinGame(gameName);
                 }
+            }
+            catch (Exception ex)
+            {
+                ViewModel.ErrorMessage = ex.Message;
+            }
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            try
+            {
+                base.OnNavigatedTo(e);
+
+                var comingFromSettingsPages = false; 
+                if (!string.IsNullOrEmpty(e.Parameter.ToString()))
+                {
+                    comingFromSettingsPages = (bool)e.Parameter;
+                }                
+
+                if (!comingFromSettingsPages)
+                {
+                    ConnectToMaster();
+
+                    if (!(App.Current as App).LoadBalancingClient.InLobby)
+                    {
+                        ConnectToLobby();
+                    }
+                }
+
+                GetGames();
+                SortGameList();
             }
             catch (Exception ex)
             {

@@ -51,24 +51,25 @@ namespace DrawGuess.Controls
 
         private void SettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            ((Frame)Window.Current.Content).Navigate(typeof(SettingsPage), null, new SuppressNavigationTransitionInfo());
+            ((Frame)Window.Current.Content).Navigate(typeof(SettingsPage), true, new SuppressNavigationTransitionInfo());
         }
 
         private void ChangePassword_Click(object sender, RoutedEventArgs e)
         {
-            ((Frame)Window.Current.Content).Navigate(typeof(ChangePasswordPage), null, new SuppressNavigationTransitionInfo());
+            ((Frame)Window.Current.Content).Navigate(typeof(ChangePasswordPage), true, new SuppressNavigationTransitionInfo());
         }
         
         private void SignOut_Click(object sender, RoutedEventArgs e)
         {
             var vault = new PasswordVault();
             vault.Remove(vault.FindAllByUserName((App.Current as App).User.Email).First());
-            ((Frame)Window.Current.Content).Navigate(typeof(LoginPage), null, new SuppressNavigationTransitionInfo());
+            (App.Current as App).LoadBalancingClient.Disconnect();
+            ((Frame)Window.Current.Content).Navigate(typeof(LoginPage), true, new SuppressNavigationTransitionInfo());
         }
 
         private void Logo_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ((Frame)Window.Current.Content).Navigate(typeof(StartPage), null, new SuppressNavigationTransitionInfo());
+            ((Frame)Window.Current.Content).Navigate(typeof(StartPage), true, new SuppressNavigationTransitionInfo());
         }
     }
 }
