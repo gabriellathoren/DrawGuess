@@ -17,10 +17,7 @@ namespace DrawGuess.Converters
         {
             Models.Player player = (Models.Player) value;
 
-            if (player.Painter) {
-                return "#33FFE600";
-            }
-            else if(player.IsCurrentUser) {
+            if(player.IsCurrentUser) {
                 return "#33FFFFFF";
             }
             else {
