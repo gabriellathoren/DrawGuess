@@ -300,6 +300,7 @@ namespace DrawGuess.Pages
                         {
                             //Set new random painter
                             ViewModel.Game.SetRandomPainter();
+                            await ViewModel.Game.SetMode(GameMode.StartingRound, 5);
                         }
                     }
                 }

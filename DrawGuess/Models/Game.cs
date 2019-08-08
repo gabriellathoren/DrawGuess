@@ -29,8 +29,7 @@ namespace DrawGuess.Models
         Playing,
         EndingRound,
         EndingGame,
-        PainterLeft,
-        StartingRoundAfterPainterLeft
+        PainterLeft
     }
 
     public class Game : INotifyPropertyChanged
@@ -302,16 +301,13 @@ namespace DrawGuess.Models
         {
             try
             {
-                //Set new random painter
-                Random rnd = new Random();
-                int newPainterIndex = rnd.Next(LoadBalancingClient.CurrentRoom.Players.Count);
-
-                var players = GetPlayers();
-                var painter = players[newPainterIndex];
-
                 //Check if there are a painter already and remove it              
                 Hashtable notPainterProperties = new Hashtable() { { "painter", false } };
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                Photon.Realtime.Player oldPainter = null;
+
+                var index = 0;
+                var oldPainterIndex = 0; 
                 foreach (var p in photonPlayers)
                 {
                     if (p.Value.CustomProperties.ContainsKey("painter"))
@@ -320,9 +316,29 @@ namespace DrawGuess.Models
                         {
                             //Remove current painter as painter
                             p.Value.SetCustomProperties(notPainterProperties);
+                            oldPainter = p.Value;
+                            oldPainterIndex = index; 
                         }
                     }
+                    index++;
                 }
+
+                //Set new random painter, but not same as before
+                var players = GetPlayers();
+                Random rand = new Random();
+
+                int newPainterIndex = 0; 
+                if (oldPainter != null)
+                {
+                    var excludeLastPainter = new HashSet<int>() { oldPainterIndex };
+                    newPainterIndex = rand.Next(0, LoadBalancingClient.CurrentRoom.Players.Count - excludeLastPainter.Count);
+                }
+                else
+                {
+                    newPainterIndex = rand.Next(players.Count);
+                }
+                                
+                var painter = players[newPainterIndex];
 
                 Hashtable painterProperties = new Hashtable() { { "painter", true } };
                 Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == painter.UserId).FirstOrDefault().Value;
@@ -482,11 +498,6 @@ namespace DrawGuess.Models
                     StartRound(Round);
                     if (Round > 1) { SetRandomPainter(); }
                     Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
-                    break;
-                case GameMode.StartingRoundAfterPainterLeft:
-                    ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
-                    StartRound(Round);
-                    Task revealTask2 = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
                     break;
                 case GameMode.RevealingRoles:                    
                     Task playTtask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
