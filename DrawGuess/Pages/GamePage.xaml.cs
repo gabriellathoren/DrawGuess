@@ -286,20 +286,21 @@ namespace DrawGuess.Pages
                 {
                     ViewModel.Players.Remove(p);
 
-                    //Change game mode
-                    await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);
+                    //Take the first player in the player's list to contine the game, to avoid doing this from multiple clients
+                    if(ViewModel.CurrentPlayer.UserId.Equals(ViewModel.Players[0].UserId))
+                    {
+                        //Change game mode
+                        await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);
 
-                    if (LoadBalancingClient.CurrentRoom.Players.Count < 2)
-                    {
-                        Task waitingTask = ViewModel.Game.SetMode(GameMode.WaitingForPlayers, 5);
-                    }
-                    else
-                    {
-                        //Set new random painter
-                        Random rnd = new Random();
-                        int newPainterIndex = rnd.Next(ViewModel.Players.Count);
-                        ViewModel.Game.SetSpecificPainter(ViewModel.Players[newPainterIndex]);
-                        Task startNewRoundTask = ViewModel.Game.SetMode(GameMode.StartingRoundAfterPainterLeft, 5);
+                        if (LoadBalancingClient.CurrentRoom.Players.Count < 2)
+                        {
+                            Task waitingTask = ViewModel.Game.SetMode(GameMode.WaitingForPlayers, 5);
+                        }
+                        else
+                        {
+                            //Set new random painter
+                            ViewModel.Game.SetRandomPainter();
+                        }
                     }
                 }
                 else
