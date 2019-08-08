@@ -150,7 +150,7 @@ namespace DrawGuess.Models
                 this.OnPropertyChanged();
             }
         }
-
+        
         private int timer;
         public int Timer
         {
