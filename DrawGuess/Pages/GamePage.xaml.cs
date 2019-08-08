@@ -351,6 +351,7 @@ namespace DrawGuess.Pages
             try
             {
                 ViewModel.Game.SetPlayerPoints(points);
+                SetPlacement(); 
             }
             catch (Exception)
             {
@@ -399,10 +400,6 @@ namespace DrawGuess.Pages
                     if (ViewModel.CurrentPlayer.RightAnswer != p.RightAnswer)
                     {
                         player.RightAnswer = p.RightAnswer;
-                    }
-                    if (ViewModel.CurrentPlayer.Placement != p.Placement)
-                    {
-                        player.Placement = p.Placement;
                     }
                     if (ViewModel.CurrentPlayer.Painter != p.Painter)
                     {

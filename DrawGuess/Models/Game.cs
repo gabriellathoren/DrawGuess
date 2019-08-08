@@ -283,7 +283,8 @@ namespace DrawGuess.Models
 
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
                 customProperties = new Hashtable() {
-                    { "painter", false }, //Set round         
+                    { "painter", false },
+                    { "points", 0 },   
                 };
 
                 foreach (var player in photonPlayers)
@@ -495,49 +496,41 @@ namespace DrawGuess.Models
                 case GameMode.WaitingForPlayers:
                     ClearGame();
                     break;
-                case GameMode.StartingGame:
-                    //Set game mode to StartingRound
+                case GameMode.StartingGame:                    
                     StopTasks = false;
-                    Task startingRoundTask = SetMode(GameMode.StartingRound, 3);
+                    Task startingRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to StartingRound
                     break;
-                case GameMode.StartingRound:
-                    //Set game mode to RevealingRoles
+                case GameMode.StartingRound:                    
                     ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
                     StartRound(Round);
                     if (Round > 1) { SetPainter(); }
-                    Task revealTask = SetMode(GameMode.RevealingRoles, 3);
+                    Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
                     break;
-                case GameMode.StartingRoundAfterPainterLeft:
-                    //Set game mode to RevealingRoles
+                case GameMode.StartingRoundAfterPainterLeft:                    
                     StartRound(Round);
-                    Task revealTask2 = SetMode(GameMode.RevealingRoles, 3);
+                    Task revealTask2 = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
                     break;
-                case GameMode.RevealingRoles:
-                    //Set game mode to RevealingRoles
-                    Task playTtask = SetMode(GameMode.Playing, 5);
+                case GameMode.RevealingRoles:                    
+                    Task playTtask = SetMode(GameMode.Playing, 5); //Set game mode to RevealingRoles
                     break;
-                case GameMode.Playing:
-                    //Set game mode to EndingRound
-                    Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound);
+                case GameMode.Playing:                    
+                    Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound); //Set game mode to EndingRound
                     break;
                 case GameMode.EndingRound:
                     //If round is 8, the game has come to an end
                     if (Round == 8)
-                    {
-                        //Set game mode to end game
-                        Task endGameTask = SetMode(GameMode.EndingGame, 3);
+                    {                        
+                        Task endGameTask = SetMode(GameMode.EndingGame, 3); //Set game mode to end game
                     }
                     else
-                    {
-                        //Set game mode to start new round
+                    {                        
                         SetRound(Round + 1);
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 3);
+                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to start new round
                     }
                     break;
-                case GameMode.EndingGame:
-                    //Set game mode to RevealingRoles
+                case GameMode.EndingGame:                    
                     SetRound(1);
-                    Task startNewGameTask = SetMode(GameMode.StartingGame, 3);
+                    Task startNewGameTask = SetMode(GameMode.StartingGame, 3); //Set game mode to RevealingRoles
                     break;
                 default:
                     break;
