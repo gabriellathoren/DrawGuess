@@ -300,29 +300,38 @@ namespace DrawGuess.Models
 
         public void SetRandomPainter()
         {
-            //Set new random painter
-            Random rnd = new Random();
-            int newPainterIndex = rnd.Next(LoadBalancingClient.CurrentRoom.Players.Count);
-            var painter = LoadBalancingClient.CurrentRoom.Players[newPainterIndex];
-
-            //Check if there are a painter already and remove it              
-            Hashtable notPainterProperties = new Hashtable() { { "painter", false } };
-            Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-            foreach (var p in photonPlayers)
+            try
             {
-                if (p.Value.CustomProperties.ContainsKey("painter"))
+                //Set new random painter
+                Random rnd = new Random();
+                int newPainterIndex = rnd.Next(LoadBalancingClient.CurrentRoom.Players.Count);
+
+                var players = GetPlayers();
+                var painter = players[newPainterIndex];
+
+                //Check if there are a painter already and remove it              
+                Hashtable notPainterProperties = new Hashtable() { { "painter", false } };
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                foreach (var p in photonPlayers)
                 {
-                    if ((bool)p.Value.CustomProperties["painter"])
+                    if (p.Value.CustomProperties.ContainsKey("painter"))
                     {
-                        //Remove current painter as painter
-                        p.Value.SetCustomProperties(notPainterProperties);
+                        if ((bool)p.Value.CustomProperties["painter"])
+                        {
+                            //Remove current painter as painter
+                            p.Value.SetCustomProperties(notPainterProperties);
+                        }
                     }
                 }
-            }
 
-            Hashtable painterProperties = new Hashtable() { { "painter", true } };
-            Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == painter.UserId).FirstOrDefault().Value;
-            newPainter.SetCustomProperties(painterProperties);
+                Hashtable painterProperties = new Hashtable() { { "painter", true } };
+                Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == painter.UserId).FirstOrDefault().Value;
+                newPainter.SetCustomProperties(painterProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set random painter", e);
+            }
         }
         
         public void AddStrokes(byte[] strokes) 
