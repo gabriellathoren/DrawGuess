@@ -502,12 +502,14 @@ namespace DrawGuess.Pages
             switch (ViewModel.Game.Mode)
             {
                 case GameMode.WaitingForPlayers:
+                    SetPlacement();
                     ViewModel.CurrentMode = GameMode.WaitingForPlayers; 
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Waiting for other players\r\nto join...";
                     break;
-                case GameMode.StartingGame:                    
+                case GameMode.StartingGame:
+                    SetPlacement();
                     SetPlayerPoints(0); //Clear player points every new game
                     ViewModel.CurrentMode = GameMode.StartingGame;
                     ViewModel.ShowInfoView = true;
@@ -771,7 +773,8 @@ namespace DrawGuess.Pages
                         var points = ViewModel.Game.Timer;                         
                         SetPlayerPoints(ViewModel.CurrentPlayer.Points + points);
                         //Give painter 10 points because someone guessed the word correct
-                        SetPlayerPoints(10, ViewModel.Players.Where(x => x.Painter.Equals(true)).First());
+                        var painter = ViewModel.Players.Where(x => x.Painter.Equals(true)).First();
+                        SetPlayerPoints(painter.Points + 10, painter);
                         SetCorrectAnswer(true);
                         //TODO: Show correct guess view
                         return;
