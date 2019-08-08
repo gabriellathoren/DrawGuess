@@ -539,7 +539,7 @@ namespace DrawGuess.Pages
                     }
                     ViewModel.ShowInfoView = false;
                     ViewModel.ShowGame = true;
-                    ViewModel.Game.Timer = 60;                    
+                    ViewModel.Game.Timer = 90;                    
                     Task task = Task.Run((Action)CountDown); //Start CoundDown task
                     break;
                 case GameMode.EndingRound:

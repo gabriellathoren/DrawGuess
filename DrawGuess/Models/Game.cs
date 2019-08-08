@@ -512,7 +512,7 @@ namespace DrawGuess.Models
                     Task revealTask2 = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
                     break;
                 case GameMode.RevealingRoles:                    
-                    Task playTtask = SetMode(GameMode.Playing, 5); //Set game mode to RevealingRoles
+                    Task playTtask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
                     break;
                 case GameMode.Playing:                    
                     Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound); //Set game mode to EndingRound
