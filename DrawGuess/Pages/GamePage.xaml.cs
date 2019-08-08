@@ -527,7 +527,16 @@ namespace DrawGuess.Pages
                     ViewModel.CurrentMode = GameMode.EndingRound;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
-                    InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;
+
+                    if(ViewModel.CurrentPlayer.RightAnswer)
+                    {
+                        InfoView.Row1 = "Yay!\r\nYou guessed correct!";
+                    }
+                    else
+                    {
+                        InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;
+                    }
+                    
                     break;
                 case GameMode.EndingGame:
                     ViewModel.CurrentMode = GameMode.EndingGame;
