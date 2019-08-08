@@ -163,9 +163,17 @@ namespace DrawGuess.Pages
                 {
                     UserId = newPlayer.UserId,
                     NickName = newPlayer.NickName,
-                    IsCurrentUser = false,
-                    Points = (int)newPlayer.CustomProperties["points"]
+                    IsCurrentUser = false
                 };
+
+                if(newPlayer.CustomProperties.ContainsKey("Points"))
+                {
+                    player.Points = (int)newPlayer.CustomProperties["points"];
+                }
+                else
+                {
+                    player.Points = 0;
+                }
 
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
@@ -466,9 +474,8 @@ namespace DrawGuess.Pages
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Waiting for other players\r\nto join...";
                     break;
-                case GameMode.StartingGame:
-                    //Clear player points every new game
-                    SetPlayerPoints(0);
+                case GameMode.StartingGame:                    
+                    SetPlayerPoints(0); //Clear player points every new game
                     ViewModel.CurrentMode = GameMode.StartingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;

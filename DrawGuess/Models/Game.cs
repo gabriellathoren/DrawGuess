@@ -373,6 +373,33 @@ namespace DrawGuess.Models
             }
         }
 
+        public void ClearCorrectAnswer()
+        {
+            try
+            {
+                //Set painter                
+                Hashtable properties = new Hashtable() { { "correct_guess", false } };
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+
+                foreach (var p in photonPlayers)
+                {
+                    if (p.Value.CustomProperties.ContainsKey("correct_guess"))
+                    {
+                        //Clear correct guess if true
+                        if((bool)p.Value.CustomProperties["correct_guess"])
+                        {
+                            Photon.Realtime.Player player = photonPlayers.Where(x => x.Value.UserId == p.Value.UserId).FirstOrDefault().Value;
+                            player.SetCustomProperties(properties);
+                        }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not clear info", e);
+            }
+        }
+
         public void StartRound(int round)
         {
             try
@@ -475,6 +502,7 @@ namespace DrawGuess.Models
                     break;
                 case GameMode.StartingRound:
                     //Set game mode to RevealingRoles
+                    ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
                     StartRound(Round);
                     if (Round > 1) { SetPainter(); }
                     Task revealTask = SetMode(GameMode.RevealingRoles, 3);
