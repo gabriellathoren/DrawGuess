@@ -384,7 +384,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public async void UpdatePlayers()
+        public void UpdatePlayers()
         {
             try
             {
@@ -393,15 +393,15 @@ namespace DrawGuess.Pages
                 {
                     var player = ViewModel.Players.Where(x => x.UserId == p.UserId).First(); 
 
-                    if (ViewModel.CurrentPlayer.Points != p.Points)
+                    if (player.Points != p.Points)
                     {
                         player.Points = p.Points;
                     }
-                    if (ViewModel.CurrentPlayer.RightAnswer != p.RightAnswer)
+                    if (player.RightAnswer != p.RightAnswer)
                     {
                         player.RightAnswer = p.RightAnswer;
                     }
-                    if (ViewModel.CurrentPlayer.Painter != p.Painter)
+                    if (player.Painter != p.Painter)
                     {
                         player.Painter = p.Painter;
                     }
