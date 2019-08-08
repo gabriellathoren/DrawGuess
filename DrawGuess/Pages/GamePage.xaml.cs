@@ -429,34 +429,53 @@ namespace DrawGuess.Pages
 
         public void SetPlacement()
         {
-            ViewModel.Players = new ObservableCollection<Models.Player>(ViewModel.Players.OrderByDescending(x => x.Points).ToList());
+            var newOrder = new ObservableCollection<Models.Player>(ViewModel.Players.OrderByDescending(x => x.Points).ToList());
 
-            if (!ViewModel.Players.Any(p => p.Points != 0))
+            //Check if list order acctually change
+            int index = 0;
+            bool listMustBeUpdated = false; 
+            foreach(var item in newOrder)
             {
+                if (item.UserId != ViewModel.Players[index].UserId)
+                {
+                    listMustBeUpdated = true;
+                    break; 
+                }
+                index++; 
+            }
+
+            //Only update placements if the list order was updated
+            if(listMustBeUpdated)
+            {
+                ViewModel.Players = newOrder;
+                if (!ViewModel.Players.Any(p => p.Points != 0))
+                {
+                    foreach (Models.Player p in ViewModel.Players)
+                    {
+                        p.Placement = 0;
+                    }
+                    return;
+                }
+
+                int placement = 1;
                 foreach (Models.Player p in ViewModel.Players)
                 {
-                    p.Placement = 0;
-                }
-                return; 
-            }
-
-            int placement = 1;
-            foreach (Models.Player p in ViewModel.Players)
-            {
-                if (ViewModel.Players.IndexOf(p) == 0)
-                {
-                    p.Placement = placement;
-                }
-                else if (p.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Points)
-                {
-                    p.Placement = placement;
-                }
-                else
-                {
-                    placement++;
-                    p.Placement = placement;
+                    if (ViewModel.Players.IndexOf(p) == 0)
+                    {
+                        p.Placement = placement;
+                    }
+                    else if (p.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Points)
+                    {
+                        p.Placement = placement;
+                    }
+                    else
+                    {
+                        placement++;
+                        p.Placement = placement;
+                    }
                 }
             }
+            
         }
 
         public void UpdateInfoView()
