@@ -297,6 +297,23 @@ namespace DrawGuess.Models
             }
         }
 
+        public void NewPlayer()
+        {
+            try
+            {
+                Hashtable customProperties = new Hashtable() {
+                    { "painter", false },
+                    { "points", 0 },
+                    { "correct_guess", false }
+                };
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set properties for new player", e);
+            }
+        }
+
         public void SetRandomPainter()
         {
             try
@@ -419,55 +436,76 @@ namespace DrawGuess.Models
 
         public async Task SetMode(GameMode mode, int waitingTimeSec)
         {
-            int i = 0;
-            bool done = false;
-            while(!StopTasks && !done)
+            try
             {
-                await Task.Delay(100);
-                
-                if(i>=(waitingTimeSec*10))
+                int i = 0;
+                bool done = false;
+                while (!StopTasks && !done)
                 {
-                    done = true;
-                }
-                i++;
-            }
+                    await Task.Delay(100);
 
-            if(!StopTasks)
-            {
-                Hashtable customProperties = new Hashtable() {
+                    if (i >= (waitingTimeSec * 10))
+                    {
+                        done = true;
+                    }
+                    i++;
+                }
+
+                if (!StopTasks)
+                {
+                    Hashtable customProperties = new Hashtable() {
                     { "mode", mode }
                 };
-                LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
-            }            
+                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                }
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set mode", e);
+            }      
         }
 
         public async Task MoveFromPlayingMode(GameMode mode)
         {
-            bool done = false;
-            while (!StopTasks && !done)
+            try
             {
-                await Task.Delay(100);
-
-                if (Timer <= 0)
+                bool done = false;
+                while (!StopTasks && !done)
                 {
-                    done = true;
-                }
-            }
+                    await Task.Delay(100);
 
-            if (!StopTasks)
-            {
-                Hashtable customProperties = new Hashtable() {
+                    if (Timer <= 0)
+                    {
+                        done = true;
+                    }
+                }
+
+                if (!StopTasks)
+                {
+                    Hashtable customProperties = new Hashtable() {
                     { "mode", mode }
                 };
-                LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                }
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not move from playing mode", e);
             }
         }
 
         public void SetRound(int round)
         {
-            Hashtable customProperties = new Hashtable() { { "round", round } };
-            (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
-            Round = round;
+            try
+            {
+                Hashtable customProperties = new Hashtable() { { "round", round } };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                Round = round;
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set round",e);
+            }
         }
 
         public byte[] GetStrokes()
@@ -543,22 +581,43 @@ namespace DrawGuess.Models
 
         public void SetPlayerPoints(int points)
         {
-            Hashtable customProperties = new Hashtable() { { "points", points } };
-            (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+            try
+            {
+                Hashtable customProperties = new Hashtable() { { "points", points } };
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set player points", e);
+            }
         }
 
         public void SetPlayerPoints(int points, Models.Player p)
         {
-            Hashtable painterProperties = new Hashtable() { { "points", points } };
-            Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-            Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == p.UserId).FirstOrDefault().Value;
-            newPainter.SetCustomProperties(painterProperties);
+            try
+            {
+                Hashtable painterProperties = new Hashtable() { { "points", points } };
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == p.UserId).FirstOrDefault().Value;
+                newPainter.SetCustomProperties(painterProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set points", e);
+            }
         }
 
         public void SetCorrectAnswer(bool correctGuess)
         {
-            Hashtable customProperties = new Hashtable() { { "correct_guess", correctGuess } };
-            (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+            try
+            {
+                Hashtable customProperties = new Hashtable() { { "correct_guess", correctGuess } };
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not set correct answer", e);
+            }            
         }
 
         public static void AddGame(string gameName)
@@ -664,7 +723,6 @@ namespace DrawGuess.Models
                 {
                     throw new PhotonException();
                 }
-
             }
             catch (Exception)
             {

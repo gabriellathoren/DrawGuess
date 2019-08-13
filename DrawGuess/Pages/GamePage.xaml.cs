@@ -351,7 +351,7 @@ namespace DrawGuess.Pages
                 ViewModel.ErrorMessage = "Could not start game";
             }
         }
-
+                
         public void SetPlayerPoints(int points, Models.Player p = null)
         {
             try
@@ -697,8 +697,7 @@ namespace DrawGuess.Pages
                 GetPlayers();
                 GetGame();
                 SetGameMode();
-                SetPlayerPoints(0);
-                SetCorrectAnswer(false);
+                ViewModel.Game.NewPlayer();
                 GetStrokes();
             }
             catch (Exception ex)
