@@ -313,7 +313,7 @@ namespace DrawGuess.Models
             }
         }
 
-        public void ClearPlayer()
+        public void ClearPlayers()
         {
             try
             {
@@ -322,7 +322,14 @@ namespace DrawGuess.Models
                     { "correct_guess", false },
                     { "was_painter", false }
                 };
-                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+
+                foreach (var p in photonPlayers)
+                {
+                    //Remove current painter as painter
+                    p.Value.SetCustomProperties(customProperties);
+                }
             }
             catch (Exception e)
             {
@@ -583,7 +590,7 @@ namespace DrawGuess.Models
                         break;
                     case GameMode.EndingGame:
                         SetRound(1);
-                        ClearPlayer();
+                        ClearPlayers();
                         Task startNewGameTask = SetMode(GameMode.StartingGame, 3); //Set game mode to RevealingRoles
                         break;
                     default:
