@@ -530,6 +530,7 @@ namespace DrawGuess.Models
                 case GameMode.StartingGame:                    
                     StopTasks = false;
                     Task startingRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to StartingRound
+                    NewPlayer(); //Clear player info
                     break;
                 case GameMode.StartingRound:                    
                     ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
