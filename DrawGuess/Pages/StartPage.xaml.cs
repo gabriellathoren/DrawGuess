@@ -166,7 +166,7 @@ namespace DrawGuess.Pages
         {
             try
             {
-                Models.Game.GetGames();
+                GameHelper.GetGames();
                 
             }
             catch (Exception e)
@@ -190,7 +190,7 @@ namespace DrawGuess.Pages
                 if (game.Id.Equals(-1))
                 {
                     gameName = RoomHelper.RandomizeRoomName(ViewModel.Items);
-                    Models.Game.AddGame(gameName);
+                    GameHelper.AddGame(gameName);
                 }
                 else if(game.Full)
                 {
@@ -198,7 +198,7 @@ namespace DrawGuess.Pages
                 }
                 else
                 {
-                    Models.Game.JoinGame(gameName);
+                    GameHelper.JoinGame(gameName);
                 }
             }
             catch (Exception ex)

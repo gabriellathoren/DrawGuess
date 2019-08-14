@@ -129,6 +129,7 @@
     <Compile Include="Converters\PlacementVisibilityConverter.cs" />
     <Compile Include="Converters\VisibilityConverter.cs" />
     <Compile Include="GameEngine.cs" />
+    <Compile Include="Helpers\GameHelper.cs" />
     <Compile Include="Helpers\RoomHelper.cs" />
     <Compile Include="Helpers\WordHelper.cs" />
     <Compile Include="LoadbalancingAPI\AppSettings.cs" />
