@@ -529,8 +529,7 @@ namespace DrawGuess.Models
                     break;
                 case GameMode.StartingGame:                    
                     StopTasks = false;
-                    Task startingRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to StartingRound
-                    NewPlayer(); //Clear player info
+                    Task startingRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to StartingRound                    
                     break;
                 case GameMode.StartingRound:                    
                     ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
@@ -558,6 +557,7 @@ namespace DrawGuess.Models
                     break;
                 case GameMode.EndingGame:                    
                     SetRound(1);
+                    NewPlayer(); //Clear player info
                     Task startNewGameTask = SetMode(GameMode.StartingGame, 3); //Set game mode to RevealingRoles
                     break;
                 default:
