@@ -72,6 +72,23 @@ namespace DrawGuess.Models
             set
             {
                 this.painter = value;
+
+                if(this.Painter)
+                {
+                    WasPainter = true; 
+                }
+                    
+                this.OnPropertyChanged();
+            }
+        }
+
+        private bool wasPainter;
+        public bool WasPainter
+        {
+            get { return this.wasPainter; }
+            set
+            {
+                this.wasPainter = value;
                 this.OnPropertyChanged();
             }
         }

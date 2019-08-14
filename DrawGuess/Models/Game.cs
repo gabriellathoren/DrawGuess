@@ -216,6 +216,15 @@ namespace DrawGuess.Models
                         player.Painter = false;
                     }
 
+                    if (p.Value.CustomProperties.ContainsKey("was_painter"))
+                    {
+                        player.WasPainter = (bool)p.Value.CustomProperties["was_painter"];
+                    }
+                    else
+                    {
+                        player.WasPainter = false;
+                    }
+
                     if (p.Value.CustomProperties.ContainsKey("correct_guess"))
                     {
                         player.RightAnswer = (bool)p.Value.CustomProperties["correct_guess"];
@@ -260,7 +269,7 @@ namespace DrawGuess.Models
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
-                SetRandomPainter();
+                SetPainter();
             }
             catch (Exception e)
             {
@@ -304,7 +313,8 @@ namespace DrawGuess.Models
                 Hashtable customProperties = new Hashtable() {
                     { "painter", false },
                     { "points", 0 },
-                    { "correct_guess", false }
+                    { "correct_guess", false },
+                    { "was_painter", false }
                 };
                 (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
             }
@@ -314,17 +324,14 @@ namespace DrawGuess.Models
             }
         }
 
-        public void SetRandomPainter()
+        public void SetPainter()
         {
             try
             {
                 //Check if there are a painter already and remove it              
-                Hashtable notPainterProperties = new Hashtable() { { "painter", false } };
+                Hashtable notPainterProperties = new Hashtable() { { "painter", false }, { "was_painter", true } };
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-                Photon.Realtime.Player oldPainter = null;
 
-                var index = 0;
-                var oldPainterIndex = 0; 
                 foreach (var p in photonPlayers)
                 {
                     if (p.Value.CustomProperties.ContainsKey("painter"))
@@ -333,29 +340,40 @@ namespace DrawGuess.Models
                         {
                             //Remove current painter as painter
                             p.Value.SetCustomProperties(notPainterProperties);
-                            oldPainter = p.Value;
-                            oldPainterIndex = index; 
                         }
                     }
-                    index++;
                 }
 
-                //Set new random painter, but not same as before
+                //Get players
                 var players = GetPlayers();
-                Random rand = new Random();
+                //Get players that have not been painters
+                var nonPainters = players.Where(x => x.WasPainter == false).ToList();
 
-                int newPainterIndex = 0; 
-                if (oldPainter != null)
+                Random rand = new Random();
+                int newPainterIndex = 0;
+                newPainterIndex = rand.Next(players.Count);
+                var painter = players[newPainterIndex];
+
+                //If there are players that never been painters yet
+                if (nonPainters.Count > 0)
                 {
-                    var excludeLastPainter = new HashSet<int>() { oldPainterIndex };
-                    newPainterIndex = rand.Next(0, LoadBalancingClient.CurrentRoom.Players.Count - excludeLastPainter.Count);
+                    painter = nonPainters[newPainterIndex];
                 }
                 else
                 {
-                    newPainterIndex = rand.Next(players.Count);
+                    Hashtable wasPainterProperties = new Hashtable() { { "was_painter", false } };
+                    foreach (var p in photonPlayers)
+                    {
+                        if (p.Value.CustomProperties.ContainsKey("was_painter"))
+                        {
+                            if ((bool)p.Value.CustomProperties["was_painter"])
+                            {
+                                //Remove current painter as painter
+                                p.Value.SetCustomProperties(wasPainterProperties);
+                            }
+                        }
+                    }
                 }
-                                
-                var painter = players[newPainterIndex];
 
                 Hashtable painterProperties = new Hashtable() { { "painter", true } };
                 Photon.Realtime.Player newPainter = photonPlayers.Where(x => x.Value.UserId == painter.UserId).FirstOrDefault().Value;
@@ -534,7 +552,7 @@ namespace DrawGuess.Models
                 case GameMode.StartingRound:                    
                     ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
                     StartRound(Round);
-                    if (Round > 1) { SetRandomPainter(); }
+                    if (Round > 1) { SetPainter(); }
                     Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
                     break;
                 case GameMode.RevealingRoles:                    

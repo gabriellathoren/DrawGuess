@@ -299,7 +299,7 @@ namespace DrawGuess.Pages
                         else
                         {
                             //Set new random painter
-                            ViewModel.Game.SetRandomPainter();
+                            ViewModel.Game.SetPainter();
                             await ViewModel.Game.SetMode(GameMode.StartingRound, 5);
                         }
                     }
@@ -694,10 +694,10 @@ namespace DrawGuess.Pages
         {
             try
             {
+                ViewModel.Game.NewPlayer();
                 GetPlayers();
                 GetGame();
-                SetGameMode();
-                ViewModel.Game.NewPlayer();
+                SetGameMode();                
                 GetStrokes();
             }
             catch (Exception ex)
