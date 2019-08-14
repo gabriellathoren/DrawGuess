@@ -351,7 +351,7 @@ namespace DrawGuess.Models
 
                 Random rand = new Random();
                 int newPainterIndex = 0;
-                newPainterIndex = rand.Next(players.Count);
+                newPainterIndex = rand.Next(players.Count-1);
                 var painter = players[newPainterIndex];
 
                 //If there are players that never been painters yet
@@ -540,46 +540,53 @@ namespace DrawGuess.Models
 
         public void ChangeMode()
         {
-            switch (Mode)
+            try
             {
-                case GameMode.WaitingForPlayers:
-                    ClearGame();
-                    break;
-                case GameMode.StartingGame:                    
-                    StopTasks = false;
-                    Task startingRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to StartingRound                    
-                    break;
-                case GameMode.StartingRound:                    
-                    ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
-                    StartRound(Round);
-                    if (Round > 1) { SetPainter(); }
-                    Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
-                    break;
-                case GameMode.RevealingRoles:                    
-                    Task playTtask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
-                    break;
-                case GameMode.Playing:                    
-                    Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound); //Set game mode to EndingRound
-                    break;
-                case GameMode.EndingRound:
-                    //If round is 8, the game has come to an end
-                    if (Round == 8)
-                    {                        
-                        Task endGameTask = SetMode(GameMode.EndingGame, 3); //Set game mode to end game
-                    }
-                    else
-                    {                        
-                        SetRound(Round + 1);
-                        Task startNewRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to start new round
-                    }
-                    break;
-                case GameMode.EndingGame:                    
-                    SetRound(1);
-                    NewPlayer(); //Clear player info
-                    Task startNewGameTask = SetMode(GameMode.StartingGame, 3); //Set game mode to RevealingRoles
-                    break;
-                default:
-                    break;
+                switch (Mode)
+                {
+                    case GameMode.WaitingForPlayers:
+                        ClearGame();
+                        break;
+                    case GameMode.StartingGame:
+                        StopTasks = false;
+                        Task startingRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to StartingRound                    
+                        break;
+                    case GameMode.StartingRound:
+                        ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
+                        StartRound(Round);
+                        if (Round > 1) { SetPainter(); }
+                        Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
+                        break;
+                    case GameMode.RevealingRoles:
+                        Task playTtask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
+                        break;
+                    case GameMode.Playing:
+                        Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound); //Set game mode to EndingRound
+                        break;
+                    case GameMode.EndingRound:
+                        //If round is 8, the game has come to an end
+                        if (Round == 8)
+                        {
+                            Task endGameTask = SetMode(GameMode.EndingGame, 3); //Set game mode to end game
+                        }
+                        else
+                        {
+                            SetRound(Round + 1);
+                            Task startNewRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to start new round
+                        }
+                        break;
+                    case GameMode.EndingGame:
+                        SetRound(1);
+                        NewPlayer(); //Clear player info
+                        Task startNewGameTask = SetMode(GameMode.StartingGame, 3); //Set game mode to RevealingRoles
+                        break;
+                    default:
+                        break;
+                }
+            }
+            catch(Exception e)
+            {
+                throw new Exception("Could not chnage mode", e);
             }
         }
 
