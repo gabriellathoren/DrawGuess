@@ -292,7 +292,9 @@ namespace DrawGuess.Models
                 Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
                 customProperties = new Hashtable() {
                     { "painter", false },
-                    { "points", 0 },   
+                    { "points", 0 },
+                    { "correct_guess", false },
+                    { "was_painter", false }
                 };
 
                 foreach (var player in photonPlayers)
@@ -319,6 +321,23 @@ namespace DrawGuess.Models
                 (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
             }
             catch(Exception e)
+            {
+                throw new PhotonException("Could not set properties for new player", e);
+            }
+        }
+
+        public void ClearPlayer()
+        {
+            try
+            {
+                Hashtable customProperties = new Hashtable() {
+                    { "points", 0 },
+                    { "correct_guess", false },
+                    { "was_painter", false }
+                };
+                (App.Current as App).LoadBalancingClient.LocalPlayer.SetCustomProperties(customProperties);
+            }
+            catch (Exception e)
             {
                 throw new PhotonException("Could not set properties for new player", e);
             }
@@ -577,7 +596,7 @@ namespace DrawGuess.Models
                         break;
                     case GameMode.EndingGame:
                         SetRound(1);
-                        NewPlayer(); //Clear player info
+                        ClearPlayer();
                         Task startNewGameTask = SetMode(GameMode.StartingGame, 3); //Set game mode to RevealingRoles
                         break;
                     default:
