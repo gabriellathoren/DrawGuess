@@ -38,7 +38,7 @@ namespace DrawGuess.Pages
             ViewModel = new GameViewModel();
 
             // Initialize the InkCanvas
-            InkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen;
+            InkCanvas.InkPresenter.InputDeviceTypes = CoreInputDeviceTypes.Mouse | CoreInputDeviceTypes.Pen | CoreInputDeviceTypes.Touch;
             InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
             InkCanvas.InkPresenter.StrokesCollected += Strokes_StrokesChanged;
             InkCanvas.InkPresenter.StrokesErased += Strokes_StrokesErased;
@@ -213,7 +213,6 @@ namespace DrawGuess.Pages
                 using (InMemoryRandomAccessStream stream2 = new InMemoryRandomAccessStream())
                 {
                     await stream2.WriteAsync(strokesByte.AsBuffer());
-                    //await InkCanvas.InkPresenter.StrokeContainer.LoadAsync(stream);
 
                     using (var inputStream = stream2.GetInputStreamAt(0))
                     {
