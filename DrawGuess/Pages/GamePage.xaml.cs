@@ -284,12 +284,13 @@ namespace DrawGuess.Pages
                 if (p.Painter == true)
                 {
                     ViewModel.Players.Remove(p);
+                    ViewModel.Game.StopTasks = true;
 
                     //Take the first player in the player's list to contine the game, to avoid doing this from multiple clients
-                    if(ViewModel.CurrentPlayer.UserId.Equals(ViewModel.Players[0].UserId))
+                    if (ViewModel.CurrentPlayer.UserId.Equals(ViewModel.Players[0].UserId))
                     {
                         //Change game mode
-                        await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);
+                        await ViewModel.Game.SetMode(GameMode.PainterLeft, 0);                        
 
                         if (LoadBalancingClient.CurrentRoom.Players.Count < 2)
                         {
@@ -710,6 +711,12 @@ namespace DrawGuess.Pages
 
         private void Quit()
         {
+            //Stop game task if quiting user is painter
+            if(ViewModel.CurrentPlayer.Painter)
+            {
+                ViewModel.Game.StopTasks = true; 
+            }
+
             ViewModel.Game.LeaveGame();
 
             while (!ViewModel.Game.LeftRoom)
