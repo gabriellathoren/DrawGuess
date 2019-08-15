@@ -333,10 +333,6 @@ namespace DrawGuess.Pages
                 {
                     ViewModel.Game.StopGame();
                 }
-                else if(ViewModel.Game.Mode == GameMode.Playing)
-                {
-                    ViewModel.Game.Timer = ViewModel.Game.GetStartTime();
-                }
             }
             catch (Exception e)
             {
@@ -695,6 +691,14 @@ namespace DrawGuess.Pages
             }
         }
 
+        public void GetTimer()
+        {
+            if (ViewModel.Game.Mode == GameMode.Playing)
+            {
+                ViewModel.Game.Timer = ViewModel.Game.GetTimer();
+            }
+        }
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
@@ -704,6 +708,7 @@ namespace DrawGuess.Pages
                 GetGame();
                 SetGameMode();                
                 GetStrokes();
+                GetTimer();
             }
             catch (Exception ex)
             {

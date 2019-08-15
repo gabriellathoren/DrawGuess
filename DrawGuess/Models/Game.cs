@@ -466,7 +466,7 @@ namespace DrawGuess.Models
             }
         }
 
-        public int GetStartTime()
+        public int GetTimer()
         {
             try
             {
@@ -481,7 +481,8 @@ namespace DrawGuess.Models
                     DateTime startTime = DateTime.Parse(start);
                     DateTime nowTime = DateTime.Parse(now);
 
-                    time = (int)(nowTime - startTime).TotalSeconds;
+                    var timeGone = (int)(nowTime - startTime).TotalSeconds - 10;
+                    time = 90 - timeGone; 
 
                     if(time < 0) { return 0; }
                 }
