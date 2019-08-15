@@ -81,7 +81,7 @@ namespace DrawGuess.Pages
                     }
                  });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
@@ -123,7 +123,7 @@ namespace DrawGuess.Pages
                     });
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
@@ -150,7 +150,7 @@ namespace DrawGuess.Pages
                         Task removeTask = RemovePlayer(player);
                     });
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
@@ -435,7 +435,7 @@ namespace DrawGuess.Pages
                         if(ViewModel.Game.Timer > 5)
                         {
                             await Task.Delay(3000);
-                            ViewModel.Game.Timer = 0;
+                            ViewModel.Game.UpdateTimer(0);
                         }
                     }
                 }
@@ -449,52 +449,59 @@ namespace DrawGuess.Pages
 
         public void SetPlacement()
         {
-            var newOrder = new ObservableCollection<Models.Player>(ViewModel.Players.OrderByDescending(x => x.Points).ToList());
-
-            //Check if list order acctually change
-            int index = 0;
-            bool listMustBeUpdated = false; 
-            foreach(var item in newOrder)
+            try
             {
-                if (item.UserId != ViewModel.Players[index].UserId)
+                var newOrder = new ObservableCollection<Models.Player>(ViewModel.Players.OrderByDescending(x => x.Points).ToList());
+
+                //Check if list order acctually change
+                int index = 0;
+                bool listMustBeUpdated = false;
+                foreach (var item in newOrder)
                 {
-                    listMustBeUpdated = true;
-                    break; 
+                    if (item.UserId != ViewModel.Players[index].UserId)
+                    {
+                        listMustBeUpdated = true;
+                        break;
+                    }
+                    index++;
                 }
-                index++; 
-            }
 
-            //Only update placements if the list order was updated
-            if(listMustBeUpdated)
-            {
-                ViewModel.Players = newOrder;                
-            }
+                //Only update placements if the list order was updated
+                if (listMustBeUpdated)
+                {
+                    ViewModel.Players = newOrder;
+                }
 
-            if (!ViewModel.Players.Any(p => p.Points != 0))
-            {
+                if (!ViewModel.Players.Any(p => p.Points != 0))
+                {
+                    foreach (Models.Player p in ViewModel.Players)
+                    {
+                        p.Placement = 0;
+                    }
+                    return;
+                }
+
+                int placement = 1;
                 foreach (Models.Player p in ViewModel.Players)
                 {
-                    p.Placement = 0;
+                    if (ViewModel.Players.IndexOf(p) == 0)
+                    {
+                        p.Placement = placement;
+                    }
+                    else if (p.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Points)
+                    {
+                        p.Placement = placement;
+                    }
+                    else
+                    {
+                        placement++;
+                        p.Placement = placement;
+                    }
                 }
-                return;
             }
-
-            int placement = 1;
-            foreach (Models.Player p in ViewModel.Players)
+            catch(Exception e)
             {
-                if (ViewModel.Players.IndexOf(p) == 0)
-                {
-                    p.Placement = placement;
-                }
-                else if (p.Points == ViewModel.Players[ViewModel.Players.IndexOf(p) - 1].Points)
-                {
-                    p.Placement = placement;
-                }
-                else
-                {
-                    placement++;
-                    p.Placement = placement;
-                }
+                ViewModel.ErrorMessage = "Could not set placement";
             }
 
         }
@@ -654,9 +661,7 @@ namespace DrawGuess.Pages
 
             ViewModel.Guess = hint;
         }
-
         
-
         public void GetGame()
         {
             try
@@ -706,12 +711,19 @@ namespace DrawGuess.Pages
                 ViewModel.Game.StopTasks = true; 
             }
 
-            ViewModel.Game.LeaveGame();
-
-            while (!ViewModel.Game.LeftRoom)
+            try
             {
-                Task.Delay(TimeSpan.FromMilliseconds(100));
+                ViewModel.Game.LeaveGame();
+
+                while (!ViewModel.Game.LeftRoom)
+                {
+                    Task.Delay(TimeSpan.FromMilliseconds(100));
+                }
             }
+            catch(Exception)
+            {
+                ViewModel.ErrorMessage = "Could not leave game properly";
+            }            
 
             this.Frame.Navigate(typeof(StartPage), "", new SuppressNavigationTransitionInfo());
         }

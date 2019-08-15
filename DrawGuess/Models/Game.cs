@@ -487,12 +487,20 @@ namespace DrawGuess.Models
             }
         }
 
-        public void UpdateTimer()
+        public void UpdateTimer(int time = 0)
         {
             try
             {
                 Hashtable customProperties = new Hashtable() { { "timer", Timer } };
+                
+                if (time != 0)
+                {
+                    customProperties = new Hashtable() { { "timer", time } };
+                }
+
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+
+
             }
             catch (Exception e)
             {
