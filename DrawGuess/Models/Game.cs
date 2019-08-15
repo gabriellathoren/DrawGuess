@@ -484,9 +484,7 @@ namespace DrawGuess.Models
 
                 if (!StopTasks)
                 {
-                    Hashtable customProperties = new Hashtable() {
-                    { "mode", mode }
-                };
+                    Hashtable customProperties = new Hashtable() { { "mode", mode } };
                     LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
                 }
             }
@@ -515,6 +513,10 @@ namespace DrawGuess.Models
                 {
                     Hashtable customProperties = new Hashtable() { { "mode", mode } };
                     LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                }
+                else
+                {
+                    Timer = 0; //Stop timer
                 }
             }
             catch(Exception e)
@@ -717,7 +719,7 @@ namespace DrawGuess.Models
                     throw new Exception();
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
                 throw new PhotonException("Could not leave room");
             }
