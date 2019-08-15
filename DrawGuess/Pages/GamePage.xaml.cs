@@ -108,6 +108,13 @@ namespace DrawGuess.Pages
                         });
                     }
                 }
+                else if (data.ContainsKey("timer"))
+                {
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        ViewModel.Game.GetTimer();
+                    });
+                }
                 else
                 {
                     await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -194,7 +201,6 @@ namespace DrawGuess.Pages
                     });
             }
         }
-
 
         public async void GetStrokes()
         {
@@ -556,8 +562,6 @@ namespace DrawGuess.Pages
                     }
                     ViewModel.ShowInfoView = false;
                     ViewModel.ShowGame = true;
-                    ViewModel.Game.Timer = 90;                    
-                    Task task = Task.Run((Action)CountDown); //Start CoundDown task
                     break;
                 case GameMode.EndingRound:
                     ViewModel.Game.Timer = 0; 
@@ -651,23 +655,7 @@ namespace DrawGuess.Pages
             ViewModel.Guess = hint;
         }
 
-        public async void CountDown()
-        {
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                SetTimer();
-            });
-        }
-
-        public async void SetTimer()
-        {
-            //Count down from 90 seconds to 0, so players nows how long the round has left 
-            while (ViewModel.Game.Timer > 0)
-            {
-                ViewModel.Game.Timer -= 1;
-                await Task.Delay(1000);
-            }
-        }
+        
 
         public void GetGame()
         {
@@ -691,14 +679,6 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void GetTimer()
-        {
-            if (ViewModel.Game.Mode == GameMode.Playing)
-            {
-                ViewModel.Game.Timer = ViewModel.Game.GetTimer();
-            }
-        }
-
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             try
@@ -708,7 +688,7 @@ namespace DrawGuess.Pages
                 GetGame();
                 SetGameMode();                
                 GetStrokes();
-                GetTimer();
+                ViewModel.Game.GetTimer();
             }
             catch (Exception ex)
             {

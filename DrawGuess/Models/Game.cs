@@ -465,32 +465,49 @@ namespace DrawGuess.Models
             }
         }
 
-        public int GetTimer()
+        public async void CountDown()
+        {
+            SetTimer();
+        }
+
+        public async void SetTimer()
+        {
+            //Count down from 90 seconds to 0, so players nows how long the round has left 
+            while (Timer > 0)
+            {
+                Timer -= 1;
+                UpdateTimer();
+                await Task.Delay(1000);
+            }
+        }
+
+        public void UpdateTimer()
+        {
+            try
+            {
+                Hashtable customProperties = new Hashtable() { { "timer", Timer } };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+            }
+            catch (Exception e)
+            {
+                throw new PhotonException("Could not set correct answer", e);
+            }
+        }
+
+        public void GetTimer()
         {
             try
             {
                 Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
-                var time = 0;
 
-                if (room.CustomProperties.ContainsKey("start_time"))
+                if (room.CustomProperties.ContainsKey("timer"))
                 {
-                    var start = room.CustomProperties["start_time"].ToString();
-                    var now = DateTime.Now.ToString("HH:mm:ss");
-
-                    DateTime startTime = DateTime.Parse(start);
-                    DateTime nowTime = DateTime.Parse(now);
-
-                    var timeGone = (int)(nowTime - startTime).TotalSeconds;
-                    time = 90 - timeGone; 
-
-                    if(time < 0) { return 0; }
+                    Timer = (int)room.CustomProperties["timer"];
                 }
-
-                return time;
             }
             catch(Exception e)
             {
-                throw new PhotonException("Could not get start time", e);
+                throw new PhotonException("Could not get timer", e);
             }
         }
 
@@ -606,6 +623,8 @@ namespace DrawGuess.Models
                         Task playTask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
                         break;
                     case GameMode.Playing:
+                        Timer = 90;
+                        Task task = Task.Run((Action)CountDown); //Start CoundDown task
                         Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound); //Set game mode to EndingRound
                         break;
                     case GameMode.EndingRound:
