@@ -454,7 +454,8 @@ namespace DrawGuess.Models
                     { "secret_word", secretWord }, //Secret word
                     { "random_letters", randomLetters }, //Set random letters
                     { "round", round }, //Set round     
-                    { "strokes", new byte[0] } //Clear strokes
+                    { "strokes", new byte[0] }, //Clear strokes
+                    { "start_time", DateTime.Now.ToString("HH:mm:ss") } //Start time
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
@@ -462,6 +463,34 @@ namespace DrawGuess.Models
             catch (Exception e)
             {
                 throw new PhotonException("Could not start round", e);
+            }
+        }
+
+        public int GetStartTime()
+        {
+            try
+            {
+                Room room = (App.Current as App).LoadBalancingClient.CurrentRoom;
+                var time = 0;
+
+                if (room.CustomProperties.ContainsKey("start_time"))
+                {
+                    var start = room.CustomProperties["start_time"].ToString();
+                    var now = DateTime.Now.ToString("HH:mm:ss");
+
+                    DateTime startTime = DateTime.Parse(start);
+                    DateTime nowTime = DateTime.Parse(now);
+
+                    time = (int)(nowTime - startTime).TotalSeconds;
+
+                    if(time < 0) { return 0; }
+                }
+
+                return time;
+            }
+            catch(Exception e)
+            {
+                throw new PhotonException("Could not get start time", e);
             }
         }
 
@@ -566,13 +595,12 @@ namespace DrawGuess.Models
                         break;
                     case GameMode.StartingRound:
                         ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
-                        //SetRound(Round);
                         StartRound(Round);
                         if (Round > 1) { SetPainter(); }
                         Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
                         break;
                     case GameMode.RevealingRoles:
-                        Task playTtask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
+                        Task playTask = SetMode(GameMode.Playing, 7); //Set game mode to RevealingRoles
                         break;
                     case GameMode.Playing:
                         Task endRoundTask = MoveFromPlayingMode(GameMode.EndingRound); //Set game mode to EndingRound
@@ -585,7 +613,7 @@ namespace DrawGuess.Models
                         }
                         else
                         {
-                            Round += 1; 
+                            SetRound(Round + 1);
                             Task startNewRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to start new round
                         }
                         break;

@@ -333,6 +333,10 @@ namespace DrawGuess.Pages
                 {
                     ViewModel.Game.StopGame();
                 }
+                else if(ViewModel.Game.Mode == GameMode.Playing)
+                {
+                    ViewModel.Game.Timer = ViewModel.Game.GetStartTime();
+                }
             }
             catch (Exception e)
             {
