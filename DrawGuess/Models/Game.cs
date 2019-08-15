@@ -16,6 +16,8 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 using Windows.UI.Input.Inking;
 
 namespace DrawGuess.Models
@@ -467,7 +469,11 @@ namespace DrawGuess.Models
 
         public async void CountDown()
         {
-            SetTimer();
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
+            () =>
+            {
+                SetTimer();
+            });
         }
 
         public async void SetTimer()
