@@ -165,6 +165,7 @@ namespace DrawGuess.Pages
         {
             try
             {
+                ViewModel.Game.StopTasks = false;
                 Photon.Realtime.Player newPlayer = (Photon.Realtime.Player)sender;
                 Models.Player player = new Models.Player()
                 {
@@ -332,7 +333,7 @@ namespace DrawGuess.Pages
                 //Start game if there are 2 or more players 
                 if (ViewModel.Players.Count > 1 && ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
                 {
-                    StartGame();
+                    ViewModel.Game.StartGame();
                 }
                 //Stop game if there are less players than two
                 else if (ViewModel.Players.Count < 2 && !ViewModel.Game.Mode.Equals(GameMode.WaitingForPlayers))
@@ -343,18 +344,6 @@ namespace DrawGuess.Pages
             catch (Exception e)
             {
                 ViewModel.ErrorMessage = "Could not set game mode";
-            }
-        }
-
-        public void StartGame()
-        {
-            try
-            {
-                ViewModel.Game.StartGame();
-            }
-            catch (Exception)
-            {
-                ViewModel.ErrorMessage = "Could not start game";
             }
         }
                 
@@ -438,8 +427,7 @@ namespace DrawGuess.Pages
                             ViewModel.Game.UpdateTimer(0);
                         }
                     }
-                }
-                
+                }                
             }
             catch (Exception e)
             {

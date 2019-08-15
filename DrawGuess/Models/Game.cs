@@ -108,7 +108,11 @@ namespace DrawGuess.Models
             get { return mode; }
             set
             {
-                if (!(mode.Equals(value)))
+                if (mode.Equals(value))
+                {
+                    mode = value;
+                }
+                else
                 {
                     mode = value;
 
@@ -119,10 +123,6 @@ namespace DrawGuess.Models
                             ChangeMode();
                         }
                     }
-                }
-                else
-                {
-                    mode = value;
                 }
                 this.OnPropertyChanged();
             }
@@ -247,18 +247,19 @@ namespace DrawGuess.Models
             return players;
         }
         
-        public void StartGame()
+        public async void StartGame()
         {
             try
             {
+                SetPainter();
+                await Task.Delay(2000);
+
                 Round = 1;
                 Hashtable customProperties = new Hashtable() {
                     { "mode", GameMode.StartingGame }, //Change game status to started
                     { "round", Round }, //Set round         
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
-
-                SetPainter();
             }
             catch (Exception e)
             {
@@ -492,14 +493,15 @@ namespace DrawGuess.Models
             try
             {
                 Hashtable customProperties = new Hashtable() { { "timer", Timer } };
-                
+                Timer = Timer;
+
                 if (time != 0)
                 {
                     customProperties = new Hashtable() { { "timer", time } };
+                    Timer = time;
                 }
 
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
-
 
             }
             catch (Exception e)
@@ -621,7 +623,7 @@ namespace DrawGuess.Models
                 switch (Mode)
                 {
                     case GameMode.WaitingForPlayers:
-                        ClearGame();
+                        ClearGame();                        
                         break;
                     case GameMode.StartingGame:
                         StopTasks = false;
