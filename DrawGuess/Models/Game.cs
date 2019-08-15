@@ -455,7 +455,6 @@ namespace DrawGuess.Models
                     { "random_letters", randomLetters }, //Set random letters
                     { "round", round }, //Set round     
                     { "strokes", new byte[0] }, //Clear strokes
-                    { "start_time", DateTime.Now.ToString("HH:mm:ss") } //Start time
                 };
                 (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
@@ -481,7 +480,7 @@ namespace DrawGuess.Models
                     DateTime startTime = DateTime.Parse(start);
                     DateTime nowTime = DateTime.Parse(now);
 
-                    var timeGone = (int)(nowTime - startTime).TotalSeconds - 10;
+                    var timeGone = (int)(nowTime - startTime).TotalSeconds;
                     time = 90 - timeGone; 
 
                     if(time < 0) { return 0; }
@@ -528,6 +527,9 @@ namespace DrawGuess.Models
         {
             try
             {
+                Hashtable customProperties = new Hashtable() { { "start_time", DateTime.Now.ToString("HH:mm:ss") } };
+                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
                 bool done = false;
                 while (!StopTasks && !done)
                 {
@@ -541,7 +543,7 @@ namespace DrawGuess.Models
 
                 if (!StopTasks)
                 {
-                    Hashtable customProperties = new Hashtable() { { "mode", mode } };
+                    customProperties = new Hashtable() { { "mode", mode } };
                     LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
                 }
                 else
