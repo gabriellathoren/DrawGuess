@@ -566,6 +566,7 @@ namespace DrawGuess.Models
                         break;
                     case GameMode.StartingRound:
                         ClearCorrectAnswer(); //Clear indicators for correct answer from the game before
+                        SetRound(Round);
                         StartRound(Round);
                         if (Round > 1) { SetPainter(); }
                         Task revealTask = SetMode(GameMode.RevealingRoles, 3); //Set game mode to RevealingRoles
@@ -584,7 +585,7 @@ namespace DrawGuess.Models
                         }
                         else
                         {
-                            SetRound(Round + 1);
+                            Round += 1; 
                             Task startNewRoundTask = SetMode(GameMode.StartingRound, 3); //Set game mode to start new round
                         }
                         break;
