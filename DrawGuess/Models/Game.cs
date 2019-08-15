@@ -513,9 +513,7 @@ namespace DrawGuess.Models
 
                 if (!StopTasks)
                 {
-                    Hashtable customProperties = new Hashtable() {
-                    { "mode", mode }
-                };
+                    Hashtable customProperties = new Hashtable() { { "mode", mode } };
                     LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
                 }
             }

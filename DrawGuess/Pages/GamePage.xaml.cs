@@ -284,7 +284,8 @@ namespace DrawGuess.Pages
                 if (p.Painter == true)
                 {
                     ViewModel.Players.Remove(p);
-                    ViewModel.Game.StopTasks = false; //Start ability to run tasks again
+                    ViewModel.Game.Timer = 0; //Stop timer
+                    ViewModel.Game.StopTasks = false; //Start ability to run tasks again                    
 
                     //Take the first player in the player's list to contine the game, to avoid doing this from multiple clients
                     if (ViewModel.CurrentPlayer.UserId.Equals(ViewModel.Players[0].UserId))
