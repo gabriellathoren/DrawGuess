@@ -510,7 +510,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     ViewModel.ShowImage = false;
-                    InfoView.Row1 = "Waiting for other players\r\nto join...";
+                    InfoView.Row1 = "Waiting for other players...";
                     StartOrStop(); //In case someone have joined the game while beeing in painter's left mode
                     break;
                 case GameMode.StartingGame:
