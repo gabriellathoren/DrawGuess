@@ -489,14 +489,14 @@ namespace DrawGuess.Models
             }
         }
 
-        public void UpdateTimer(int time = 0)
+        public void UpdateTimer(int time = -1)
         {
             try
             {
                 Hashtable customProperties = new Hashtable() { { "timer", Timer } };
                 Timer = Timer;
 
-                if (time != 0)
+                if (time != -1)
                 {
                     customProperties = new Hashtable() { { "timer", time } };
                     Timer = time;
@@ -507,7 +507,7 @@ namespace DrawGuess.Models
             }
             catch (Exception e)
             {
-                throw new PhotonException("Could not set correct answer", e);
+                throw new PhotonException("Could not update timer", e);
             }
         }
 
