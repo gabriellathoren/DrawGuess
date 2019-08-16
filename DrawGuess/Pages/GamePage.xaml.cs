@@ -691,12 +691,12 @@ namespace DrawGuess.Pages
             }
         }
 
-        private void Quit()
+        private async void Quit()
         {
             //Stop game task if quiting user is painter
             if(ViewModel.CurrentPlayer.Painter)
             {
-                ViewModel.Game.StopTasks = true; 
+                ViewModel.Game.StopTasks = true;
             }
 
             try
@@ -705,7 +705,7 @@ namespace DrawGuess.Pages
 
                 while (!ViewModel.Game.LeftRoom)
                 {
-                    Task.Delay(TimeSpan.FromMilliseconds(100));
+                    await Task.Delay(TimeSpan.FromMilliseconds(100));
                 }
             }
             catch(Exception)

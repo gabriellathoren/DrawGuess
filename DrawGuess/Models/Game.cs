@@ -373,6 +373,7 @@ namespace DrawGuess.Models
                 //If there are players that never been painters yet
                 if (nonPainters.Count > 0)
                 {
+                    newPainterIndex = rand.Next(nonPainters.Count - 1);
                     painter = nonPainters[newPainterIndex];
                 }
                 else
