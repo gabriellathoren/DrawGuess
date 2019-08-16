@@ -576,7 +576,9 @@ namespace DrawGuess.Pages
                     }
                     else
                     {
-                        InfoView.Row1 = "The secret word was:\r\n" + ViewModel.Game.SecretWord;
+                        InfoView.TwoRows = true; 
+                        InfoView.Row1 = "The secret word was:";
+                        InfoView.Row2 = ViewModel.Game.SecretWord;
                     }
                     
                     break;
@@ -585,7 +587,9 @@ namespace DrawGuess.Pages
                     ViewModel.CurrentMode = GameMode.EndingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
-                    InfoView.Row1 = "Winner:\r\n" + GetWinners();
+                    InfoView.TwoRows = true;
+                    InfoView.Row1 = "Winner:";
+                    InfoView.Row2 = GetWinners();
                     break;
                 case GameMode.PainterLeft:
                     ViewModel.CurrentMode = GameMode.PainterLeft;

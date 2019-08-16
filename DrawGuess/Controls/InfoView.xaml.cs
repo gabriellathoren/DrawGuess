@@ -103,7 +103,7 @@ namespace DrawGuess.Controls
             this.InitializeComponent();
 
             Row1FontSize = 62;
-            Row2FontSize = 40;
+            Row2FontSize = 32;
             Row1 = "";
             Row2 = "";
             TwoRows = false;
