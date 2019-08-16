@@ -771,7 +771,7 @@ namespace DrawGuess.Pages
                         SetPlayerPoints(ViewModel.CurrentPlayer.Points + points);
                         //Give painter 10 points because someone guessed the word correct
                         var painter = ViewModel.Players.Where(x => x.Painter.Equals(true)).First();
-                        SetPlayerPoints(painter.Points + 10, painter);
+                        SetPlayerPoints(painter.Points + (90/ViewModel.Players.Count), painter);
                         SetCorrectAnswer(true);
                         //TODO: Show correct guess view
                         return;
