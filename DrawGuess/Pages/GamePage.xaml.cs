@@ -314,7 +314,7 @@ namespace DrawGuess.Pages
                 else
                 {
                     ViewModel.Players.Remove(p);
-                    SetGameMode();
+                    StartOrStop();
                 }
 
                 SetPlacement();
@@ -326,7 +326,7 @@ namespace DrawGuess.Pages
             }
         }
 
-        public void SetGameMode()
+        public void StartOrStop()
         {
             try
             {
@@ -510,6 +510,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Waiting for other players\r\nto join...";
+                    StartOrStop(); //In case someone have joined the game while beeing in painter's left mode
                     break;
                 case GameMode.StartingGame:
                     SetPlacement();
@@ -679,7 +680,7 @@ namespace DrawGuess.Pages
                 ViewModel.Game.NewPlayer();
                 GetPlayers();
                 GetGame();
-                SetGameMode();                
+                StartOrStop();                
                 GetStrokes();
                 ViewModel.Game.GetTimer();
             }
