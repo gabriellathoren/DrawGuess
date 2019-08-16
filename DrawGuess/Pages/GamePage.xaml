@@ -66,7 +66,9 @@
                 <StackPanel Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Converter={StaticResource InverseConverter}, Mode=OneWay}"
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             Background="Transparent"/>
-                <TextBlock Text="{x:Bind ViewModel.Game.Timer, Mode=OneWay}" Foreground="Black" FontFamily="{StaticResource RobotoLight}" FontSize="42" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,0,10,0"/>
+                <StackPanel Background="White" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,0,10,0">
+                    <TextBlock Text="{x:Bind ViewModel.Game.Timer, Mode=OneWay}" Foreground="Black" FontFamily="{StaticResource RobotoLight}" FontSize="42" VerticalAlignment="Top" HorizontalAlignment="Right" />
+                </StackPanel>
             </Grid>
 
             <InkToolbar InitialControls="None" Background="Black" TargetInkCanvas="{x:Bind InkCanvas}" Grid.Row="2">
