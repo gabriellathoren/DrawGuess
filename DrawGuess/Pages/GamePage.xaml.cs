@@ -698,6 +698,7 @@ namespace DrawGuess.Pages
             if(ViewModel.CurrentPlayer.Painter)
             {
                 ViewModel.Game.StopTasks = true;
+                Task.Delay(1000); //Wait 1 second to be sure that all task closes 
             }
 
             try

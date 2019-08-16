@@ -184,7 +184,7 @@ namespace DrawGuess.Models
 
             try
             {
-                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                Dictionary<int, Photon.Realtime.Player> photonPlayers = LoadBalancingClient.CurrentRoom.Players;
 
                 foreach (var p in photonPlayers)
                 {
@@ -262,7 +262,7 @@ namespace DrawGuess.Models
                 
                 if(LoadBalancingClient.CurrentRoom != null)
                 {
-                    (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
                 }
             }
             catch (Exception e)
@@ -281,20 +281,24 @@ namespace DrawGuess.Models
                 Hashtable customProperties = new Hashtable() {
                     { "round", Round }, //Set round         
                 };
-                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
 
-                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-                customProperties = new Hashtable() {
-                    { "painter", false },
-                    { "points", 0 },
-                    { "correct_guess", false },
-                    { "was_painter", false }
-                };
-
-                foreach (var player in photonPlayers)
+                if(LoadBalancingClient.CurrentRoom != null)
                 {
-                    player.Value.SetCustomProperties(customProperties);
-                }
+                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
+                    Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
+                    customProperties = new Hashtable() {
+                        { "painter", false },
+                        { "points", 0 },
+                        { "correct_guess", false },
+                        { "was_painter", false }
+                    };
+
+                    foreach (var player in photonPlayers)
+                    {
+                        player.Value.SetCustomProperties(customProperties);
+                    }
+                }                
             }
             catch (Exception e)
             {
@@ -330,13 +334,16 @@ namespace DrawGuess.Models
                     { "was_painter", false }
                 };
 
-                Dictionary<int, Photon.Realtime.Player> photonPlayers = (App.Current as App).LoadBalancingClient.CurrentRoom.Players;
-
-                foreach (var p in photonPlayers)
+                if(LoadBalancingClient.CurrentRoom != null)
                 {
-                    //Remove current painter as painter
-                    p.Value.SetCustomProperties(customProperties);
-                }
+                    Dictionary<int, Photon.Realtime.Player> photonPlayers = LoadBalancingClient.CurrentRoom.Players;
+
+                    foreach (var p in photonPlayers)
+                    {
+                        //Remove current painter as painter
+                        p.Value.SetCustomProperties(customProperties);
+                    }
+                }                
             }
             catch (Exception e)
             {
@@ -485,7 +492,7 @@ namespace DrawGuess.Models
         public async void SetTimer()
         {
             //Count down from 90 seconds to 0, so players nows how long the round has left 
-            while (Timer > 0)
+            while (Timer > 0 && !StopTasks)
             {
                 Timer -= 1;
                 UpdateTimer();
@@ -506,8 +513,10 @@ namespace DrawGuess.Models
                     Timer = time;
                 }
 
-                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
-
+                if(LoadBalancingClient.CurrentRoom != null)
+                {
+                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties);
+                }
             }
             catch (Exception e)
             {
@@ -586,7 +595,11 @@ namespace DrawGuess.Models
                 if (!StopTasks)
                 {
                     customProperties = new Hashtable() { { "mode", mode } };
-                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+
+                    if(LoadBalancingClient.CurrentRoom != null)
+                    {
+                        LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                    }
                 }
                 else
                 {
