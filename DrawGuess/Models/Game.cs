@@ -259,7 +259,11 @@ namespace DrawGuess.Models
                     { "mode", GameMode.StartingGame }, //Change game status to started
                     { "round", Round }, //Set round         
                 };
-                (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                
+                if(LoadBalancingClient.CurrentRoom != null)
+                {
+                    (App.Current as App).LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                }
             }
             catch (Exception e)
             {
@@ -548,7 +552,11 @@ namespace DrawGuess.Models
                 if (!StopTasks)
                 {
                     Hashtable customProperties = new Hashtable() { { "mode", mode } };
-                    LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                    
+                    if(LoadBalancingClient.CurrentRoom != null)
+                    {
+                        LoadBalancingClient.CurrentRoom.SetCustomProperties(customProperties, new Hashtable(), new WebFlags(0) { HttpForward = true });
+                    }
                 }
             }
             catch(Exception e)

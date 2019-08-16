@@ -35,6 +35,7 @@ namespace DrawGuess.Pages
     {
         public StartViewModel ViewModel { get; set; }
         public LoadBalancingClient LoadBalancingClient { get; set; }
+        public bool GetRooms { get; set; }
 
         public StartPage()
         {
@@ -46,7 +47,8 @@ namespace DrawGuess.Pages
 
             this.InitializeComponent();
             this.ViewModel = new StartViewModel();
-            
+            ViewModel.Items.Insert(0, new Game() { Id = -1 });
+
             LoadBalancingClient = (App.Current as App).LoadBalancingClient;
             LoadBalancingClient.MatchMakingCallbackTargets.JoinedRoom += JoinedRoom;
             LoadBalancingClient.MatchMakingCallbackTargets.CreateRoomFailed += CreateRoomFailed;
@@ -100,7 +102,15 @@ namespace DrawGuess.Pages
                 await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal,
                     () =>
                     {
-                        SetGames(rooms);
+                        if (GetRooms)
+                        {
+                            SetGames(rooms);
+                            GetRooms = false; 
+                        }
+                        else
+                        {
+                            GetGames();
+                        }
                     });
             }
             catch(Exception)
@@ -136,25 +146,42 @@ namespace DrawGuess.Pages
         {
             try
             {
-                var list = new ObservableCollection<Game>();
-
-                if (rooms.Count > 0)
+                foreach (var room in rooms)
                 {
-                    foreach (RoomInfo room in rooms)
-                    {
-                        if(room.PlayerCount < 1) { continue; } //Don't show rooms that has no players
-
-                        list.Add(new Models.Game()
+                    //If the room list does not contain the room, add it to the list 
+                    if(!ViewModel.Items.Any(x => x.Name == room.Name)) {
+                        
+                        ViewModel.Items.Add(new Models.Game()
                         {
                             Name = room.Name,
                             NumberOfPlayers = room.PlayerCount
                         });
                     }
+                    //If the room list contains the room, update it
+                    else
+                    {
+                        var updatedRoom = rooms.Where(x => x.Name == room.Name).First();
+                        var oldRoom = ViewModel.Items.Where(x => x.Name == room.Name).First();
+
+                        if (updatedRoom.PlayerCount != oldRoom.NumberOfPlayers)
+                        {
+                            oldRoom.NumberOfPlayers = updatedRoom.PlayerCount;
+                        }
+                    }
                 }
 
-                list.Insert(0, new Game() { Id = -1 });
+                //Remove all rooms that exists in ViewModel, but not in new, updated list
+                foreach(var room in ViewModel.Items.ToList())
+                {
+                    if(room.Id == -1) { continue; }
+                    if(!rooms.Any(x => x.Name == room.Name))
+                    {
+                        ViewModel.Items.Remove(room);
+                    }
+                }
 
-                ViewModel.Items = list;
+                SortGameList();
+
             }
             catch(Exception e)
             {
@@ -166,8 +193,8 @@ namespace DrawGuess.Pages
         {
             try
             {
-                GameHelper.GetGames();
-                
+                GetRooms = true;
+                GameHelper.GetGames();                
             }
             catch (Exception e)
             {
@@ -177,7 +204,10 @@ namespace DrawGuess.Pages
 
         public void SortGameList()
         {
-            ViewModel.Items = new ObservableCollection<Game>(ViewModel.Items.OrderBy(x => x.Full).ToList());
+            if(ViewModel.Items.Any(x => x.Full))
+            {
+                ViewModel.Items = new ObservableCollection<Game>(ViewModel.Items.OrderBy(x => x.Full).ToList());
+            }            
         }
 
         private void GameList_Tapped(object sender, TappedRoutedEventArgs e)
@@ -230,7 +260,6 @@ namespace DrawGuess.Pages
                 }
 
                 GetGames();
-                SortGameList();
             }
             catch (Exception ex)
             {
