@@ -62,7 +62,11 @@
             </StackPanel>
 
             <Grid Grid.Row="1" BorderBrush="Black" BorderThickness="0.5" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
-                <InkCanvas x:Name="InkCanvas" />
+                <InkCanvas x:Name="InkCanvas">
+                    <InkCanvas.RenderTransform>
+                        <ScaleTransform x:Name="InkCanvasScaleTransform" />
+                    </InkCanvas.RenderTransform>
+                </InkCanvas>
                 <StackPanel Visibility="{x:Bind ViewModel.CurrentPlayer.Painter, Converter={StaticResource InverseConverter}, Mode=OneWay}"
                             HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
                             Background="Transparent"/>
