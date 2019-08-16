@@ -13,8 +13,8 @@
     </UserControl.Resources>
         
     <!-- View for waiting mode -->
-    <Grid Grid.Column="0" Background="#80000000">
-        <Image Source="/Assets/Components/colorsplash.png" Height="800"/>
+    <Grid Grid.Column="0" Background="#40000000">
+        <Image Source="/Assets/Backgrounds/paint_black_splash.png" Height="900" VerticalAlignment="Center"/>
         <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center">
             <TextBlock FontFamily="{StaticResource Akronim}" Foreground="White" FontSize="{x:Bind Row1FontSize, Mode=OneWay}" HorizontalTextAlignment="Center">
                 <Run Text="{x:Bind Row1, Mode=OneWay}"/>

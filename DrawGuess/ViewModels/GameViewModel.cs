@@ -124,6 +124,17 @@ namespace DrawGuess.ViewModels
             }
         }
 
+        private bool showImage;
+        public bool ShowImage
+        {
+            get { return this.showImage; }
+            set
+            {
+                this.showImage = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private bool showPlacement;
         public bool ShowPlacement
         {

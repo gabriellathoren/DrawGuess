@@ -215,6 +215,11 @@
     <Content Include="Assets\Backgrounds\Background_Square_Gray.scale-150.png" />
     <Content Include="Assets\Backgrounds\Background_Square_Gray.scale-200.png" />
     <Content Include="Assets\Backgrounds\Background_Square_Gray.scale-400.png" />
+    <Content Include="Assets\Backgrounds\paint_black_splash.scale-100.png" />
+    <Content Include="Assets\Backgrounds\paint_black_splash.scale-125.png" />
+    <Content Include="Assets\Backgrounds\paint_black_splash.scale-150.png" />
+    <Content Include="Assets\Backgrounds\paint_black_splash.scale-200.png" />
+    <Content Include="Assets\Backgrounds\paint_black_splash.scale-400.png" />
     <Content Include="Assets\Components\add_button.scale-100.png" />
     <Content Include="Assets\Components\add_button.scale-125.png" />
     <Content Include="Assets\Components\add_button.scale-150.png" />

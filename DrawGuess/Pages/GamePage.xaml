@@ -107,7 +107,8 @@
 
         <!-- View for info mode -->
         <Controls:InfoView x:Name="InfoView" Grid.Column="0"
-            Visibility="{x:Bind ViewModel.ShowInfoView, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
+                           ShowImage="{x:Bind ViewModel.ShowImage, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"
+                           Visibility="{x:Bind ViewModel.ShowInfoView, Converter={StaticResource VisibilityConverter}, Mode=OneWay}"/>
 
         <!-- Grid for players  -->
         <Grid Grid.Column="1" Padding="0,20,0,10">

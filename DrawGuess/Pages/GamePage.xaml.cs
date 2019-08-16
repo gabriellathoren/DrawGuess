@@ -509,6 +509,7 @@ namespace DrawGuess.Pages
                     ViewModel.CurrentMode = GameMode.WaitingForPlayers; 
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
+                    ViewModel.ShowImage = false;
                     InfoView.Row1 = "Waiting for other players\r\nto join...";
                     StartOrStop(); //In case someone have joined the game while beeing in painter's left mode
                     break;
@@ -519,10 +520,12 @@ namespace DrawGuess.Pages
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Starting new game...";
+                    ViewModel.ShowImage = true;
                     break;
                 case GameMode.StartingRound:
                     ViewModel.CurrentMode = GameMode.StartingRound;
                     ViewModel.ShowInfoView = true;
+                    ViewModel.ShowImage = true;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "ROUND " + ViewModel.Game.Round.ToString();
                     InkCanvas.InkPresenter.StrokeContainer = new InkStrokeContainer();
@@ -530,6 +533,7 @@ namespace DrawGuess.Pages
                 case GameMode.RevealingRoles:
                     ViewModel.CurrentMode = GameMode.RevealingRoles;
                     ViewModel.ShowInfoView = true;
+                    ViewModel.ShowImage = false;
                     ViewModel.ShowGame = false;
                     InfoView.Row1 = "Painter: " + ViewModel.Players.Where(x => x.Painter.Equals(true)).First().NickName;
                     InfoView.ShowSecretWord = false;
@@ -560,6 +564,7 @@ namespace DrawGuess.Pages
                     ViewModel.ShowGame = true;
                     break;
                 case GameMode.EndingRound:
+                    ViewModel.ShowImage = true;
                     ViewModel.Game.Timer = 0; 
                     ViewModel.CurrentMode = GameMode.EndingRound;
                     ViewModel.ShowInfoView = true;
@@ -576,6 +581,7 @@ namespace DrawGuess.Pages
                     
                     break;
                 case GameMode.EndingGame:
+                    ViewModel.ShowImage = false;
                     ViewModel.CurrentMode = GameMode.EndingGame;
                     ViewModel.ShowInfoView = true;
                     ViewModel.ShowGame = true;
@@ -583,6 +589,7 @@ namespace DrawGuess.Pages
                     break;
                 case GameMode.PainterLeft:
                     ViewModel.CurrentMode = GameMode.PainterLeft;
+                    ViewModel.ShowImage = true;
                     ViewModel.ShowInfoView = true;
                     InfoView.Row1 = "Painter left the game";
                     break;

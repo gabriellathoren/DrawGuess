@@ -76,6 +76,17 @@ namespace DrawGuess.Controls
             }
         }
 
+        private Visibility showImage;
+        public Visibility ShowImage
+        {
+            get { return this.showImage; }
+            set
+            {
+                this.showImage = value;
+                this.OnPropertyChanged();
+            }
+        }
+
         private bool showSecretWord;
         public bool ShowSecretWord
         {
@@ -97,6 +108,7 @@ namespace DrawGuess.Controls
             Row2 = "";
             TwoRows = false;
             ShowSecretWord = false;
+            ShowImage = Visibility.Visible;
         }
 
         public event PropertyChangedEventHandler PropertyChanged = delegate { };
